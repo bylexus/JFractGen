@@ -6,7 +6,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -14,17 +15,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SwingWorker;
 
 import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
-import ch.alexi.fractgen.models.FractCalcerProgressData;
+import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractParam;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -32,7 +31,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class MainFrame extends JFrame implements IFractCalcObserver {
+public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener {
 	private static final long serialVersionUID = 1L;
 	private JTextField picWidth;
 	private JTextField picHeight;
@@ -46,6 +45,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 	private JComboBox functionCB;
 	private JButton btnStartCalculation;
 	private JPanel settingsPanel;
+	private JComboBox colorPresetsCombo;
+	private JComboBox fractParamPresetsCB;
 	public MainFrame(String title) {
 		super(title);
 		
@@ -106,14 +107,15 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 		JLabel lblNewLabel_1 = new JLabel("Fractals");
 		settingsPanel.add(lblNewLabel_1, "2, 4, 3, 1, fill, default");
 		
-		JComboBox fractParamPresetsCB = new FractParamPresetsCombo();
+		fractParamPresetsCB = new FractParamPresetsCombo();
+		fractParamPresetsCB.addActionListener(this);
 		settingsPanel.add(fractParamPresetsCB, "2, 6, 3, 1, fill, default");
 		
 		JLabel lblNewLabel = new JLabel("Color Schemes");
 		settingsPanel.add(lblNewLabel, "2, 8, 3, 1, fill, default");
 		
-		JComboBox comboBox_2 = new JComboBox();
-		settingsPanel.add(comboBox_2, "2, 10, 3, 1, fill, default");
+		colorPresetsCombo = new ColorPresetsCombo();
+		settingsPanel.add(colorPresetsCombo, "2, 10, 3, 1, fill, default");
 		
 		JSeparator separator = new JSeparator();
 		settingsPanel.add(separator, "2, 12, 3, 1, fill, default");
@@ -191,9 +193,21 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 		nrOfWorkers.setColumns(10);
 		
 		outPanel = new FractOutPanel();
+		outPanel.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e ) {
+				System.out.println("clicked: "+e.getPoint());
+				MainFrame.this.zoomByClick(e.getPoint().x, e.getPoint().y);
+			}
+			public void mousePressed(MouseEvent e) {
+				System.out.println("pressed: "+e.getPoint());
+			}
+			public void mouseReleased(MouseEvent e) {
+				System.out.println("released: "+e.getPoint());
+			}
+		});
 		splitPane.setRightComponent(outPanel);
 		
-		outPanel.setPreferredSize(new Dimension(800, 600));
+		outPanel.setPreferredSize(new Dimension(805, 605));
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -222,6 +236,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 		p.maxBetragQuadrat = Double.parseDouble(maxBetragQuadrat.getText());
 		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
 		
+		p.colorPreset = (ColorPreset)colorPresetsCombo.getSelectedItem();
+		
 		return p;
 	}
 	
@@ -240,6 +256,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 		maxBetragQuadrat.setText(Double.toString(p.maxBetragQuadrat));
 		nrOfWorkers.setText(Integer.toString(p.nrOfWorkers));
 		
+		colorPresetsCombo.setSelectedItem(p.colorPreset);
+	}
+	
+	public void zoomByClick(int centerX, int centerY) {
+		FractParam p = this.getActualFractParam();
+		p.initFractParams();
+		p.diameterCX = p.diameterCX * 0.5;
+		p.maxIterations = new Double(p.maxIterations * 1.3).intValue();
+		
+		p.centerCX = p.min_cx + centerX * p.punkt_abstand;
+		p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse x-axis on draw
+		
+		this.setFractParam(p);
+		this.startCalculation();
 	}
 	
 	private void startCalculation() {
@@ -280,5 +310,13 @@ public class MainFrame extends JFrame implements IFractCalcObserver {
 			e.printStackTrace();
 		}
 		btnStartCalculation.setEnabled(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent a) {
+		if (a.getSource() == this.fractParamPresetsCB) {
+			this.setFractParam((FractParam)this.fractParamPresetsCB.getSelectedItem());
+		}
+		
 	}
 }

@@ -27,6 +27,29 @@ public class FractParam {
 	public double punkt_abstand = 0.0;
 	public int nrOfWorkers = 2;
 	
+	public ColorPreset colorPreset = ColorPresets.PALETTE_PATCHWORK;
+	
+	
+	/**
+	 * before calling, the following values need to be set:
+	 * - picWidth, picHeight,
+	 * - diameterCX,
+	 * - centerCX, centerCY
+	 */
+	public void initFractParams() {
+		double aspect, fract_width, fract_heigth;
+		
+		aspect = this.picWidth / (double)this.picHeight;
+		fract_width = this.diameterCX;
+		fract_heigth = this.diameterCX / aspect;
+		
+		this.min_cx = this.centerCX - (fract_width / 2);
+		this.max_cx = this.min_cx + fract_width;
+		this.min_cy = this.centerCY - (fract_heigth / 2);
+		this.max_cy = this.min_cy + fract_heigth;
+		
+		this.punkt_abstand = (this.max_cx - this.min_cx) / this.picWidth;
+	}
 	
 	@Override
 	public String toString() {

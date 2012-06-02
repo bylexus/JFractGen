@@ -21,8 +21,6 @@ public class AppManager {
 		return inst;
 	}
 	
-	
-	
 	public MainFrame createAndShowGUI() {
 		if (mainFrame == null) {
 			// Create and set up the window.
