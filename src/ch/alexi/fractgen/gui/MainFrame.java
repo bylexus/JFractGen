@@ -20,10 +20,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
 import ch.alexi.fractgen.models.ColorPreset;
+import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -47,6 +49,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JPanel settingsPanel;
 	private JComboBox colorPresetsCombo;
 	private JComboBox fractParamPresetsCB;
+	private JButton btnBack;
 	public MainFrame(String title) {
 		super(title);
 		
@@ -219,6 +222,19 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		toolBar.add(btnStartCalculation);
+		
+		btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				AppManager.getInstance().popHistory();
+				FractHistory h = AppManager.getInstance().getLastHistory();
+				if (h != null) {
+					MainFrame.this.setFractParam(h.fractParam);
+					MainFrame.this.outPanel.drawImage(h.fractImage);
+				} else btnBack.setEnabled(false);
+			}
+		});
+		toolBar.add(btnBack);
 	}
 	
 	private FractParam getActualFractParam() {
@@ -272,7 +288,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		this.startCalculation();
 	}
 	
-	private void startCalculation() {
+	public void startCalculation() {
 		// set up GUI for waiting:
 		
 		btnStartCalculation.setEnabled(false);
@@ -301,6 +317,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		try {
 			Image img = worker.get();
 			outPanel.drawImage(img);
+			// Create history entry:
+			AppManager.getInstance().addHistory(img,this.getActualFractParam());
+			btnBack.setEnabled(true);
 			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
