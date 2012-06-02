@@ -2,23 +2,33 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.FractCalcer;
@@ -50,6 +60,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JComboBox colorPresetsCombo;
 	private JComboBox fractParamPresetsCB;
 	private JButton btnBack;
+	private JButton btnSaveToPng;
 	public MainFrame(String title) {
 		super(title);
 		
@@ -235,6 +246,30 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		toolBar.add(btnBack);
+		
+		btnSaveToPng = new JButton("Save to PNG");
+		btnSaveToPng.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BufferedImage img = (BufferedImage)outPanel.getFractalImage();
+				if (img != null) {
+					JFileChooser dialog = new JFileChooser();
+					dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
+					int ret = dialog.showSaveDialog(MainFrame.this);
+					if (ret == JFileChooser.APPROVE_OPTION) {
+						File f = dialog.getSelectedFile();
+						try {
+							ImageIO.write(img, "png", f);
+							JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+							JOptionPane.showMessageDialog(MainFrame.this, "Ooops! Error occured! "+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			}
+		});
+		toolBar.add(btnSaveToPng);
 	}
 	
 	private FractParam getActualFractParam() {

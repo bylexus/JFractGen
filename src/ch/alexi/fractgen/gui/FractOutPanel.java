@@ -33,6 +33,10 @@ public class FractOutPanel extends JScrollPane {
 		}
 	}
 	
+	public Image getFractalImage() {
+		return this.fractImage;
+	}
+	
 	@Override
 	public void addMouseListener(MouseListener l) {
 		// Mouse events are directly redirected to the inner component:
