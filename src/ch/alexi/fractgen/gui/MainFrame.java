@@ -35,6 +35,7 @@ import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
 import ch.alexi.fractgen.models.ColorPreset;
+import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 
@@ -61,6 +62,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JComboBox fractParamPresetsCB;
 	private JButton btnBack;
 	private JButton btnSaveToPng;
+	
+	private ProgressDialog progressDialog;
 	public MainFrame(String title) {
 		super(title);
 		
@@ -207,18 +210,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		nrOfWorkers.setColumns(10);
 		
 		outPanel = new FractOutPanel();
-		outPanel.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e ) {
-				System.out.println("clicked: "+e.getPoint());
-				MainFrame.this.zoomByClick(e.getPoint().x, e.getPoint().y);
+		outPanel.addZoomListener(new IZoomListener() {
+			
+			@Override
+			public void rubberBandZoom(int x, int y, int width, int height) {
+				MainFrame.this.zoomByRubberband(x, y, width, height);
 			}
-			public void mousePressed(MouseEvent e) {
-				System.out.println("pressed: "+e.getPoint());
-			}
-			public void mouseReleased(MouseEvent e) {
-				System.out.println("released: "+e.getPoint());
+			
+			@Override
+			public void clickZoom(int x, int y) {
+				MainFrame.this.zoomByClick(x,y);
+				
 			}
 		});
+		
 		splitPane.setRightComponent(outPanel);
 		
 		outPanel.setPreferredSize(new Dimension(805, 605));
@@ -317,7 +322,25 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		p.maxIterations = new Double(p.maxIterations * 1.3).intValue();
 		
 		p.centerCX = p.min_cx + centerX * p.punkt_abstand;
-		p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse x-axis on draw
+		p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
+		
+		this.setFractParam(p);
+		this.startCalculation();
+	}
+	
+	public void zoomByRubberband(int left, int top, int width, int height) {
+		FractParam p = this.getActualFractParam();
+		p.initFractParams();
+		
+		int pixelCenterX = left + width / 2;
+		int pixelCenterY = top + height / 2;
+		
+		p.diameterCX = width / (double)p.picWidth * p.diameterCX;
+		
+		double scaleFactor = p.initialDiameterCX / p.diameterCX;
+		p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+		p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
+		p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
 		
 		this.setFractParam(p);
 		this.startCalculation();
@@ -329,13 +352,18 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		btnStartCalculation.setEnabled(false);
 		
 		
+		
 		// Get all params
 		final FractParam p = getActualFractParam();
+		
+		progressDialog = new ProgressDialog(p.nrOfWorkers);
 		
 		// Start calc:
 		FractCalcer sw = new FractCalcer(p,this);
 
 		sw.execute();
+		
+		progressDialog.setVisible(true);
 	}
 
 	@Override
@@ -343,8 +371,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	}
 	
 	@Override
-	public void progress(FractCalcer worker,String threadName, double progress, double total) {
-		System.out.println(threadName + ": "+progress + " ("+total+")");
+	public void progress(FractCalcer worker,FractCalcerProgressData progress) {
+		//System.out.println(threadName + ": "+progress + " ("+total+")");
+		if (progressDialog != null) {
+			progressDialog.updateProgress(progress.threadNr, new Double(progress.threadProgress*100).intValue());
+		}
 	}
 	
 	@Override
@@ -364,6 +395,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			e.printStackTrace();
 		}
 		btnStartCalculation.setEnabled(true);
+		if (progressDialog != null) {
+			progressDialog.setVisible(false);
+			progressDialog.dispose();
+			progressDialog = null;
+		}
 	}
 
 	@Override

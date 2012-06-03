@@ -21,12 +21,13 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 	int[][] palette;
 	
 	class FractCalcThread extends Thread {
-		int minX,minY,maxX,maxY;
+		int minX,minY,maxX,maxY, threadNr;
 		FractParam fractParam;
 		WritableRaster raster;
 		
-		public FractCalcThread(FractParam param,WritableRaster raster, int minX, int minY, int maxX, int maxY) {
+		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, int minX, int minY, int maxX, int maxY) {
 			this.fractParam = param;
+			this.threadNr = threadNr;
 			this.minX = minX;
 			this.minY = minY;
 			this.maxX = maxX;
@@ -43,6 +44,10 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			Double percCol;
 			int res;
 			
+			FractCalcerProgressData pdata = new FractCalcerProgressData();
+			pdata.threadNr = this.threadNr;
+			pdata.threadName = this.getName();
+			
 			for (int y = minY; y <= maxY; y++) {
 				cy = fractParam.min_cy + (maxY - y) * fractParam.punkt_abstand; // imaginaerteil von c
 				for (int x = minX; x <= maxX; x++) {
@@ -53,13 +58,15 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 				}
 				
 				// Progress update:
-				if (y % 10 == 0) {
-					FractCalcerProgressData pdata = new FractCalcerProgressData();
-					pdata.threadName = this.getName();
-					pdata.threadProress = (y*(maxX - minX))/(double)nrOfLoops;
+				if (y % 50 == 0) {
+					pdata.threadProgress = (y*(maxX - minX))/(double)nrOfLoops;
 					FractCalcer.this.publish(pdata);
 				}
 			}
+			
+			// publish 100% message:
+			pdata.threadProgress = 1;
+			FractCalcer.this.publish(pdata);
 		}
 	};
 	
@@ -119,7 +126,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 		for (int i = 0; i < workers.length; i++) {
 			int minX = fractParam.picWidth / fractParam.nrOfWorkers * i;
 			int maxX = fractParam.picWidth / fractParam.nrOfWorkers * (i+1) - 1;
-			workers[i] = new FractCalcThread(fractParam, img.getRaster(), minX, 0, maxX, fractParam.picHeight-1);
+			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), minX, 0, maxX, fractParam.picHeight-1);
 			workers[i].start();
 		}
 		
@@ -140,7 +147,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 	@Override
 	protected void process(List<FractCalcerProgressData> pdata) {
 		for (FractCalcerProgressData p : pdata) {
-			observer.progress(this, p.threadName, p.threadProress, p.totalProgress);
+			observer.progress(this, p);
 		}
 	}
 	
