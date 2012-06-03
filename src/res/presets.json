@@ -1,0 +1,274 @@
+{
+	"fractalPresets": [{
+		"name": "Mandelbrot Total",
+		"picWidth": 800,
+		"diameterCX": 3.0769,
+		"centerCX": -0.7,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 40,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Seahorse Valley",
+		"picWidth": 800,
+		"diameterCX": 0.53184,
+		"centerCX": -0.87591,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.20464,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 100,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Seahorse Upside Down",
+		"picWidth": 800,
+		"diameterCX": 0.016110,
+		"centerCX": -0.743030,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.126433,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 400,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Seahorse Tail",
+		"picWidth": 800,
+		"diameterCX": 0.0022878,
+		"centerCX": -0.7435669,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.1314023,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 500,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Antenna Satellite",
+		"picWidth": 800,
+		"diameterCX": 0.0000029336,
+		"centerCX": -0.743644786,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.1318252536,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 4,
+		"initialMaxIterations": 40,
+		"maxIterations": 3000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Seahorse Valley of the Satellite",
+		"picWidth": 800,
+		"diameterCX": 0.00000066208,
+		"centerCX": -0.74364409961,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.13182604688,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 4,
+		"initialMaxIterations": 40,
+		"maxIterations": 3000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Snowstar",
+		"picWidth": 800,
+		"diameterCX": 0.02403828125,
+		"centerCX": 0.20070234179688,
+		"initialDiameterCX": 3.0769,
+		"centerCY": -0.56375779101563,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 400,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Day of the Tentacles",
+		"picWidth": 800,
+		"diameterCX": 1.0096719999999999e-7,
+		"centerCX": -0.7436441534039999,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.13182601791399998,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 5000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600
+	}, {
+		"name": "Mandelbrot Fire!",
+		"picWidth": 800,
+		"diameterCX": 0.26592,
+		"centerCX": -0.9949091999999999,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.30308639999999996,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 1000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600,
+		"colorPreset":"Red Alert"
+	}, {
+		"name": "Mandelbrot Lexus' Secret Spot",
+		"picWidth": 800,
+		"diameterCX": 0.000036573043007812505,
+		"centerCX": -0.2379717670706691,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0.8451734844686328,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 2500,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600,
+		"colorPreset": "Shades of Blue"
+	}, {
+		"name": "Julia Total",
+		"picWidth": 800,
+		"diameterCX": 3,
+		"centerCX": 0,
+		"initialDiameterCX": 3.0769,
+		"centerCY": 0,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"initialMaxIterations": 40,
+		"maxIterations": 80,
+		"iterFunc": "Julia",
+		"picHeight": 600
+	}],
+
+	"colorPresets": [{
+		"name": "Patchwork",
+		"colors": [{
+			"r": 0,"g": 0,"b": 30
+		}, {
+			"r": 253,"g": 204,"b": 6
+			
+		}, {
+			"r": 186,"g": 84,"b": 15
+			
+		}, {
+			"r": 0,"g": 0,"b": 255
+			
+		}, {
+			"r": 180,"g": 180,"b": 30
+			
+		}, {
+			"r": 103,"g": 61,"b": 135
+			
+		}, {
+			"r": 255,"g": 0,"b": 0
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 255,"g": 255,"b": 255
+			
+		}, {
+			"r": 230,"g": 0,"b": 230
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 255,"g": 0,"b": 0
+			
+		}, {
+			"r": 255,"g": 255,"b": 0
+			
+		}, {
+			"r": 255,"g": 255,"b": 255
+			
+		}]
+	}, {
+		"name": "Shades of Blue",
+		"colors": [{
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 128,"g": 128,"b": 255
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		}, {
+			"r": 64,"g": 64,"b": 192
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		},{
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 128,"g": 128,"b": 255
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		}, {
+			"r": 64,"g": 64,"b": 192
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 128,"g": 128,"b": 255
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		}, {
+			"r": 64,"g": 64,"b": 192
+			
+		}, {
+			"r": 0,"g": 0,"b": 30
+			
+		}, {
+			"r": 200,"g": 200,"b": 255
+			
+		}]
+	},{
+			"name":"Red Alert",
+			"colors": [
+				{"r":30,"g":0,"b":0},
+				{"r":128,"g":0,"b":0},
+				{"r":255,"g":0,"b":0},
+				{"r":255,"g":128,"b":0},
+				{"r":255,"g":255,"b":0},
+				{"r":255,"g":255,"b":255},
+				{"r":30,"g":0,"b":0},
+				{"r":128,"g":0,"b":0},
+				{"r":255,"g":0,"b":0},
+				{"r":255,"g":128,"b":0},
+				{"r":255,"g":255,"b":0},
+				{"r":255,"g":255,"b":255},
+				{"r":30,"g":0,"b":0},
+				{"r":128,"g":0,"b":0},
+				{"r":255,"g":0,"b":0},
+				{"r":255,"g":128,"b":0},
+				{"r":255,"g":255,"b":0},
+				{"r":255,"g":255,"b":255}
+			]
+		}]
+	
+}

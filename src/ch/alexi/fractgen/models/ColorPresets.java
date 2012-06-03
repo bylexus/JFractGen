@@ -4,55 +4,59 @@ import java.util.Vector;
 
 import javax.print.attribute.standard.SheetCollate;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ch.alexi.fractgen.logic.AppManager;
+
 public class ColorPresets extends Vector<ColorPreset> {
-	private static RGB[] patchwork = {new RGB(0,0,30),
-		new RGB(253,204,6),
-		new RGB(186,84,15),
-		new RGB(0,0,255),
-		new RGB(180,180,30),
-		new RGB(103,61,135),
-		new RGB(255,0,0),
-		new RGB(0,0,30),
-		new RGB(255,255,255),
-		new RGB(230,0,230),
-		new RGB(0,0,30),
-		new RGB(255,0,0),
-		new RGB(255,255,0),
-		new RGB(255,255,255)};
-	private static RGB[] shadesofblue = {
-		new RGB(0,0,30),
-		new RGB(128,128,255),
-		new RGB(200,200,255),
-		new RGB(64,64,192),
-		new RGB(0,0,30),
-		new RGB(200,200,255),
-		new RGB(0,0,30),
-		new RGB(128,128,255),
-		new RGB(200,200,255),
-		new RGB(64,64,192),
-		new RGB(0,0,30),
-		new RGB(200,200,255),
-		new RGB(0,0,30),
-		new RGB(128,128,255),
-		new RGB(200,200,255),
-		new RGB(64,64,192),
-		new RGB(0,0,30),
-		new RGB(200,200,255)
-	};
-	public static ColorPreset  PALETTE_PATCHWORK = new ColorPreset("Patchwork",patchwork);
-	public static ColorPreset  PALETTE_SHADES_OF_BLUE = new ColorPreset("Shades of Blue",shadesofblue);
 			
 			
 	
 	public static ColorPresets inst = new ColorPresets();
 	
+	
+	
 	private ColorPresets() {
-		this.add(PALETTE_PATCHWORK);
-		this.add(PALETTE_SHADES_OF_BLUE);
 	}
 	
 	
 	public static ColorPresets getColorPresets() {
+		if (inst.isEmpty()) {
+			JSONObject presets = AppManager.getInstance().getPresetsJSONObject();
+			if (presets != null && presets.has("colorPresets")) {
+				inst.clear();
+				try {
+					JSONArray entries = presets.getJSONArray("colorPresets");
+					for (int i = 0; i < entries.length(); i++) {
+						JSONObject entry = entries.getJSONObject(i);
+						inst.add(ColorPreset.fromJSONObject(entry));
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		return inst;
+	}
+	
+	public static ColorPreset getColorPresetByName(String name) {
+		for (ColorPreset p : inst) {
+			if (name.equals(p.name)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public static JSONArray getColorPresetsAsJSONArray() {
+		JSONArray arr = new JSONArray();
+		for (ColorPreset p : inst) {
+			arr.put(p.toJSONObject());
+		}
+		return arr;
 	}
 }

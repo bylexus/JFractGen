@@ -1,9 +1,18 @@
 package ch.alexi.fractgen.logic;
 
 import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Stack;
 
 import javax.swing.JFrame;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ch.alexi.fractgen.gui.MainFrame;
 import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
@@ -14,6 +23,8 @@ public class AppManager {
 	
 	private MainFrame mainFrame;
 	private Stack<FractHistory> history;
+	
+	private JSONObject presets;
 	
 	private AppManager() {
 		this.history = new Stack<FractHistory>();
@@ -36,8 +47,34 @@ public class AppManager {
 		}
 		
 		mainFrame.startCalculation();
+		
         return mainFrame;
     }
+	
+	public JSONObject getPresetsJSONObject() {
+		if (this.presets == null) {
+			InputStream is = getClass().getResourceAsStream("/res/presets.json");
+			if (is != null) {
+				StringBuffer s = new StringBuffer();
+				String tmp;
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+				try {
+					while ((tmp = reader.readLine()) != null) {
+						s.append(tmp);
+					}
+					presets = new JSONObject(s.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return presets;
+	}
 	
 	public void addHistory(FractHistory h) {
 		history.push(h);

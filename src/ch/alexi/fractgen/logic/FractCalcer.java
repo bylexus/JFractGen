@@ -54,7 +54,16 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 					cx = fractParam.min_cx + x * fractParam.punkt_abstand; // realteil von Pixelwert errechnet (skaliert)
 					
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,-0.8,0.8);
+					/*
+					int[] c = new int[3];
+					c[0] = (res*5) % 255;
+					c[1] = (res*5) % 255;
+					c[2] = (res*5) % 255;
+					raster.setPixel(x, y, c);
+					/**/
+					
 					raster.setPixel(x, y, palette[res]);
+					
 				}
 				
 				// Progress update:
@@ -81,8 +90,8 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 		
 		int stepsPerFade = nrOfIters / (preset.colors.length - 1);
 		RGB actBase, nextBase;
-		int rStep,gStep,bStep;
-		int r,g,b;
+		double rStep,gStep,bStep;
+		double r,g,b;
 		int counter = 0;
 		
 		for (int i = 0; i < preset.colors.length - 1; i++) {
@@ -91,13 +100,13 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			r = actBase.r;
 			g = actBase.g;
 			b = actBase.b;
-			rStep = (nextBase.r-actBase.r) / stepsPerFade;
-			bStep = (nextBase.b-actBase.b) / stepsPerFade;
-			gStep = (nextBase.g-actBase.g) / stepsPerFade;
+			rStep = (nextBase.r-actBase.r) / (double)stepsPerFade;
+			bStep = (nextBase.b-actBase.b) / (double)stepsPerFade;
+			gStep = (nextBase.g-actBase.g) / (double)stepsPerFade;
 			for (int j = 0; j < stepsPerFade;j++) {
-				this.palette[counter][0] = r;
-				this.palette[counter][1] = g;
-				this.palette[counter][2] = b;
+				this.palette[counter][0] = new Double(r).intValue();
+				this.palette[counter][1] = new Double(g).intValue();
+				this.palette[counter][2] = new Double(b).intValue();
 				
 				r += rStep;
 				g += gStep;
