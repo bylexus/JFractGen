@@ -118,7 +118,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
 		JLabel lblNewLabel_2 = new JLabel("Presets");
-		lblNewLabel_2.setFont(new Font("Lucida Grande", Font.BOLD, 15));
+		lblNewLabel_2.setFont(new Font("Sans Serif", Font.BOLD, 14));
 		settingsPanel.add(lblNewLabel_2, "2, 2, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_1 = new JLabel("Fractals");

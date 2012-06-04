@@ -1,5 +1,6 @@
 package ch.alexi.fractgen.logic;
 
+import java.awt.Font;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +37,11 @@ public class AppManager {
 	}
 	
 	public MainFrame createAndShowGUI() {
+		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,10));
+		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,10));
+		UIManager.put("TextField.font",new Font("Sans Serif",Font.PLAIN,10));
+
+		
 		if (mainFrame == null) {
 			// Create and set up the window.
 	        mainFrame = new MainFrame("JFractGen");
