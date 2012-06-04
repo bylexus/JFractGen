@@ -64,16 +64,18 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JButton btnSaveToPng;
 	
 	private ProgressDialog progressDialog;
+	private JSplitPane outputSplitPane;
+	private JPanel legendPanel;
 	public MainFrame(String title) {
 		super(title);
 		
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JSplitPane splitPane = new JSplitPane();
-		getContentPane().add(splitPane, BorderLayout.CENTER);
+		JSplitPane mainHorizSplitPane = new JSplitPane();
+		getContentPane().add(mainHorizSplitPane, BorderLayout.CENTER);
 		
 		settingsPanel = new JPanel();
-		splitPane.setLeftComponent(settingsPanel);
+		mainHorizSplitPane.setLeftComponent(settingsPanel);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
@@ -209,7 +211,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		settingsPanel.add(nrOfWorkers, "4, 36, fill, default");
 		nrOfWorkers.setColumns(10);
 		
+		outputSplitPane = new JSplitPane();
+		outputSplitPane.setOneTouchExpandable(true);
+		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		mainHorizSplitPane.setRightComponent(outputSplitPane);
+		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
+		
 		outPanel = new FractOutPanel();
+		//getContentPane().add(outPanel, BorderLayout.WEST);
 		outPanel.addZoomListener(new IZoomListener() {
 			
 			@Override
@@ -224,9 +233,16 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		
-		splitPane.setRightComponent(outPanel);
-		
 		outPanel.setPreferredSize(new Dimension(805, 605));
+		
+		outputSplitPane.setTopComponent(outPanel);
+		
+		legendPanel = new JPanel();
+		outputSplitPane.setRightComponent(legendPanel);
+		outputSplitPane.setResizeWeight(1.0d);
+		
+		JLabel lblTest = new JLabel("Test");
+		legendPanel.add(lblTest);
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -337,8 +353,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		p.diameterCX = width / (double)p.picWidth * p.diameterCX;
 		
-		double scaleFactor = p.initialDiameterCX / p.diameterCX;
-		p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+		double scaleFactor = (double)p.picWidth / width; // selected area is scaleFactor times smaller
+		p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+		//double scaleFactor = p.initialDiameterCX / p.diameterCX;
+		//p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
 		p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
 		p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
 		
@@ -400,6 +418,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			progressDialog.dispose();
 			progressDialog = null;
 		}
+		outputSplitPane.setDividerLocation(1.0d);
 	}
 
 	@Override
