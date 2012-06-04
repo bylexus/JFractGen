@@ -46,4 +46,12 @@ public class RGB {
 		return col;
 	}
 	
+	public int[] toRGBArray() {
+		int[] arr = new int[3];
+		arr[0] = this.r;
+		arr[1] = this.g;
+		arr[2] = this.b;
+		return arr;
+	}
+	
 }

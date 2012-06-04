@@ -3,7 +3,6 @@
 	<property name="src" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="lib" />
-	<property name="res.dir" value="res" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 
@@ -13,14 +12,11 @@
 	        <fileset id="libs" dir="${lib.dir}" includes="**/*.jar"/>
 	</path>
 	
-	<fileset id="res" dir="${res.dir}" includes="**/*"/>
-
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${lib.dir}"/>
 		<mkdir dir="${jar.dir}"/>
-		<mkdir dir="${res.dir}"/>
 	</target>
 
 	<target name="clean" description="Removes build files" depends="init">
@@ -32,9 +28,6 @@
 
 	<target name="compile" depends="init">
 		<javac srcdir="${src}" destdir="${classes.dir}"  classpathref="classpath" includeantruntime="false"></javac>
-		<copy todir="${classes.dir}/res">
-            <fileset dir="${src}/res" excludes="**/*.java"/>
-        </copy>
 	</target>
 
   <target name ="makejar" depends="compile" description="Create a jar for the ${ant.project.name} project">

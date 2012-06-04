@@ -65,7 +65,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	
 	private ProgressDialog progressDialog;
 	private JSplitPane outputSplitPane;
-	private JPanel legendPanel;
+	private LegendPanel legendPanel;
 	public MainFrame(String title) {
 		super(title);
 		
@@ -237,12 +237,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		outputSplitPane.setTopComponent(outPanel);
 		
-		legendPanel = new JPanel();
+		legendPanel = new LegendPanel();
 		outputSplitPane.setRightComponent(legendPanel);
 		outputSplitPane.setResizeWeight(1.0d);
 		
-		JLabel lblTest = new JLabel("Test");
-		legendPanel.add(lblTest);
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -372,7 +370,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		
 		// Get all params
-		final FractParam p = getActualFractParam();
+		FractParam p = getActualFractParam();
 		
 		progressDialog = new ProgressDialog(p.nrOfWorkers);
 		
@@ -401,9 +399,12 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		try {
 			Image img = worker.get();
 			outPanel.drawImage(img);
+			legendPanel.updateInfo(worker.getFractParam(), worker.getPalette());
+			
 			// Create history entry:
 			AppManager.getInstance().addHistory(img,this.getActualFractParam());
 			btnBack.setEnabled(true);
+			
 			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -418,7 +419,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			progressDialog.dispose();
 			progressDialog = null;
 		}
-		outputSplitPane.setDividerLocation(1.0d);
+		outputSplitPane.resetToPreferredSizes();
 	}
 
 	@Override

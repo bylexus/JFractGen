@@ -17,8 +17,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 	
 	private FractParam fractParam;
 	private IFractCalcObserver observer;
-	
-	int[][] palette;
+	private RGB[] palette;
 	
 	class FractCalcThread extends Thread {
 		int minX,minY,maxX,maxY, threadNr;
@@ -39,9 +38,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 		public void run() {
 			
 			int nrOfLoops = (maxY - minY)*(maxX - minX);
-			int[] cols = new int[3];
 			double cx, cy;
-			Double percCol;
 			int res;
 			
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
@@ -54,15 +51,9 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 					cx = fractParam.min_cx + x * fractParam.punkt_abstand; // realteil von Pixelwert errechnet (skaliert)
 					
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,-0.8,0.8);
-					/*
-					int[] c = new int[3];
-					c[0] = (res*5) % 255;
-					c[1] = (res*5) % 255;
-					c[2] = (res*5) % 255;
-					raster.setPixel(x, y, c);
-					/**/
 					
-					raster.setPixel(x, y, palette[res]);
+					raster.setPixel(x, y, palette[res].toRGBArray());
+					
 					
 				}
 				
@@ -84,40 +75,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 		this.observer = o;
 	}
 	
-	private void createColorPalette(int nrOfIters, ColorPreset preset) {
-		nrOfIters++;
-		this.palette = new int[nrOfIters][3];
-		
-		int stepsPerFade = nrOfIters / (preset.colors.length - 1);
-		RGB actBase, nextBase;
-		double rStep,gStep,bStep;
-		double r,g,b;
-		int counter = 0;
-		
-		for (int i = 0; i < preset.colors.length - 1; i++) {
-			actBase = preset.colors[i];
-			nextBase = preset.colors[i+1];
-			r = actBase.r;
-			g = actBase.g;
-			b = actBase.b;
-			rStep = (nextBase.r-actBase.r) / (double)stepsPerFade;
-			bStep = (nextBase.b-actBase.b) / (double)stepsPerFade;
-			gStep = (nextBase.g-actBase.g) / (double)stepsPerFade;
-			for (int j = 0; j < stepsPerFade;j++) {
-				this.palette[counter][0] = new Double(r).intValue();
-				this.palette[counter][1] = new Double(g).intValue();
-				this.palette[counter][2] = new Double(b).intValue();
-				
-				r += rStep;
-				g += gStep;
-				b += bStep;
-				counter++;
-			}
-		}
-		this.palette[this.palette.length-1][0] = 0;
-		this.palette[this.palette.length-1][1] = 0;
-		this.palette[this.palette.length-1][2] = 0;
-	}
+	
 	
 	private void initFractParams(FractParam p) {
 		p.initFractParams();
@@ -126,7 +84,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 	@Override
 	public Image doInBackground() {
 		// Create color palette
-		createColorPalette(fractParam.maxIterations,fractParam.colorPreset);
+		this.palette = fractParam.colorPreset.createColorPalette(fractParam.maxIterations);
 		initFractParams(this.fractParam);
 		
 		BufferedImage img = new BufferedImage(fractParam.picWidth, fractParam.picHeight, BufferedImage.TYPE_INT_RGB);
@@ -151,6 +109,14 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			e.printStackTrace();
 		}
 		return img;
+	}
+	
+	public RGB[] getPalette() {
+		return this.palette;
+	}
+	
+	public FractParam getFractParam() {
+		return this.fractParam;
 	}
 	
 	@Override

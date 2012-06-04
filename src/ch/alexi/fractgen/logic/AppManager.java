@@ -3,7 +3,6 @@ package ch.alexi.fractgen.logic;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,9 +36,9 @@ public class AppManager {
 	}
 	
 	public MainFrame createAndShowGUI() {
-		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,10));
-		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,10));
-		UIManager.put("TextField.font",new Font("Sans Serif",Font.PLAIN,10));
+		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,11));
+		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,11));
+		UIManager.put("TextField.font",new Font("Sans Serif",Font.PLAIN,11));
 
 		
 		if (mainFrame == null) {
@@ -60,7 +59,7 @@ public class AppManager {
 	
 	public JSONObject getPresetsJSONObject() {
 		if (this.presets == null) {
-			InputStream is = getClass().getResourceAsStream("/res/presets.json");
+			InputStream is = getClass().getResourceAsStream("/presets.json");
 			if (is != null) {
 				StringBuffer s = new StringBuffer();
 				String tmp;
