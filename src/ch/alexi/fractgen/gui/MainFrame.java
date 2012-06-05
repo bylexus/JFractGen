@@ -79,7 +79,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		JSplitPane mainHorizSplitPane = new JSplitPane();
 		getContentPane().add(mainHorizSplitPane, BorderLayout.CENTER);
 		
-		settingsPanel = new JPanel();
+		settingsPanel = new SettingsPanel();
 		mainHorizSplitPane.setLeftComponent(settingsPanel);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -304,6 +304,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		toolBar.add(btnSaveToPng);
 	}
 	
+	private void updateOutput(FractCalcerResultData data) {
+		outPanel.drawImage(data.fractImage);
+		legendPanel.updateInfo(data.fractParam, data.colorPalette);
+	}
+	
 	private FractParam getActualFractParam() {
 		FractParam p = new FractParam();
 		
@@ -424,8 +429,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			this.actualFractCalcerResult = result;
 			
 			Image img = result.fractImage;
-			outPanel.drawImage(img);
-			legendPanel.updateInfo(worker.getFractParam(), worker.getPalette());
+			//outPanel.drawImage(img);
+			//legendPanel.updateInfo(worker.getFractParam(), worker.getPalette());
+			this.updateOutput(result);
 			
 			
 			btnBack.setEnabled(true);
@@ -461,12 +467,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				this.actualFractCalcerResult.fractParam.colorPreset = preset;
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
-				this.outPanel.drawImage(this.actualFractCalcerResult.fractImage);
-				this.legendPanel.updateInfo(this.actualFractCalcerResult.fractParam, this.actualFractCalcerResult.colorPalette);
+				this.updateOutput(this.actualFractCalcerResult);
 			}
 			
-			
 		}
-		
 	}
 }
