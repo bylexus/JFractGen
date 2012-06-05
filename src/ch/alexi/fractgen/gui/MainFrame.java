@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.alexi.fractgen.logic.AppManager;
+import ch.alexi.fractgen.logic.Colorizer;
 import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
@@ -138,6 +139,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		settingsPanel.add(lblNewLabel, "2, 8, 3, 1, fill, default");
 		
 		colorPresetsCombo = new ColorPresetsCombo();
+		colorPresetsCombo.addActionListener(this);
 		settingsPanel.add(colorPresetsCombo, "2, 10, 3, 1, fill, default");
 		
 		JSeparator separator = new JSeparator();
@@ -449,6 +451,21 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	public void actionPerformed(ActionEvent a) {
 		if (a.getSource() == this.fractParamPresetsCB) {
 			this.setFractParam((FractParam)this.fractParamPresetsCB.getSelectedItem());
+		}
+		
+		if (a.getSource() == this.colorPresetsCombo) {
+			// Re-render the color values of the actual fractal image:
+			if (this.actualFractCalcerResult != null) {
+				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(256);
+				this.actualFractCalcerResult.fractParam.colorPreset = preset;
+				Colorizer c = new Colorizer();
+				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
+				this.outPanel.drawImage(this.actualFractCalcerResult.fractImage);
+				this.legendPanel.updateInfo(this.actualFractCalcerResult.fractParam, this.actualFractCalcerResult.colorPalette);
+			}
+			
+			
 		}
 		
 	}

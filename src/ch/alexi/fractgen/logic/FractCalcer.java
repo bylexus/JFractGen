@@ -56,14 +56,18 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,-0.8,0.8);
 					iterValues[x][y] = res;
 					
-					int index = new Double((double)res / fractParam.maxIterations * palette.length).intValue();
-					if (index > palette.length-1) {
+					double percentualIterValue = (double)res / fractParam.maxIterations;
+					
+					colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue);
+					
+					/*if (index > palette.length-1) {
 						colorizer.colorizeRasterPixel(raster, x, y, black);
 						//raster.setPixel(x, y, black);
 					} else {
 						colorizer.colorizeRasterPixel(raster, x, y, palette[index]);
 						//raster.setPixel(x, y, palette[index].toRGBArray());
 					}
+					*/
 				}
 				
 				// Progress update:
