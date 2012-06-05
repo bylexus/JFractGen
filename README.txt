@@ -7,6 +7,7 @@ FUTURE FEATURES
 - more presets
 - drag-move
 - julia set K-parameters
+- smooth colors
 
 
 Note to mysels:

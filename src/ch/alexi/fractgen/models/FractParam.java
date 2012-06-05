@@ -15,10 +15,11 @@ public class FractParam {
 	public double centerCY = 0.0;
 	public double diameterCX = 3.0769;
 
-	public double initialDiameterCX = 3.0769;
-	public double initialMaxIterations = 40;
 
 	public IFractFunction iterFunc = FractFunctions.mandelbrot;
+	
+	public double juliaKr = -0.6;
+	public double juliaKi = 0.6;
 
 	public int picWidth = 800;
 	public int picHeight = 600;
@@ -67,9 +68,9 @@ public class FractParam {
 			o.put("centerCX", this.centerCX);
 			o.put("centerCY", this.centerCY);
 			o.put("diameterCX", this.diameterCX);
-			o.put("initialDiameterCX", this.initialDiameterCX);
-			o.put("initialMaxIterations", this.initialMaxIterations);
 			o.put("iterFunc", this.iterFunc);
+			o.put("juliaKr", this.juliaKr);
+			o.put("juliaKi", this.juliaKi);
 			o.put("picWidth", this.picWidth);
 			o.put("picHeight", this.picHeight);
 			o.put("nrOfWorkers", this.nrOfWorkers);
@@ -92,9 +93,15 @@ public class FractParam {
 			p.centerCX = o.getDouble("centerCX");
 			p.centerCY = o.getDouble("centerCY");
 			p.diameterCX = o.getDouble("diameterCX");
-			p.initialDiameterCX = o.getDouble("initialDiameterCX");
-			p.initialMaxIterations = o.getInt("initialMaxIterations");
 			p.iterFunc = (o.getString("iterFunc").equals("Julia") ? FractFunctions.julia: FractFunctions.mandelbrot);
+			
+			if (o.has("juliaKr")) {
+				p.juliaKr = o.getDouble("juliaKr");
+			}
+			if (o.has("juliaKi")) {
+				p.juliaKi = o.getDouble("juliaKi");
+			}
+			
 			p.picWidth = o.getInt("picWidth");
 			p.picHeight = o.getInt("picHeight");
 			p.nrOfWorkers = o.getInt("nrOfWorkers");

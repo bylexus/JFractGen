@@ -51,23 +51,17 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			for (int y = minY; y <= maxY; y++) {
 				cy = fractParam.min_cy + (maxY - y) * fractParam.punkt_abstand; // imaginaerteil von c
 				for (int x = minX; x <= maxX; x++) {
+					if (isCancelled()) {
+						return;
+					}
 					cx = fractParam.min_cx + x * fractParam.punkt_abstand; // realteil von Pixelwert errechnet (skaliert)
 					
-					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,-0.8,0.8);
+					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
 					iterValues[x][y] = res;
 					
 					double percentualIterValue = (double)res / fractParam.maxIterations;
 					
 					colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue);
-					
-					/*if (index > palette.length-1) {
-						colorizer.colorizeRasterPixel(raster, x, y, black);
-						//raster.setPixel(x, y, black);
-					} else {
-						colorizer.colorizeRasterPixel(raster, x, y, palette[index]);
-						//raster.setPixel(x, y, palette[index].toRGBArray());
-					}
-					*/
 				}
 				
 				// Progress update:
@@ -110,7 +104,9 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			int minX = fractParam.picWidth / fractParam.nrOfWorkers * i;
 			int maxX = fractParam.picWidth / fractParam.nrOfWorkers * (i+1) - 1;
 			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result.iterValues,minX, 0, maxX, fractParam.picHeight-1);
-			workers[i].start();
+			if (!isCancelled()) {
+				workers[i].start();
+			}
 		}
 		
 		
@@ -122,7 +118,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return null;
 		}
 		return result;
 	}

@@ -35,9 +35,11 @@ import ch.alexi.fractgen.logic.Colorizer;
 import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
+import ch.alexi.fractgen.logic.JuliaFractFunction;
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
+import ch.alexi.fractgen.models.FractFunctions;
 import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 
@@ -70,6 +72,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private LegendPanel legendPanel;
 	
 	private FractCalcerResultData actualFractCalcerResult;
+	private JTextField juliaKrField;
+	private JTextField juliaKiField;
+	
+	private boolean suspendUpdate = false;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -79,7 +85,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		JSplitPane mainHorizSplitPane = new JSplitPane();
 		getContentPane().add(mainHorizSplitPane, BorderLayout.CENTER);
 		
-		settingsPanel = new SettingsPanel();
+		settingsPanel = new JPanel();
 		mainHorizSplitPane.setLeftComponent(settingsPanel);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -93,6 +99,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("28px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -209,12 +219,27 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		functionCB = new FractFunctionsCombo();
 		settingsPanel.add(functionCB, "4, 34, fill, default");
+		functionCB.addActionListener(this);
+		
+		JLabel lblJuliaK = new JLabel("Julia K(r):");
+		settingsPanel.add(lblJuliaK, "2, 36, right, default");
+		
+		juliaKrField = new JTextField();
+		settingsPanel.add(juliaKrField, "4, 36, fill, default");
+		juliaKrField.setColumns(10);
+		
+		JLabel lblJuliaKi = new JLabel("Julia K(i):");
+		settingsPanel.add(lblJuliaKi, "2, 38, right, default");
+		
+		juliaKiField = new JTextField();
+		settingsPanel.add(juliaKiField, "4, 38, fill, default");
+		juliaKiField.setColumns(10);
 		
 		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 36, right, default");
+		settingsPanel.add(lblOfWorkers, "2, 40, right, default");
 		
 		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 36, fill, default");
+		settingsPanel.add(nrOfWorkers, "4, 40, fill, default");
 		nrOfWorkers.setColumns(10);
 		
 		outputSplitPane = new JSplitPane();
@@ -263,17 +288,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		btnBack.setEnabled(false);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				// Back in history:
-				FractCalcerResultData h = AppManager.getInstance().popHistory();
-				if (h != null) {
-					MainFrame.this.setFractParam(h.fractParam);
-					MainFrame.this.outPanel.drawImage(h.fractImage);
-					MainFrame.this.legendPanel.updateInfo(h.fractParam, h.colorPalette);
-					MainFrame.this.actualFractCalcerResult = h;
-				}
-				if (AppManager.getInstance().getHistoryCount() == 0) {
-					btnBack.setEnabled(false);
-				}
+				popHistory();
 				
 			}
 		});
@@ -302,11 +317,34 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		toolBar.add(btnSaveToPng);
+		
+		FooterPanel footerPanel = new FooterPanel();
+		getContentPane().add(footerPanel, BorderLayout.SOUTH);
+	}
+	
+	private void popHistory(boolean restoreGUI) {
+		// Back in history:
+		FractCalcerResultData h = AppManager.getInstance().popHistory();
+		
+		if (restoreGUI && h != null) {
+			MainFrame.this.setFractParam(h.fractParam);
+			MainFrame.this.updateOutput(h);
+			MainFrame.this.actualFractCalcerResult = h;
+		}
+		if (AppManager.getInstance().getHistoryCount() == 0) {
+			btnBack.setEnabled(false);
+		}
+	}
+	
+	private void popHistory() {
+		this.popHistory(true);
 	}
 	
 	private void updateOutput(FractCalcerResultData data) {
-		outPanel.drawImage(data.fractImage);
-		legendPanel.updateInfo(data.fractParam, data.colorPalette);
+		if (!this.suspendUpdate) {
+			outPanel.drawImage(data.fractImage);
+			legendPanel.updateInfo(data.fractParam, data.colorPalette);
+		}
 	}
 	
 	private FractParam getActualFractParam() {
@@ -320,6 +358,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		p.diameterCX = Double.parseDouble(diameterCX.getText());
 		p.iterFunc = (IFractFunction)functionCB.getSelectedItem();
+		p.juliaKr = Double.parseDouble(juliaKrField.getText());
+		p.juliaKi = Double.parseDouble(juliaKiField.getText());
 		p.maxIterations = Integer.parseInt(maxIters.getText());
 		p.maxBetragQuadrat = Double.parseDouble(maxBetragQuadrat.getText());
 		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
@@ -339,6 +379,18 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		diameterCX.setText(Double.toString(p.diameterCX));
 		
 		functionCB.setSelectedItem(p.iterFunc);
+		
+		if (p.iterFunc == FractFunctions.julia) {
+			juliaKrField.setText(Double.toString(p.juliaKr));
+			juliaKiField.setText(Double.toString(p.juliaKi));
+			juliaKrField.setEnabled(true);
+			juliaKiField.setEnabled(true);
+		} else {
+			juliaKrField.setText("0");
+			juliaKiField.setText("0");
+			juliaKrField.setEnabled(false);
+			juliaKiField.setEnabled(false);
+		}
 		
 		maxIters.setText(Integer.toString(p.maxIterations));
 		maxBetragQuadrat.setText(Double.toString(p.maxBetragQuadrat));
@@ -389,7 +441,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	
 	public void startCalculation() {
 		// set up GUI for waiting:
-		
+		this.suspendUpdate = true;
 		btnStartCalculation.setEnabled(false);
 		
 		// Create history entry, if we have a fract already:
@@ -400,13 +452,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		// Get all params
 		FractParam p = getActualFractParam();
 		
-		progressDialog = new ProgressDialog(p.nrOfWorkers);
+		final FractCalcer sw = new FractCalcer(p,this);
+		
+		progressDialog = new ProgressDialog(p.nrOfWorkers, this);
+		progressDialog.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sw.cancel(true);
+			}
+		});
 		
 		// Start calc:
-		FractCalcer sw = new FractCalcer(p,this);
-
 		sw.execute();
-		
+		progressDialog.pack();
 		progressDialog.setVisible(true);
 	}
 
@@ -424,13 +483,15 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	
 	@Override
 	public void done(FractCalcer worker) {
+		this.suspendUpdate = false;
 		try {
+			if (worker.isCancelled()) {
+				throw new InterruptedException();
+			}
 			FractCalcerResultData result = worker.get();
 			this.actualFractCalcerResult = result;
 			
 			Image img = result.fractImage;
-			//outPanel.drawImage(img);
-			//legendPanel.updateInfo(worker.getFractParam(), worker.getPalette());
 			this.updateOutput(result);
 			
 			
@@ -438,11 +499,12 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			
 			
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Thrown when the user hits the cancel button
+			//e.printStackTrace();
+			this.popHistory(false);
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		btnStartCalculation.setEnabled(true);
 		if (progressDialog != null) {
@@ -456,12 +518,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	@Override
 	public void actionPerformed(ActionEvent a) {
 		if (a.getSource() == this.fractParamPresetsCB) {
+			this.suspendUpdate = true;
 			this.setFractParam((FractParam)this.fractParamPresetsCB.getSelectedItem());
+			startCalculation();
 		}
 		
 		if (a.getSource() == this.colorPresetsCombo) {
 			// Re-render the color values of the actual fractal image:
-			if (this.actualFractCalcerResult != null) {
+			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
 				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(256);
 				this.actualFractCalcerResult.fractParam.colorPreset = preset;
@@ -470,6 +534,17 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				this.updateOutput(this.actualFractCalcerResult);
 			}
 			
+		}
+		
+		if (a.getSource() == this.functionCB) {
+			IFractFunction f = (IFractFunction)this.functionCB.getSelectedItem();
+			if (f instanceof JuliaFractFunction) {
+				juliaKrField.setEnabled(true);
+				juliaKiField.setEnabled(true);
+			} else {
+				juliaKrField.setEnabled(false);
+				juliaKiField.setEnabled(false);
+			}
 		}
 	}
 }

@@ -96,8 +96,6 @@ public class FractOutPanel extends JScrollPane {
 			drawPanel.setBounds(0, 0, fractImage.getWidth(this), fractImage.getHeight(this));
 			drawPanel.repaint();
 			
-			rubberBand.setBounds(20,20,50,50);
-			rubberBand.setPreferredSize(new Dimension(50,50));
 			
 			this.revalidate();
 		}
