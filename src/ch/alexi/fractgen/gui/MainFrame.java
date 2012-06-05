@@ -36,6 +36,7 @@ import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
+import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 
@@ -66,6 +67,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private ProgressDialog progressDialog;
 	private JSplitPane outputSplitPane;
 	private LegendPanel legendPanel;
+	
+	private FractCalcerResultData actualFractCalcerResult;
+	
 	public MainFrame(String title) {
 		super(title);
 		
@@ -254,14 +258,21 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		toolBar.add(btnStartCalculation);
 		
 		btnBack = new JButton("Back");
+		btnBack.setEnabled(false);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				AppManager.getInstance().popHistory();
-				FractHistory h = AppManager.getInstance().getLastHistory();
+				// Back in history:
+				FractCalcerResultData h = AppManager.getInstance().popHistory();
 				if (h != null) {
 					MainFrame.this.setFractParam(h.fractParam);
 					MainFrame.this.outPanel.drawImage(h.fractImage);
-				} else btnBack.setEnabled(false);
+					MainFrame.this.legendPanel.updateInfo(h.fractParam, h.colorPalette);
+					MainFrame.this.actualFractCalcerResult = h;
+				}
+				if (AppManager.getInstance().getHistoryCount() == 0) {
+					btnBack.setEnabled(false);
+				}
+				
 			}
 		});
 		toolBar.add(btnBack);
@@ -330,36 +341,43 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	}
 	
 	public void zoomByClick(int centerX, int centerY) {
-		FractParam p = this.getActualFractParam();
-		p.initFractParams();
-		p.diameterCX = p.diameterCX * 0.5;
-		p.maxIterations = new Double(p.maxIterations * 1.3).intValue();
+		if (this.actualFractCalcerResult != null) {
+			this.setFractParam(this.actualFractCalcerResult.fractParam);
+			FractParam p = this.getActualFractParam();
+			p.initFractParams();
+			p.diameterCX = p.diameterCX * 0.5;
+			p.maxIterations = new Double(p.maxIterations * 1.3).intValue();
+			
+			p.centerCX = p.min_cx + centerX * p.punkt_abstand;
+			p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
+			
+			this.setFractParam(p);
+			this.startCalculation();
+		}
 		
-		p.centerCX = p.min_cx + centerX * p.punkt_abstand;
-		p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
-		
-		this.setFractParam(p);
-		this.startCalculation();
 	}
 	
 	public void zoomByRubberband(int left, int top, int width, int height) {
-		FractParam p = this.getActualFractParam();
-		p.initFractParams();
-		
-		int pixelCenterX = left + width / 2;
-		int pixelCenterY = top + height / 2;
-		
-		p.diameterCX = width / (double)p.picWidth * p.diameterCX;
-		
-		double scaleFactor = (double)p.picWidth / width; // selected area is scaleFactor times smaller
-		p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
-		//double scaleFactor = p.initialDiameterCX / p.diameterCX;
-		//p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
-		p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
-		p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
-		
-		this.setFractParam(p);
-		this.startCalculation();
+		if (this.actualFractCalcerResult != null) {
+			this.setFractParam(this.actualFractCalcerResult.fractParam);
+			FractParam p = this.getActualFractParam();
+			p.initFractParams();
+			
+			int pixelCenterX = left + width / 2;
+			int pixelCenterY = top + height / 2;
+			
+			p.diameterCX = width / (double)p.picWidth * p.diameterCX;
+			
+			double scaleFactor = (double)p.picWidth / width; // selected area is scaleFactor times smaller
+			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+			//double scaleFactor = p.initialDiameterCX / p.diameterCX;
+			//p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+			p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
+			p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
+			
+			this.setFractParam(p);
+			this.startCalculation();
+		}
 	}
 	
 	public void startCalculation() {
@@ -367,7 +385,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		btnStartCalculation.setEnabled(false);
 		
-		
+		// Create history entry, if we have a fract already:
+		if (this.actualFractCalcerResult != null) {
+			AppManager.getInstance().addHistory(this.actualFractCalcerResult);
+		}
 		
 		// Get all params
 		FractParam p = getActualFractParam();
@@ -397,12 +418,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	@Override
 	public void done(FractCalcer worker) {
 		try {
-			Image img = worker.get();
+			FractCalcerResultData result = worker.get();
+			this.actualFractCalcerResult = result;
+			
+			Image img = result.fractImage;
 			outPanel.drawImage(img);
 			legendPanel.updateInfo(worker.getFractParam(), worker.getPalette());
 			
-			// Create history entry:
-			AppManager.getInstance().addHistory(img,this.getActualFractParam());
+			
 			btnBack.setEnabled(true);
 			
 			

@@ -15,6 +15,7 @@ import ch.alexi.fractgen.models.RGB;
 
 public class ColorPalettePanel extends JComponent {
 	private RGB[] colorPalette;
+	private int nrOfIterations;
 
 	public ColorPalettePanel() {
 		super();
@@ -40,8 +41,9 @@ public class ColorPalettePanel extends JComponent {
 		return d;
 	}
 	
-	public void setColorPalette(RGB[] palette) {
+	public void setColorPalette(RGB[] palette, int nrOfIterations) {
 		this.colorPalette = palette;
+		this.nrOfIterations = nrOfIterations;
 		this.repaint();
 	}
 	
@@ -65,7 +67,7 @@ public class ColorPalettePanel extends JComponent {
 			g.drawString("0", 1, yPos);
 			
 			g.drawString(
-				Integer.toString(this.colorPalette.length-1),
+				Integer.toString(this.nrOfIterations),
 				this.getWidth() - new Double(maxIterTextBounds.getWidth()).intValue()-1,
 				yPos
 			);

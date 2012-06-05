@@ -1,30 +1,31 @@
 package ch.alexi.fractgen.logic;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
+
 import javax.swing.SwingWorker;
 
-import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
+import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.RGB;
 
-public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
+public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerProgressData>{
 	
 	private FractParam fractParam;
 	private IFractCalcObserver observer;
 	private RGB[] palette;
+	private Colorizer colorizer = new Colorizer();
 	
 	class FractCalcThread extends Thread {
 		int minX,minY,maxX,maxY, threadNr;
 		FractParam fractParam;
 		WritableRaster raster;
+		int[][] iterValues;
 		
-		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, int minX, int minY, int maxX, int maxY) {
+		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, int[][] iterValues, int minX, int minY, int maxX, int maxY) {
 			this.fractParam = param;
 			this.threadNr = threadNr;
 			this.minX = minX;
@@ -32,6 +33,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			this.maxX = maxX;
 			this.maxY = maxY;
 			this.raster = raster;
+			this.iterValues = iterValues;
 		}
 		
 		@Override
@@ -40,6 +42,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			int nrOfLoops = (maxY - minY)*(maxX - minX);
 			double cx, cy;
 			int res;
+			RGB black = new RGB(0,0,0);
 			
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
 			pdata.threadNr = this.threadNr;
@@ -51,10 +54,16 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 					cx = fractParam.min_cx + x * fractParam.punkt_abstand; // realteil von Pixelwert errechnet (skaliert)
 					
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,-0.8,0.8);
+					iterValues[x][y] = res;
 					
-					raster.setPixel(x, y, palette[res].toRGBArray());
-					
-					
+					int index = new Double((double)res / fractParam.maxIterations * palette.length).intValue();
+					if (index > palette.length-1) {
+						colorizer.colorizeRasterPixel(raster, x, y, black);
+						//raster.setPixel(x, y, black);
+					} else {
+						colorizer.colorizeRasterPixel(raster, x, y, palette[index]);
+						//raster.setPixel(x, y, palette[index].toRGBArray());
+					}
 				}
 				
 				// Progress update:
@@ -82,18 +91,21 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 	}
 	
 	@Override
-	public Image doInBackground() {
+	public FractCalcerResultData doInBackground() {
 		// Create color palette
-		this.palette = fractParam.colorPreset.createColorPalette(fractParam.maxIterations);
+		//this.palette = fractParam.colorPreset.createFixedSizeColorPalette(fractParam.maxIterations);
+		this.palette = fractParam.colorPreset.createDynamicSizeColorPalette(256);
 		initFractParams(this.fractParam);
 		
 		BufferedImage img = new BufferedImage(fractParam.picWidth, fractParam.picHeight, BufferedImage.TYPE_INT_RGB);
+		
+		FractCalcerResultData result = new FractCalcerResultData(this.fractParam, img,this.palette);
 		
 		Thread[] workers = new Thread[fractParam.nrOfWorkers];
 		for (int i = 0; i < workers.length; i++) {
 			int minX = fractParam.picWidth / fractParam.nrOfWorkers * i;
 			int maxX = fractParam.picWidth / fractParam.nrOfWorkers * (i+1) - 1;
-			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), minX, 0, maxX, fractParam.picHeight-1);
+			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result.iterValues,minX, 0, maxX, fractParam.picHeight-1);
 			workers[i].start();
 		}
 		
@@ -108,7 +120,7 @@ public class FractCalcer extends SwingWorker<Image, FractCalcerProgressData>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return img;
+		return result;
 	}
 	
 	public RGB[] getPalette() {

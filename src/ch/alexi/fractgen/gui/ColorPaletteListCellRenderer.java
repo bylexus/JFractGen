@@ -65,7 +65,7 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
 		if (value instanceof ColorPreset) {
-			this.palette = ((ColorPreset)value).createColorPalette(256);
+			this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);
 		}
 		 
 		return this;

@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.alexi.fractgen.gui.MainFrame;
+import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.FractParamPresets;
@@ -23,12 +24,12 @@ public class AppManager {
 	private static AppManager inst = new AppManager();
 	
 	private MainFrame mainFrame;
-	private Stack<FractHistory> history;
+	private Stack<FractCalcerResultData> history;
 	
 	private JSONObject presets;
 	
 	private AppManager() {
-		this.history = new Stack<FractHistory>();
+		this.history = new Stack<FractCalcerResultData>();
 	}
 	
 	public static AppManager getInstance() {
@@ -82,27 +83,17 @@ public class AppManager {
 		return presets;
 	}
 	
-	public void addHistory(FractHistory h) {
-		history.push(h);
+	public void addHistory(FractCalcerResultData data) {
+		history.push(data);
 	}
 	
-	public FractHistory addHistory(Image image, FractParam fractParam) {
-		FractHistory h = new FractHistory();
-		h.fractImage = image;
-		h.fractParam = fractParam;
-		this.addHistory(h);
-		return h;
-	}
-	
-	public FractHistory popHistory() {
+	public FractCalcerResultData popHistory() {
 		if (!this.history.isEmpty()) {
 			return this.history.pop();
 		} else return null;
 	}
 	
-	public FractHistory getLastHistory() {
-		if (!this.history.isEmpty()) {
-			return this.history.lastElement();
-		} else return null;
+	public int getHistoryCount() {
+		return this.history.size();
 	}
 }

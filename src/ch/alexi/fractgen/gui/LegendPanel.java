@@ -39,7 +39,7 @@ public class LegendPanel extends JPanel {
 	}
 	
 	public void updateInfo(FractParam param, RGB[] colorPalette) {
-		this.colorPalettePanel.setColorPalette(colorPalette);
+		this.colorPalettePanel.setColorPalette(colorPalette, param.maxIterations);
 		if (param != null) {
 			infoTextArea.setText("");
 			infoTextArea.append("Fractal Information:\n");

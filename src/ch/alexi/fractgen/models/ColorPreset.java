@@ -1,5 +1,8 @@
 package ch.alexi.fractgen.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,6 +10,8 @@ import org.json.JSONObject;
 public class ColorPreset {
 	public String name;
 	public RGB[] colors;
+	
+	private Map<Integer, RGB[]> dynamicPalettes = new HashMap<Integer, RGB[]>();
 	
 	public ColorPreset() {
 		
@@ -63,8 +68,7 @@ public class ColorPreset {
 	 * @param nrOfIters
 	 * @return
 	 */
-	public RGB[] createColorPalette(int nrOfIters) {
-		nrOfIters++;
+	public RGB[] createFixedSizeColorPalette(int nrOfIters) {
 		RGB[] palette = new RGB[nrOfIters];
 		
 		int stepsPerFade = nrOfIters / (this.colors.length - 1);
@@ -102,9 +106,16 @@ public class ColorPreset {
 			counter++;
 		}
 		
-		// ... but the last color must be black to indicate Julia / Mandelbrot membership:
-		palette[palette.length-1] = new RGB(0,0,0);
-		
 		return palette;
+	}
+	
+	public RGB[] createDynamicSizeColorPalette(int nrOfStepsPerTransition) {
+		Integer key = new Integer(nrOfStepsPerTransition);
+		if (!this.dynamicPalettes.containsKey(key)) {
+			this.dynamicPalettes.put(
+					key, 
+					this.createFixedSizeColorPalette(nrOfStepsPerTransition * (this.colors.length - 1)));
+		}
+		return this.dynamicPalettes.get(key);
 	}
 }
