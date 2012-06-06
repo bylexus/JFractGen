@@ -1,18 +1,13 @@
 package ch.alexi.fractgen;
 
-import javax.swing.JFrame;
-
-import ch.alexi.fractgen.gui.MainFrame;
 import ch.alexi.fractgen.logic.AppManager;
-import ch.alexi.fractgen.models.FractParam;
 
+/**
+ * JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class Main {
-	
-	
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
@@ -22,5 +17,4 @@ public class Main {
             }
         });
 	}
-
 }
