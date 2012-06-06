@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.RGB;
 

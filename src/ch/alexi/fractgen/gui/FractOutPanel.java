@@ -10,21 +10,28 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * The FractOutPanel draws the Fractal image and allows / initiates zooming.
+ * It informs IZoomListeners of zoom events. 
+ * It gets updated via drawImage() method, which simply takes an image to be drawn in the panel. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
+
+@SuppressWarnings("serial")
 public class FractOutPanel extends JScrollPane {
 	private Image fractImage;
-	
 	private JPanel drawPanel;
 	private JLayeredPane layerPane;
 	private JPanel rubberBand;
-	
 	private boolean mouseMoved = false;
 	private Point mouseStartPoint;
-	
 	private List<IZoomListener> zoomListeners;
 	
 	public FractOutPanel() {

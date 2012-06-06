@@ -2,15 +2,23 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * The footer panel, just some info.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
+@SuppressWarnings("serial")
 public class FooterPanel extends JPanel {
 	public FooterPanel() {
 		super();
@@ -18,6 +26,7 @@ public class FooterPanel extends JPanel {
 	}
 
 	private void initGUI() {
+		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(new JLabel("<html>JFractGen - &copy; 2012</html>"));
 		JButton linkBtn = new JButton();
 		linkBtn.setText("<html><font color='blue'><u>Alexander Schenkel</u></font></html>");

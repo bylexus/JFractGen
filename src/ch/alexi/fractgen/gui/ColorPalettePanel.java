@@ -5,14 +5,20 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import ch.alexi.fractgen.models.RGB;
 
+@SuppressWarnings("serial")
+/**
+ * The panel showing the actual fractal's color palette, which represents
+ * the number of iterations used to overflow max. |Z| ^ 2.
+ * Part of the @see LegendPanel.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class ColorPalettePanel extends JComponent {
 	private RGB[] colorPalette;
 	private int nrOfIterations;
@@ -82,6 +88,5 @@ public class ColorPalettePanel extends JComponent {
 				g.drawLine(i, yPos, i, this.getHeight());
 			}
 		}
-		
 	}
 }
