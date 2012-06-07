@@ -3,6 +3,13 @@ package ch.alexi.fractgen.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Represents a single RGB color value.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class RGB {
 	public int r;
 	public int g;

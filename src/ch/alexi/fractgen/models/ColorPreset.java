@@ -2,15 +2,23 @@ package ch.alexi.fractgen.models;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * A color preset is a list of colors that are used to calculate
+ * a color palette later: e.g. a preset contains "red", "blue" and "yellow".
+ * The calculated color palette then contains intermediate colors between those
+ * preset colors to smoothly fade from one color to the other.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class ColorPreset {
 	public String name;
 	public RGB[] colors;
-	
 	private Map<Integer, RGB[]> dynamicPalettes = new HashMap<Integer, RGB[]>();
 	
 	public ColorPreset() {
@@ -26,6 +34,10 @@ public class ColorPreset {
 		return this.name;
 	}
 	
+	/**
+	 * Returns a JSONObject representing this color preset.
+	 * @return
+	 */
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		try {
@@ -43,6 +55,11 @@ public class ColorPreset {
 		return o;
 	}
 	
+	/**
+	 * Creates a color preset from a given JSONObject, see presets.json
+	 * @param o
+	 * @return
+	 */
 	public static ColorPreset fromJSONObject(JSONObject o) {
 		ColorPreset p = new ColorPreset();
 		try {
@@ -62,8 +79,7 @@ public class ColorPreset {
 	
 	/**
 	 * Creates a color palette (Array of RGB value) for a certain number of
-	 * iterations (including "0" iterations as value, so for nrOfIterations = 100, the
-	 * palette contains 101 entries).
+	 * entries (= nr of iterations).
 	 * 
 	 * @param nrOfIters
 	 * @return
@@ -109,6 +125,14 @@ public class ColorPreset {
 		return palette;
 	}
 	
+	
+	/**
+	 * Creates a color palette with a dynamic number of colors, but with constant
+	 * number of steps between two preset colors.
+	 * @see createFixedSizeColorPalette()
+	 * @param nrOfStepsPerTransition
+	 * @return
+	 */
 	public RGB[] createDynamicSizeColorPalette(int nrOfStepsPerTransition) {
 		Integer key = new Integer(nrOfStepsPerTransition);
 		if (!this.dynamicPalettes.containsKey(key)) {

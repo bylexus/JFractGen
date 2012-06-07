@@ -1,27 +1,30 @@
 package ch.alexi.fractgen.models;
 
 import java.util.Vector;
-
-import javax.print.attribute.standard.SheetCollate;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import ch.alexi.fractgen.logic.AppManager;
 
+@SuppressWarnings("serial")
+/**
+ * A list of avaliable color presets.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class ColorPresets extends Vector<ColorPreset> {
-			
-			
-	
 	public static ColorPresets inst = new ColorPresets();
-	
-	
 	
 	private ColorPresets() {
 	}
 	
 	
+	/**
+	 * Get available color presets, stored in the presets.json property file.
+	 * @return
+	 */
 	public static ColorPresets getColorPresets() {
 		if (inst.isEmpty()) {
 			JSONObject presets = AppManager.getInstance().getPresetsJSONObject();
@@ -43,8 +46,13 @@ public class ColorPresets extends Vector<ColorPreset> {
 		return inst;
 	}
 	
+	/**
+	 * Returns one color preset identified by its name (presets.json, preset.name property)
+	 * @param name
+	 * @return
+	 */
 	public static ColorPreset getColorPresetByName(String name) {
-		for (ColorPreset p : inst) {
+		for (ColorPreset p : getColorPresets()) {
 			if (name.equals(p.name)) {
 				return p;
 			}
@@ -52,6 +60,10 @@ public class ColorPresets extends Vector<ColorPreset> {
 		return null;
 	}
 	
+	/**
+	 * Returns this list as JSONArray.
+	 * @return
+	 */
 	public static JSONArray getColorPresetsAsJSONArray() {
 		JSONArray arr = new JSONArray();
 		for (ColorPreset p : inst) {

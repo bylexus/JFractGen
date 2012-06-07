@@ -1,17 +1,24 @@
 package ch.alexi.fractgen.logic;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
-
 import javax.swing.SwingWorker;
-
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.RGB;
 
+/**
+ * This is the real workhorse class: It calculates the Mandelbrot/Julia set numbers and draws the 
+ * fractal output image. Because it is started as background task from the GUI, it is implemented
+ * as SwingWorker, but uses Threads itself to split the work between multiple processors: Each worker
+ * takes a part of the set to calculate. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerProgressData>{
 	
 	private FractParam fractParam;
@@ -19,12 +26,27 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	private RGB[] palette;
 	private Colorizer colorizer = new Colorizer();
 	
+	/**
+	 * The Worker thread calculating a part of the fractal set.
+	 * @author alex
+	 */
 	class FractCalcThread extends Thread {
 		int minX,minY,maxX,maxY, threadNr;
 		FractParam fractParam;
 		WritableRaster raster;
 		int[][] iterValues;
 		
+		/**
+		 * 
+		 * @param threadNr
+		 * @param param
+		 * @param raster
+		 * @param iterValues
+		 * @param minX
+		 * @param minY
+		 * @param maxX
+		 * @param maxY
+		 */
 		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, int[][] iterValues, int minX, int minY, int maxX, int maxY) {
 			this.fractParam = param;
 			this.threadNr = threadNr;
@@ -37,34 +59,43 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		}
 		
 		@Override
+		/**
+		 * Calculates a part of the Julia/Mandelbrot set and fills the image raster with the correct color.
+		 * Loops over each image pixel, calculate the corresponding Complex number, and runs the 
+		 * iteration function for all Complex number to see if it is part of Julia/Mandelbrot.
+		 * 
+		 * Informs the parent thread of its progress in a percentage value.
+		 */
 		public void run() {
 			
 			int nrOfLoops = (maxY - minY)*(maxX - minX);
 			double cx, cy;
 			int res;
-			RGB black = new RGB(0,0,0);
 			
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
 			pdata.threadNr = this.threadNr;
 			pdata.threadName = this.getName();
 			
 			for (int y = minY; y <= maxY; y++) {
-				cy = fractParam.min_cy + (maxY - y) * fractParam.punkt_abstand; // imaginaerteil von c
+				// cy = C(i) for the pixel y (C(i) = imaginary part of C)
+				cy = fractParam.min_cy + (maxY - y) * fractParam.punkt_abstand;
 				for (int x = minX; x <= maxX; x++) {
 					if (isCancelled()) {
 						return;
 					}
-					cx = fractParam.min_cx + x * fractParam.punkt_abstand; // realteil von Pixelwert errechnet (skaliert)
+					// cx = C(r) for the pixel x (C(r) = real part of C)
+					cx = fractParam.min_cx + x * fractParam.punkt_abstand;
 					
+					// Check for set membership by executing the selected iteration function (julia, mandelbrot):
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
 					iterValues[x][y] = res;
 					
+					// Colorize the pixel:
 					double percentualIterValue = (double)res / fractParam.maxIterations;
-					
 					colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue);
 				}
 				
-				// Progress update:
+				// Progress update, all 50 lines only to save resources:
 				if (y % 50 == 0) {
 					pdata.threadProgress = (y*(maxX - minX))/(double)nrOfLoops;
 					FractCalcer.this.publish(pdata);
@@ -83,15 +114,17 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	}
 	
 	
-	
 	private void initFractParams(FractParam p) {
 		p.initFractParams();
 	}
 	
 	@Override
+	/**
+	 * Starts the calculation: Invokes the configured number of workers, split the 
+	 * image equally between those workers and listen for their done signal.
+	 */
 	public FractCalcerResultData doInBackground() {
 		// Create color palette
-		//this.palette = fractParam.colorPreset.createFixedSizeColorPalette(fractParam.maxIterations);
 		this.palette = fractParam.colorPreset.createDynamicSizeColorPalette(256);
 		initFractParams(this.fractParam);
 		
@@ -99,6 +132,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		
 		FractCalcerResultData result = new FractCalcerResultData(this.fractParam, img,this.palette);
 		
+		// Build a vertical image stripe for each worker
 		Thread[] workers = new Thread[fractParam.nrOfWorkers];
 		for (int i = 0; i < workers.length; i++) {
 			int minX = fractParam.picWidth / fractParam.nrOfWorkers * i;
@@ -109,7 +143,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			}
 		}
 		
-		
+		// Wait on all workers to complete:
 		try {
 			for (Thread w : workers) {
 				if (w != null) {
@@ -117,7 +151,6 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			return null;
 		}
 		return result;
@@ -132,6 +165,9 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	}
 	
 	@Override
+	/**
+	 * Called by the inner workers on progress updates, inform the observers:
+	 */
 	protected void process(List<FractCalcerProgressData> pdata) {
 		for (FractCalcerProgressData p : pdata) {
 			observer.progress(this, p);

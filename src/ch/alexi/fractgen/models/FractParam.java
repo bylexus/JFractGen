@@ -2,9 +2,15 @@ package ch.alexi.fractgen.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import ch.alexi.fractgen.logic.IFractFunction;
 
+/**
+ * The parameter object for calculating a fractal view.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class FractParam {
 	public String name = "Mandelbrot Total";
 

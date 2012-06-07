@@ -2,19 +2,13 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -27,9 +21,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.Colorizer;
 import ch.alexi.fractgen.logic.FractCalcer;
@@ -40,7 +32,6 @@ import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractFunctions;
-import ch.alexi.fractgen.models.FractHistory;
 import ch.alexi.fractgen.models.FractParam;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -48,8 +39,16 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
+ * components and "glues" them together through their respective event handlers. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener {
-	private static final long serialVersionUID = 1L;
 	private JTextField picWidth;
 	private JTextField picHeight;
 	private JTextField centerCX;
@@ -66,11 +65,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JComboBox fractParamPresetsCB;
 	private JButton btnBack;
 	private JButton btnSaveToPng;
-	
 	private ProgressDialog progressDialog;
 	private JSplitPane outputSplitPane;
 	private LegendPanel legendPanel;
-	
 	private FractCalcerResultData actualFractCalcerResult;
 	private JTextField juliaKrField;
 	private JTextField juliaKiField;
@@ -79,7 +76,13 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	
 	public MainFrame(String title) {
 		super(title);
-		
+		this.initGUI();
+	}
+	
+	/**
+	 * GUI Setup function
+	 */
+	private void initGUI() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JSplitPane mainHorizSplitPane = new JSplitPane();
@@ -297,23 +300,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		btnSaveToPng = new JButton("Save to PNG");
 		btnSaveToPng.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				BufferedImage img = (BufferedImage)outPanel.getFractalImage();
-				if (img != null) {
-					JFileChooser dialog = new JFileChooser();
-					dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
-					int ret = dialog.showSaveDialog(MainFrame.this);
-					if (ret == JFileChooser.APPROVE_OPTION) {
-						File f = dialog.getSelectedFile();
-						try {
-							ImageIO.write(img, "png", f);
-							JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-							JOptionPane.showMessageDialog(MainFrame.this, "Ooops! Error occured! "+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				}
+				MainFrame.this.saveToPng();
 			}
 		});
 		toolBar.add(btnSaveToPng);
@@ -322,6 +309,36 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		getContentPane().add(footerPanel, BorderLayout.SOUTH);
 	}
 	
+	
+	/**
+	 * Shows a file save dialog and saves the actual displayed fractal image to a PNG file.
+	 */
+	private void saveToPng() {
+		BufferedImage img = (BufferedImage)outPanel.getFractalImage();
+		if (img != null) {
+			JFileChooser dialog = new JFileChooser();
+			dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
+			int ret = dialog.showSaveDialog(MainFrame.this);
+			if (ret == JFileChooser.APPROVE_OPTION) {
+				File f = dialog.getSelectedFile();
+				try {
+					ImageIO.write(img, "png", f);
+					JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(MainFrame.this, "Ooops! Error occured! "+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Pops / displays the last fractal in history, if any.
+	 * @param restoreGUI If true, popping the history also restores the GUI
+	 *   instead of just popping the history. If false it has the same effect as
+	 *   to "forget" one history entry.
+	 */
 	private void popHistory(boolean restoreGUI) {
 		// Back in history:
 		FractCalcerResultData h = AppManager.getInstance().popHistory();
@@ -336,10 +353,18 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		}
 	}
 	
+	/**
+	 * @see this.popHistory(boolean restoreGUI), just the restoreGUI = true variant.
+	 */
 	private void popHistory() {
 		this.popHistory(true);
 	}
 	
+	/**
+	 * Updates the fractal image and the legend panel from a given
+	 * fract calcer result.
+	 * @param data A FractCalcerResultData object to be displayed in the GUI.
+	 */
 	private void updateOutput(FractCalcerResultData data) {
 		if (!this.suspendUpdate) {
 			outPanel.drawImage(data.fractImage);
@@ -347,6 +372,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		}
 	}
 	
+	/**
+	 * Creates a new FractParam object from the actual settings panel data.
+	 * @return A new FractParam object with the actual settings.
+	 */
 	private FractParam getActualFractParam() {
 		FractParam p = new FractParam();
 		
@@ -369,6 +398,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		return p;
 	}
 	
+	/**
+	 * Sets the settings panel's setting from a given FractParam object.
+	 * @param p
+	 */
 	public void setFractParam(FractParam p) {
 		picWidth.setText(Integer.toString(p.picWidth));
 		picHeight.setText(Integer.toString(p.picHeight));
@@ -399,13 +432,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		colorPresetsCombo.setSelectedItem(p.colorPreset);
 	}
 	
+	/**
+	 * Performs a click-zoom: The new center is the click position, the 
+	 * scale is divided by 2, so the zoom level is doubled.
+	 * Implies a calculation start. 
+	 * @param centerX The x pixel value for the new center, relative to the fractal image
+	 * @param centerY The y pixel value for the new center, relative to the fractal image
+	 */
 	public void zoomByClick(int centerX, int centerY) {
 		if (this.actualFractCalcerResult != null) {
 			this.setFractParam(this.actualFractCalcerResult.fractParam);
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
 			p.diameterCX = p.diameterCX * 0.5;
-			p.maxIterations = new Double(p.maxIterations * 1.3).intValue();
+			p.maxIterations = new Double(p.maxIterations * 1.3).intValue(); // Nr of iterations is +30% per zoom doubling
 			
 			p.centerCX = p.min_cx + centerX * p.punkt_abstand;
 			p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
@@ -416,21 +456,35 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 	}
 	
+	/**
+	 * Performs a rubberband-zoom: Shows as much as possible from the given rectangle of the
+	 * actual fractal, by re-calculating the area. The 
+	 * Implies a calculation start. 
+	 * @param left The left x pixel of the rubber band, relative to the actual fractal image
+	 * @param top The top y pixel of the rubber band, relative to the actual fractal image
+	 * @param width The width in pixel of the rubber band
+	 * @param height The height in pixel of the rubber band
+	 */
 	public void zoomByRubberband(int left, int top, int width, int height) {
 		if (this.actualFractCalcerResult != null) {
 			this.setFractParam(this.actualFractCalcerResult.fractParam);
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
 			
+			// new pixel center: middle of the rubber band rectangle:
 			int pixelCenterX = left + width / 2;
 			int pixelCenterY = top + height / 2;
 			
+			// The new fractal diameter on the real axis, in fractal scale (rubberband width percentage * old diameter)
 			p.diameterCX = width / (double)p.picWidth * p.diameterCX;
 			
-			double scaleFactor = (double)p.picWidth / width; // selected area is scaleFactor times smaller
+			// The scale factor: selected area is scaleFactor times smaller than the original width
+			double scaleFactor = (double)p.picWidth / width;
+			
+			// Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.3 times increased by every doubling of the zoom level:
 			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
-			//double scaleFactor = p.initialDiameterCX / p.diameterCX;
-			//p.maxIterations = new Double(p.initialMaxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+			
+			// New center in fractal coordinates:
 			p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
 			p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
 			
@@ -439,6 +493,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		}
 	}
 	
+	/**
+	 * Starts the fractal calculation in the background, using a SwingWorker.
+	 * Shows a progress dialog during this time. A history entry from the 
+	 * old/actual fractal is taken before the calculation starts.
+	 */
 	public void startCalculation() {
 		// set up GUI for waiting:
 		this.suspendUpdate = true;
@@ -470,41 +529,46 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	}
 
 	@Override
+	/**
+	 * Listener for the start of the fractal calculation.
+	 */
 	public void start(FractCalcer worker) {
 	}
 	
 	@Override
+	/**
+	 * Listens for calculation updates from the fractal calculator,
+	 * and updates the progress dialog.
+	 */
 	public void progress(FractCalcer worker,FractCalcerProgressData progress) {
-		//System.out.println(threadName + ": "+progress + " ("+total+")");
 		if (progressDialog != null) {
 			progressDialog.updateProgress(progress.threadNr, new Double(progress.threadProgress*100).intValue());
 		}
 	}
 	
 	@Override
+	/**
+	 * Listens the fract calcer for a done event, updates the
+	 * output with the result, if necessary.
+	 */
 	public void done(FractCalcer worker) {
 		this.suspendUpdate = false;
 		try {
 			if (worker.isCancelled()) {
 				throw new InterruptedException();
 			}
+			
 			FractCalcerResultData result = worker.get();
 			this.actualFractCalcerResult = result;
 			
-			Image img = result.fractImage;
 			this.updateOutput(result);
-			
-			
 			btnBack.setEnabled(true);
-			
-			
 		} catch (InterruptedException e) {
 			// Thrown when the user hits the cancel button
 			//e.printStackTrace();
-			this.popHistory(false);
+			this.popHistory(false);  // When canceled, restore the old state.
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		btnStartCalculation.setEnabled(true);
 		if (progressDialog != null) {
@@ -516,13 +580,21 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	}
 
 	@Override
+	/**
+	 * action listeners for various comboboxes
+	 */
 	public void actionPerformed(ActionEvent a) {
+		
+		// user selects a fractal preset: 
+		// set the fractal params from the selected preset and start the calculation.
 		if (a.getSource() == this.fractParamPresetsCB) {
 			this.suspendUpdate = true;
 			this.setFractParam((FractParam)this.fractParamPresetsCB.getSelectedItem());
 			startCalculation();
 		}
 		
+		// user selects a color preset:
+		// re-calculate the image colors if needed / wanted:
 		if (a.getSource() == this.colorPresetsCombo) {
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
@@ -533,9 +605,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
 				this.updateOutput(this.actualFractCalcerResult);
 			}
-			
 		}
-		
+
+		// user selected the fractal function: enable/disable julia start constant fields:
 		if (a.getSource() == this.functionCB) {
 			IFractFunction f = (IFractFunction)this.functionCB.getSelectedItem();
 			if (f instanceof JuliaFractFunction) {

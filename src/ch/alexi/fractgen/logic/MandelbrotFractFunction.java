@@ -1,5 +1,26 @@
 package ch.alexi.fractgen.logic;
 
+/**
+ * An implementing algorithm for the fractal function: Mandelbrot set.
+ * 
+ * The Mandelbrot set is defined by:
+ * 
+ * Z(n+1) = Z(n)^2 + c
+ * 
+ * while c = a constant complex number (cx + (cy)i)
+ * and
+ * Z(0) = 0;
+ * 
+ * cx = initial real value, calculated from the actual pixel's x position
+ * cy = initial imaginary value, calculated from the actual pixel's y position
+ * 
+ * The number is iterated as long as it is clear that is is either reaching the border |Z^2| > max
+ * or the max. number of iterations is reached. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class MandelbrotFractFunction implements IFractFunction {
 	@Override
 	public String toString() {

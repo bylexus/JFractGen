@@ -23,7 +23,6 @@ import javax.swing.JScrollPane;
  * @author Alexander Schenkel, www.alexi.ch
  * (c) 2012 Alexander Schenkel
  */
-
 @SuppressWarnings("serial")
 public class FractOutPanel extends JScrollPane {
 	private Image fractImage;
@@ -47,6 +46,17 @@ public class FractOutPanel extends JScrollPane {
 			}
 		};
 		
+		
+		/**
+		 * on mouse down:
+		 *   save the start point, mark the mouse as not moved.
+		 * On mouse move (dragged): 
+		 *   When a start point is set, it means that the mouse key is still down,
+		 *   so the user wants to draw a zoom rubber band. Do so.
+		 * On mouse up:
+		 *   If the mouse was not moved, it was a click.
+		 *   If the mouse was moved, it was a rubber band zoom. Get the selected rectangle. 
+		 */
 		drawPanel.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				mouseMoved = false;
@@ -74,7 +84,9 @@ public class FractOutPanel extends JScrollPane {
 			}
 		});
 		
-		
+		/**
+		 * The rubber band is the zoom area the user can span with the mouse.
+		 */
 		rubberBand = new JPanel() {
 			@Override
 			public void paint(Graphics g) {
@@ -86,7 +98,6 @@ public class FractOutPanel extends JScrollPane {
 			}
 		};
 		rubberBand.setOpaque(false);
-		
 		rubberBand.setVisible(false);
 		
 		layerPane.add(drawPanel,JLayeredPane.DEFAULT_LAYER);
@@ -102,9 +113,7 @@ public class FractOutPanel extends JScrollPane {
 			layerPane.setPreferredSize(new Dimension(i.getWidth(this),i.getHeight(this)));
 			drawPanel.setBounds(0, 0, fractImage.getWidth(this), fractImage.getHeight(this));
 			drawPanel.repaint();
-			
-			
-			this.revalidate();
+			this.revalidate(); // makes sure the scroll bars get update when needed after the fract image size changed
 		}
 	}
 	

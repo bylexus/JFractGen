@@ -1,19 +1,24 @@
 package ch.alexi.fractgen.gui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.BoxLayout;
-
-import ch.alexi.fractgen.models.FractParam;
-import ch.alexi.fractgen.models.RGB;
-
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import java.awt.BorderLayout;
+import ch.alexi.fractgen.models.FractParam;
+import ch.alexi.fractgen.models.RGB;
 
+/**
+ * The legend panel shows information about the actual displayed fractal view, including
+ * the color palette and some math information. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
+@SuppressWarnings("serial")
 public class LegendPanel extends JPanel {
 	ColorPalettePanel colorPalettePanel;
 	private JTextArea infoTextArea;

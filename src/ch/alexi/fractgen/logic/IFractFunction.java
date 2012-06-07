@@ -1,5 +1,13 @@
 package ch.alexi.fractgen.logic;
 
+/**
+ * An algorithm for iterating a single Complex number to check if it is part of the fractal set or not.
+ * Currently only mandelbrot/julia are supported. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public interface IFractFunction {
 	@Override
 	public String toString();

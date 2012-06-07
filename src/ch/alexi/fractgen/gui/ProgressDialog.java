@@ -1,24 +1,31 @@
 package ch.alexi.fractgen.gui;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
+/**
+ * The Progress dialog shows a progress bar for each worker that is currently working
+ * on calculating the fractal. It gets updated from external components using the 
+ * updateProgress function. It informs attached action listeners when the user hits the
+ * cancel event. 
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
+@SuppressWarnings("serial")
 public class ProgressDialog extends JDialog {
 	private int nrOfWorkers;
 	private JProgressBar[] progressBars;
 	private List<ActionListener> actionListeners = new Vector<ActionListener>();
-	
 	public final static String CANCEL = "cancel";
 	
 	public ProgressDialog(int nrOfWorkers, Frame parent) {
