@@ -316,11 +316,13 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private void saveToPng() {
 		BufferedImage img = (BufferedImage)outPanel.getFractalImage();
 		if (img != null) {
-			JFileChooser dialog = new JFileChooser();
+			String lastPath = AppManager.getInstance().getUserProperty("lastSavePath");
+			JFileChooser dialog = new JFileChooser(lastPath);
 			dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
 			int ret = dialog.showSaveDialog(MainFrame.this);
 			if (ret == JFileChooser.APPROVE_OPTION) {
 				File f = dialog.getSelectedFile();
+				AppManager.getInstance().setUserProperty("lastSavePath", f.getAbsolutePath());
 				try {
 					ImageIO.write(img, "png", f);
 					JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
