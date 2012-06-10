@@ -133,7 +133,9 @@ public class AppManager implements ApplicationListener{
 	 */
 	public FractCalcerResultData popHistory() {
 		if (!this.history.isEmpty()) {
-			return this.history.pop();
+			FractCalcerResultData res = this.history.pop();
+			System.gc();
+			return res;
 		} else return null;
 	}
 	

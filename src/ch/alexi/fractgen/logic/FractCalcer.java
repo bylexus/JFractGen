@@ -124,6 +124,8 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	 * image equally between those workers and listen for their done signal.
 	 */
 	public FractCalcerResultData doInBackground() {
+		System.gc();
+		
 		// Create color palette
 		this.palette = fractParam.colorPreset.createDynamicSizeColorPalette(256);
 		initFractParams(this.fractParam);

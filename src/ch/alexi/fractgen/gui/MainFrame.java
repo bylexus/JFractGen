@@ -2,6 +2,7 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,6 +23,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.Colorizer;
@@ -314,23 +317,42 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	 * Shows a file save dialog and saves the actual displayed fractal image to a PNG file.
 	 */
 	private void saveToPng() {
-		BufferedImage img = (BufferedImage)outPanel.getFractalImage();
+		final BufferedImage img = (BufferedImage)outPanel.getFractalImage();
 		if (img != null) {
 			String lastPath = AppManager.getInstance().getUserProperty("lastSavePath");
 			JFileChooser dialog = new JFileChooser(lastPath);
 			dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
 			int ret = dialog.showSaveDialog(MainFrame.this);
 			if (ret == JFileChooser.APPROVE_OPTION) {
-				File f = dialog.getSelectedFile();
+				final File f = dialog.getSelectedFile();
 				AppManager.getInstance().setUserProperty("lastSavePath", f.getParent());
-				try {
-					ImageIO.write(img, "png", f);
-					JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(MainFrame.this, "Ooops! Error occured! "+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-				}
+				final JDialog d = new JDialog(this);
+				d.setModal(true);
+				d.setLayout(new FlowLayout(FlowLayout.CENTER));
+				d.setLocationRelativeTo(this);
+				d.setPreferredSize(new Dimension(200,100));
+				d.add(new JLabel("Saving in progress ..."));
+				d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+				SwingWorker<Void, Void> w = new SwingWorker<Void, Void>() {
+
+					@Override
+					protected Void doInBackground() throws Exception {
+						ImageIO.write(img, "png", f);
+						return null;
+					}
+					
+					@Override
+					protected void done() {
+						if (d != null) {
+							d.setVisible(false);
+							d.dispose();
+						}
+						JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
+					}
+					
+				};
+				w.execute();
+				d.pack();d.setVisible(true);
 			}
 		}
 	}

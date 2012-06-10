@@ -9,7 +9,10 @@ import ch.alexi.fractgen.logic.MathLib;
 
 public class MemoryProgressbar extends JProgressBar {
 	private long maxMem = new Long(0);
-	private long actMem = new Long(0);;
+	private long actMem = new Long(0);
+	
+	private Object semaphore = new Object();
+	
 	public MemoryProgressbar() {
 		super(0,100);
 		setStringPainted(true);
@@ -23,8 +26,10 @@ public class MemoryProgressbar extends JProgressBar {
 			@Override
 			protected Integer doInBackground() throws Exception {
 				while (!isCancelled()) {
-					maxMem = Runtime.getRuntime().totalMemory();
-					actMem = maxMem - Runtime.getRuntime().freeMemory();
+					synchronized (semaphore) {
+						maxMem = Runtime.getRuntime().totalMemory();
+						actMem = maxMem - Runtime.getRuntime().freeMemory();
+					}
 					publish(new Long(Math.round(100.0*actMem / maxMem)).intValue());
 					Thread.sleep(1000);
 				}
@@ -33,8 +38,10 @@ public class MemoryProgressbar extends JProgressBar {
 			
 			@Override
 			protected void process(List<Integer> l) {
-				MemoryProgressbar.this.setValue(l.get(l.size()-1));
-				MemoryProgressbar.this.setString(MathLib.byteString(actMem) + " / " + MathLib.byteString(maxMem));
+				synchronized (semaphore) {
+					MemoryProgressbar.this.setValue(l.get(l.size()-1));
+					MemoryProgressbar.this.setString(MathLib.byteString(actMem) + " / " + MathLib.byteString(maxMem));
+				}
 			}
 		};
 		sw.execute();
