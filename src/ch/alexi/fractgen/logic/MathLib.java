@@ -33,6 +33,17 @@ public class MathLib {
 			break;
 		}
 		return Math.round(decadeValue) + " " + decadeStr;
-		
+	}
+	
+	public static int maxInt(int a, int b) {
+		if (a > b)
+			return a;
+		else return b;
+	}
+	
+	public static int minInt(int a, int b) {
+		if (a < b)
+			return a;
+		else return b;
 	}
 }

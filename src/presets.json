@@ -42,7 +42,9 @@
 		"nrOfWorkers": 2,
 		"maxIterations": 500,
 		"iterFunc": "Mandelbrot",
-		"picHeight": 600
+		"picHeight": 600,
+		"colorPreset":"Women's Choice",
+		"colorPresetRepeat": 3
 	}, {
 		"name": "Mandelbrot Antenna Satellite",
 		"picWidth": 800,
@@ -53,7 +55,9 @@
 		"nrOfWorkers": 4,
 		"maxIterations": 3000,
 		"iterFunc": "Mandelbrot",
-		"picHeight": 600
+		"picHeight": 600,
+		"colorPreset":"Red Alert",
+		"colorPresetRepeat": 3
 	}, {
 		"name": "Mandelbrot Seahorse Valley of the Satellite",
 		"picWidth": 800,
@@ -64,7 +68,9 @@
 		"nrOfWorkers": 4,
 		"maxIterations": 3000,
 		"iterFunc": "Mandelbrot",
-		"picHeight": 600
+		"picHeight": 600,
+		"colorPreset":"Shades of Blue",
+		"colorPresetRepeat": 2
 	}, {
 		"name": "Mandelbrot Snowstar",
 		"picWidth": 800,
@@ -86,7 +92,9 @@
 		"nrOfWorkers": 2,
 		"maxIterations": 5000,
 		"iterFunc": "Mandelbrot",
-		"picHeight": 600
+		"picHeight": 600,
+		"colorPreset":"Shades of Gray",
+		"colorPresetRepeat": 4
 	}, {
 		"name": "Mandelbrot Fire!",
 		"picWidth": 800,
@@ -98,7 +106,8 @@
 		"maxIterations": 1000,
 		"iterFunc": "Mandelbrot",
 		"picHeight": 600,
-		"colorPreset":"Red Alert"
+		"colorPreset":"Red Alert",
+		"colorPresetRepeat": 3
 	}, {
 		"name": "Mandelbrot Lexus' Secret Spot",
 		"picWidth": 800,
@@ -110,7 +119,8 @@
 		"maxIterations": 2500,
 		"iterFunc": "Mandelbrot",
 		"picHeight": 600,
-		"colorPreset": "Shades of Blue"
+		"colorPreset": "Shades of Blue",
+		"colorPresetRepeat": 5
 	}, {
 		"name": "Mandelbrot The lost World",
 		"picWidth": 800,
@@ -122,7 +132,8 @@
 		"maxIterations": 1000,
 		"iterFunc": "Mandelbrot",
 		"picHeight": 600,
-		"colorPreset": "Red Alert"
+		"colorPreset": "Red Alert",
+		"colorPresetRepeat": 5
 	}, {
 		"name": "Julia Total",
 		"picWidth": 800,
@@ -154,46 +165,18 @@
 			{"r": 0,"g": 0,"b": 30}, 
 			{"r": 255,"g": 0,"b": 0}, 
 			{"r": 255,"g": 255,"b": 0}, 
-			{"r": 255,"g": 255,"b": 255
-			
-		}]
+			{"r": 255,"g": 255,"b": 255}
+		]
 	}, {
 		"name": "Shades of Blue",
 		"colors": [
-			{"r": 0,"g": 0,"b": 30}, 
+			{"r": 15,"g": 15,"b": 60}, 
 			{"r": 128,"g": 128,"b": 255}, 
-			{"r": 200,"g": 200,"b": 255}, 
-			{"r": 64,"g": 64,"b": 192}, 
-			{"r": 0,"g": 0,"b": 30}, 
-			{"r": 200,"g": 200,"b": 255},
-			{"r": 0,"g": 0,"b": 30}, 
-			{"r": 128,"g": 128,"b": 255}, 
-			{"r": 200,"g": 200,"b": 255}, 
-			{"r": 64,"g": 64,"b": 192}, 
-			{"r": 0,"g": 0,"b": 30}, 
-			{"r": 200,"g": 200,"b": 255}, 
-			{"r": 0,"g": 0,"b": 30}, 
-			{"r": 128,"g": 128,"b": 255}, 
-			{"r": 200,"g": 200,"b": 255}, 
-			{"r": 64,"g": 64,"b": 192}, 
-			{"r": 0,"g": 0,"b": 30}, 
-			{"r": 200,"g": 200,"b": 255
-		}]
+			{"r": 200,"g": 200,"b": 255}
+		]
 	},{
 			"name":"Red Alert",
 			"colors": [
-				{"r":30,"g":0,"b":0},
-				{"r":128,"g":0,"b":0},
-				{"r":255,"g":0,"b":0},
-				{"r":255,"g":128,"b":0},
-				{"r":255,"g":255,"b":0},
-				{"r":255,"g":255,"b":255},
-				{"r":30,"g":0,"b":0},
-				{"r":128,"g":0,"b":0},
-				{"r":255,"g":0,"b":0},
-				{"r":255,"g":128,"b":0},
-				{"r":255,"g":255,"b":0},
-				{"r":255,"g":255,"b":255},
 				{"r":30,"g":0,"b":0},
 				{"r":128,"g":0,"b":0},
 				{"r":255,"g":0,"b":0},
@@ -205,32 +188,13 @@
 			name: "Women's Choice",
 			colors: [
 				{r:30,g:5,b:25},
-				{r:255,g:102,b:204},
-				{r:255,g:179,b:232},
 				{r:128,g:0,b:89},
-				{r:255,g:204,b:255},
-				{r:30,g:5,b:25},
 				{r:255,g:102,b:204},
-				{r:255,g:179,b:232},
-				{r:128,g:0,b:89},
-				{r:255,g:204,b:255},
-				{r:30,g:5,b:25},
-				{r:255,g:102,b:204},
-				{r:255,g:179,b:232},
-				{r:128,g:0,b:89},
-				{r:255,g:204,b:255}
+				{r:255,g:179,b:232}
 			]
 		},{
 			"name":"Shades of Gray",
 			"colors": [
-				{"r":30,"g":30,"b":30},
-				{"r":255,"g":255,"b":255},
-				{"r":30,"g":30,"b":30},
-				{"r":255,"g":255,"b":255},
-				{"r":30,"g":30,"b":30},
-				{"r":255,"g":255,"b":255},
-				{"r":30,"g":30,"b":30},
-				{"r":255,"g":255,"b":255},
 				{"r":30,"g":30,"b":30},
 				{"r":255,"g":255,"b":255}
 			]

@@ -3,6 +3,7 @@ package ch.alexi.fractgen.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ch.alexi.fractgen.logic.IFractFunction;
+import ch.alexi.fractgen.logic.MathLib;
 
 /**
  * The parameter object for calculating a fractal view.
@@ -40,6 +41,7 @@ public class FractParam {
 	public double punkt_abstand = 0.0;
 
 	public ColorPreset colorPreset = ColorPresets.getColorPresets().firstElement();
+	public int colorPresetRepeat = 1;
 
 	/**
 	 * before calling, the following values need to be set: - picWidth,
@@ -81,6 +83,7 @@ public class FractParam {
 			o.put("picHeight", this.picHeight);
 			o.put("nrOfWorkers", this.nrOfWorkers);
 			o.put("colorPreset",this.colorPreset.name);
+			o.put("colorPresetRepeat",MathLib.maxInt(1, this.colorPresetRepeat));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,6 +120,10 @@ public class FractParam {
 				if (cp != null) {
 					p.colorPreset = cp;
 				}
+			}
+			
+			if (o.has("colorPresetRepeat")) {
+				p.colorPresetRepeat = MathLib.maxInt(1, o.getInt("colorPresetRepeat"));
 			}
 			
 		} catch (JSONException e) {

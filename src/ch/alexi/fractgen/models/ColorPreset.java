@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class ColorPreset {
 	public String name;
 	public RGB[] colors;
-	private Map<Integer, RGB[]> dynamicPalettes = new HashMap<Integer, RGB[]>();
+	private Map<String, RGB[]> dynamicPalettes = new HashMap<String, RGB[]>();
 	
 	public ColorPreset() {
 		
@@ -133,12 +133,50 @@ public class ColorPreset {
 	 * @param nrOfStepsPerTransition
 	 * @return
 	 */
-	public RGB[] createDynamicSizeColorPalette(int nrOfStepsPerTransition) {
-		Integer key = new Integer(nrOfStepsPerTransition);
+	public RGB[] createDynamicSizeColorPalette(int nrOfStepsPerTransition, int repeat) {
+		//int repeat = 1;
+		String key = Integer.toString(nrOfStepsPerTransition) + "-" + Integer.toString(repeat);
 		if (!this.dynamicPalettes.containsKey(key)) {
+			int nrOfSteps = nrOfStepsPerTransition * (this.colors.length * repeat - 1);
+			RGB[] palette = new RGB[nrOfSteps];
+			
+			RGB actBase, nextBase;
+			double rStep,gStep,bStep;
+			double r,g,b;
+			int counter = 0;
+			
+			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
+				actBase = this.colors[i % this.colors.length];
+				nextBase = this.colors[(i+1) % this.colors.length];
+				r = actBase.r;
+				g = actBase.g;
+				b = actBase.b;
+				rStep = (nextBase.r-actBase.r) / (double)nrOfStepsPerTransition;
+				bStep = (nextBase.b-actBase.b) / (double)nrOfStepsPerTransition;
+				gStep = (nextBase.g-actBase.g) / (double)nrOfStepsPerTransition;
+				for (int j = 0; j < nrOfStepsPerTransition;j++) {
+					palette[counter] = new RGB(
+							new Double(r).intValue(),
+							new Double(g).intValue(),
+							new Double(b).intValue()
+					);
+					
+					r += rStep;
+					g += gStep;
+					b += bStep;
+					counter++;
+				}
+			}
+			
+			// Fill the missing end with the last color:
+			while (counter < palette.length) {
+				palette[counter] = palette[counter-1];
+				counter++;
+			}
+			
 			this.dynamicPalettes.put(
 					key, 
-					this.createFixedSizeColorPalette(nrOfStepsPerTransition * (this.colors.length - 1)));
+					palette);
 		}
 		return this.dynamicPalettes.get(key);
 	}

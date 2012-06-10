@@ -31,6 +31,7 @@ import ch.alexi.fractgen.logic.FractCalcer;
 import ch.alexi.fractgen.logic.IFractCalcObserver;
 import ch.alexi.fractgen.logic.IFractFunction;
 import ch.alexi.fractgen.logic.JuliaFractFunction;
+import ch.alexi.fractgen.logic.MathLib;
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
@@ -76,6 +77,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JTextField juliaKiField;
 	
 	private boolean suspendUpdate = false;
+	private JTextField paletteRepeat;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -138,6 +140,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
 		JLabel lblNewLabel_2 = new JLabel("Presets");
@@ -158,94 +162,101 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		colorPresetsCombo.addActionListener(this);
 		settingsPanel.add(colorPresetsCombo, "2, 10, 3, 1, fill, default");
 		
+		JLabel lblColorPresetRepeat = new JLabel("Color preset repeat:");
+		settingsPanel.add(lblColorPresetRepeat, "2, 12, right, default");
+		
+		paletteRepeat = new JTextField();
+		settingsPanel.add(paletteRepeat, "4, 12, fill, default");
+		paletteRepeat.setColumns(10);
+		
 		JSeparator separator = new JSeparator();
-		settingsPanel.add(separator, "2, 12, 3, 1, fill, default");
+		settingsPanel.add(separator, "2, 14, 3, 1, fill, default");
 		
 		JLabel lblFractalSettings = new JLabel("Fractal Settings");
-		settingsPanel.add(lblFractalSettings, "2, 14, 3, 1, fill, default");
+		settingsPanel.add(lblFractalSettings, "2, 16, 3, 1, fill, default");
 		
 		JLabel lblPixelW = new JLabel("Pixel W:");
-		settingsPanel.add(lblPixelW, "2, 16, right, default");
+		settingsPanel.add(lblPixelW, "2, 18, right, default");
 		
 		picWidth = new JTextField();
 		lblPixelW.setLabelFor(picWidth);
-		settingsPanel.add(picWidth, "4, 16, fill, default");
+		settingsPanel.add(picWidth, "4, 18, fill, default");
 		picWidth.setColumns(10);
 		
 		JLabel lblPixelH = new JLabel("Pixel H:");
-		settingsPanel.add(lblPixelH, "2, 18, right, default");
+		settingsPanel.add(lblPixelH, "2, 20, right, default");
 		
 		picHeight = new JTextField();
-		settingsPanel.add(picHeight, "4, 18, fill, default");
+		settingsPanel.add(picHeight, "4, 20, fill, default");
 		picHeight.setColumns(10);
 		
 		JLabel lblCenterCx = new JLabel("Center cx:");
-		settingsPanel.add(lblCenterCx, "2, 20, right, default");
+		settingsPanel.add(lblCenterCx, "2, 22, right, default");
 		
 		centerCX = new JTextField();
-		settingsPanel.add(centerCX, "4, 20, fill, default");
+		settingsPanel.add(centerCX, "4, 22, fill, default");
 		centerCX.setColumns(10);
 		
 		JLabel lblCenterCy = new JLabel("Center cy:");
-		settingsPanel.add(lblCenterCy, "2, 22, right, default");
+		settingsPanel.add(lblCenterCy, "2, 24, right, default");
 		
 		centerCY = new JTextField();
-		settingsPanel.add(centerCY, "4, 22, fill, default");
+		settingsPanel.add(centerCY, "4, 24, fill, default");
 		centerCY.setColumns(10);
 		
 		JLabel lblDiameterX = new JLabel("Diameter x:");
-		settingsPanel.add(lblDiameterX, "2, 24, right, default");
+		settingsPanel.add(lblDiameterX, "2, 26, right, default");
 		
 		diameterCX = new JTextField();
-		settingsPanel.add(diameterCX, "4, 24, fill, default");
+		settingsPanel.add(diameterCX, "4, 26, fill, default");
 		diameterCX.setColumns(10);
 		
 		JSeparator separator_1 = new JSeparator();
-		settingsPanel.add(separator_1, "2, 26, 3, 1, fill, default");
+		settingsPanel.add(separator_1, "2, 28, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_3 = new JLabel("Calculation Settings");
-		settingsPanel.add(lblNewLabel_3, "2, 28, 3, 1, fill, default");
+		settingsPanel.add(lblNewLabel_3, "2, 30, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_4 = new JLabel("max. Iters.:");
-		settingsPanel.add(lblNewLabel_4, "2, 30, right, center");
+		settingsPanel.add(lblNewLabel_4, "2, 32, right, center");
 		
 		maxIters = new JTextField();
-		settingsPanel.add(maxIters, "4, 30, fill, default");
+		settingsPanel.add(maxIters, "4, 32, fill, default");
 		maxIters.setColumns(10);
 		
 		JLabel lblMaxz = new JLabel("max. |Z|^2:");
-		settingsPanel.add(lblMaxz, "2, 32, right, default");
+		settingsPanel.add(lblMaxz, "2, 34, right, default");
 		
 		maxBetragQuadrat = new JTextField();
-		settingsPanel.add(maxBetragQuadrat, "4, 32, fill, default");
+		settingsPanel.add(maxBetragQuadrat, "4, 34, fill, default");
 		maxBetragQuadrat.setColumns(10);
 		
 		JLabel lblFunction = new JLabel("Function:");
-		settingsPanel.add(lblFunction, "2, 34, right, default");
+		settingsPanel.add(lblFunction, "2, 36, right, default");
 		
 		functionCB = new FractFunctionsCombo();
-		settingsPanel.add(functionCB, "4, 34, fill, default");
+		settingsPanel.add(functionCB, "4, 36, fill, default");
 		functionCB.addActionListener(this);
 		
 		JLabel lblJuliaK = new JLabel("Julia K(r):");
-		settingsPanel.add(lblJuliaK, "2, 36, right, default");
+		settingsPanel.add(lblJuliaK, "2, 38, right, default");
 		
 		juliaKrField = new JTextField();
-		settingsPanel.add(juliaKrField, "4, 36, fill, default");
+		settingsPanel.add(juliaKrField, "4, 38, fill, default");
 		juliaKrField.setColumns(10);
 		
 		JLabel lblJuliaKi = new JLabel("Julia K(i):");
-		settingsPanel.add(lblJuliaKi, "2, 38, right, default");
+		settingsPanel.add(lblJuliaKi, "2, 40, right, default");
 		
 		juliaKiField = new JTextField();
-		settingsPanel.add(juliaKiField, "4, 38, fill, default");
+		settingsPanel.add(juliaKiField, "4, 40, fill, default");
 		juliaKiField.setColumns(10);
 		
 		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 40, right, default");
+		settingsPanel.add(lblOfWorkers, "2, 42, right, default");
 		
 		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 40, fill, default");
+		settingsPanel.add(nrOfWorkers, "4, 42, fill, default");
 		nrOfWorkers.setColumns(10);
 		
 		outputSplitPane = new JSplitPane();
@@ -328,10 +339,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				AppManager.getInstance().setUserProperty("lastSavePath", f.getParent());
 				final JDialog d = new JDialog(this);
 				d.setModal(true);
-				d.setLayout(new FlowLayout(FlowLayout.CENTER));
+				d.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
 				d.setLocationRelativeTo(this);
 				d.setPreferredSize(new Dimension(200,100));
-				d.add(new JLabel("Saving in progress ..."));
+				d.getContentPane().add(new JLabel("Saving in progress ..."));
 				d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				SwingWorker<Void, Void> w = new SwingWorker<Void, Void>() {
 
@@ -418,6 +429,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
 		
 		p.colorPreset = (ColorPreset)colorPresetsCombo.getSelectedItem();
+		p.colorPresetRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
 		
 		return p;
 	}
@@ -454,6 +466,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		nrOfWorkers.setText(Integer.toString(p.nrOfWorkers));
 		
 		colorPresetsCombo.setSelectedItem(p.colorPreset);
+		
+		paletteRepeat.setText( Integer.toString(p.colorPresetRepeat));
 	}
 	
 	/**
@@ -505,8 +519,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			// The scale factor: selected area is scaleFactor times smaller than the original width
 			double scaleFactor = (double)p.picWidth / width;
 			
-			// Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.3 times increased by every doubling of the zoom level:
-			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+			// Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.2 times increased by every doubling of the zoom level:
+			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.2, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
 			
 			// New center in fractal coordinates:
 			p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
@@ -623,7 +637,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(256);
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(256,this.actualFractCalcerResult.fractParam.colorPresetRepeat);
 				this.actualFractCalcerResult.fractParam.colorPreset = preset;
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
