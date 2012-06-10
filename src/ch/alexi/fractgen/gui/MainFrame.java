@@ -322,7 +322,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			int ret = dialog.showSaveDialog(MainFrame.this);
 			if (ret == JFileChooser.APPROVE_OPTION) {
 				File f = dialog.getSelectedFile();
-				AppManager.getInstance().setUserProperty("lastSavePath", f.getAbsolutePath());
+				AppManager.getInstance().setUserProperty("lastSavePath", f.getParent());
 				try {
 					ImageIO.write(img, "png", f);
 					JOptionPane.showMessageDialog(MainFrame.this, "Image saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);

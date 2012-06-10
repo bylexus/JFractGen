@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +41,7 @@ public class AppManager implements ApplicationListener{
 	private AppManager() {
 		this.history = new Stack<FractCalcerResultData>();
 		this.userProperties = new Properties();
-		
+		this.loadUserSettings();
 	}
 	
 	public static AppManager getInstance() {
@@ -150,6 +151,21 @@ public class AppManager implements ApplicationListener{
 	
 	public void setUserProperty(String key, String value) {
 		this.userProperties.setProperty(key, value);
+	}
+	
+	protected void loadUserSettings() {
+		String userHome = System.getProperty("user.home");
+		File userSettingsFile = new File(userHome + File.separator + ".jfractgen/settings.xml");
+		if (userSettingsFile.exists()) {
+			try {
+				this.userProperties.load(new FileInputStream(userSettingsFile));
+				System.out.println("User loaded from: "+userSettingsFile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	
