@@ -167,7 +167,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		paletteRepeat = new JTextField();
 		settingsPanel.add(paletteRepeat, "4, 12, fill, default");
-		paletteRepeat.setColumns(10);
+		paletteRepeat.setColumns(3);
 		
 		JSeparator separator = new JSeparator();
 		settingsPanel.add(separator, "2, 14, 3, 1, fill, default");
