@@ -135,6 +135,19 @@
 		"colorPreset": "Red Alert",
 		"colorPresetRepeat": 5
 	}, {
+		"name": "Mandelbrot Explosion",
+		"picWidth": 800,
+		"diameterCX": 9.171127505090332E-5,
+		"centerCX": 0.27139860544317856,
+		"centerCY": 0.589522421362935,
+		"maxBetragQuadrat": 800,
+		"nrOfWorkers": 2,
+		"maxIterations": 1000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600,
+		"colorPreset": "Red Alert",
+		"colorPresetRepeat": 7
+	}, {
 		"name": "Julia Total",
 		"picWidth": 800,
 		"diameterCX": 3,
