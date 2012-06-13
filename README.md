@@ -8,8 +8,6 @@ in a very early stage, let's call it "0.1-alpha", if already. Give me some time 
 
 Main class: ch.alexi.fractgen.Main
 
-See also: https://github.com/bylexus/JS-fractgen
-
 Today's already implemented features
 ------------------------------------
 - Fractal settings presets for 'nice' mandelbrot locations
