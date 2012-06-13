@@ -38,6 +38,14 @@ public class MandelbrotFractFunction implements IFractFunction {
 		while (betrag_quadrat <= max_betrag_quadrat && iter < max_iter) {
 			xt = x * x - y*y + cx;
 			yt = 2*x*y + cy;
+			
+			// Z^3 + c:
+			//xt = x*(x*x - 3*y*y) + cx;
+			//yt = y*(3*x*x - y*y) + cy;
+			
+			// Z^4 + c:
+			//xt = x*x*x*x -6*x*x*y*y + y*y*y*y + cx;
+			//yt = 4*x*x*x*y - 4*x*y*y*y + cy;
 			x = xt;
 			y = yt;
 			iter += 1;
