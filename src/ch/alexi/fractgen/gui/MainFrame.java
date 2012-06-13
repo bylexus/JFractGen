@@ -6,10 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -25,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.Colorizer;
 import ch.alexi.fractgen.logic.FractCalcer;
@@ -52,7 +55,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * (c) 2012 Alexander Schenkel
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener {
+public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener, FocusListener {
 	private JTextField picWidth;
 	private JTextField picHeight;
 	private JTextField centerCX;
@@ -167,7 +170,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		paletteRepeat = new JTextField();
 		settingsPanel.add(paletteRepeat, "4, 12, fill, default");
-		paletteRepeat.setColumns(3);
+		paletteRepeat.addFocusListener(this);
 		
 		JSeparator separator = new JSeparator();
 		settingsPanel.add(separator, "2, 14, 3, 1, fill, default");
@@ -656,5 +659,28 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				juliaKiField.setEnabled(false);
 			}
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent ev) {
+		// nothing todo here
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent ev) {
+		if (ev.getSource() == this.paletteRepeat) {
+			// If the palette repeat value changes, redraw the actual fractal using the new palette repeat value:
+			// Re-render the color values of the actual fractal image:
+			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
+				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
+				this.actualFractCalcerResult.fractParam.colorPresetRepeat = Integer.parseInt(this.paletteRepeat.getText());
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPresetRepeat);
+				Colorizer c = new Colorizer();
+				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
+				this.updateOutput(this.actualFractCalcerResult);
+			}
+		}
+		
 	}
 }

@@ -161,6 +161,19 @@
 		"colorPreset": "Pastel Blue",
 		"colorPresetRepeat": 5
 	}, {
+		"name": "Mandelbrot A Dream In Pink",
+		"picWidth": 800,
+		"diameterCX": 8.376309798955982E-6,
+		"centerCX": -0.7711961329605335,
+		"centerCY": 0.11536423928621213,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"maxIterations": 5000,
+		"iterFunc": "Mandelbrot",
+		"picHeight": 600,
+		"colorPreset": "Women's Choice",
+		"colorPresetRepeat": 100
+	}, {
 		"name": "Julia Total",
 		"picWidth": 800,
 		"diameterCX": 3,
@@ -173,6 +186,21 @@
 		"juliaKr": -0.2,
 		"juliaKi":0.8,
 		"picHeight": 600
+	}, {
+		"name": "Julia Rose Ornament",
+		"picWidth": 800,
+		"diameterCX": 6.215899658203127E-4,
+		"centerCX": 0.16448743469238283,
+		"centerCY": 0.5103007983398435,
+		"maxBetragQuadrat": 4,
+		"nrOfWorkers": 2,
+		"maxIterations": 750,
+		"iterFunc": "Julia",
+		"juliaKr": -0.8,
+		"juliaKi":0.2,
+		"picHeight": 600,
+		"colorPreset": "Women's Choice",
+		"colorPresetRepeat": 4
 	}],
 
 	"colorPresets": [{
@@ -251,6 +279,16 @@
 				{"r":255,"g":0,"b":0},
 				{"r":255,"g":255,"b":0},
 				{"r":255,"g":255,"b":255}
+			]
+		},{
+			"name":"Baloooons",
+			"defaultSteps":256,
+			"colors": [
+				{"r":44,"g":60,"b":112},
+				{"r":183,"g":105,"b":131},
+				{"r":255,"g":112,"b":222},
+				{"r":98,"g":73,"b":115},
+				{"r":194,"g":255,"b":255}
 			]
 		}]
 }
