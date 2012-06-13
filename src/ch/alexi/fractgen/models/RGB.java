@@ -14,6 +14,7 @@ public class RGB {
 	public int r;
 	public int g;
 	public int b;
+	public int steps = 0; // 0 means: inherit from Color Preset
 	
 	public RGB() {
 		
@@ -31,6 +32,9 @@ public class RGB {
 			o.put("r", this.r);
 			o.put("g", this.g);
 			o.put("b", this.b);
+			if (this.steps > 0) {
+				o.put("steps",this.steps);
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,6 +49,9 @@ public class RGB {
 			col.r = o.getInt("r");
 			col.g = o.getInt("g");
 			col.b = o.getInt("b");
+			if (o.has("steps") && o.getInt("steps") > 0) {
+				col.steps = o.getInt("steps");
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,7 +1,10 @@
 package ch.alexi.fractgen.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +22,9 @@ import org.json.JSONObject;
 public class ColorPreset {
 	public String name;
 	public RGB[] colors;
-	private Map<String, RGB[]> dynamicPalettes = new HashMap<String, RGB[]>();
+	public int defaultSteps = 256;
+	
+	private Map<Integer, RGB[]> dynamicPalettes = new HashMap<Integer, RGB[]>();
 	
 	public ColorPreset() {
 		
@@ -47,6 +52,7 @@ public class ColorPreset {
 				cols.put(col.toJSONObject());
 			}
 			o.put("colors", cols);
+			o.put("defaultSteps", this.defaultSteps);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,6 +75,9 @@ public class ColorPreset {
 			for (int i = 0; i < cols.length(); i++) {
 				p.colors[i] = RGB.fromJSONObject(cols.getJSONObject(i));
 			}
+			if (o.has("defaultSteps") && o.getInt("defaultSteps") > 0) {
+				p.defaultSteps = o.getInt("defaultSteps");
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,72 +87,22 @@ public class ColorPreset {
 	
 	
 	/**
-	 * Creates a color palette (Array of RGB value) for a certain number of
-	 * entries (= nr of iterations).
-	 * 
-	 * @param nrOfIters
-	 * @return
-	 */
-	public RGB[] createFixedSizeColorPalette(int nrOfIters) {
-		RGB[] palette = new RGB[nrOfIters];
-		
-		int stepsPerFade = nrOfIters / (this.colors.length - 1);
-		RGB actBase, nextBase;
-		double rStep,gStep,bStep;
-		double r,g,b;
-		int counter = 0;
-		
-		for (int i = 0; i < this.colors.length - 1; i++) {
-			actBase = this.colors[i];
-			nextBase = this.colors[i+1];
-			r = actBase.r;
-			g = actBase.g;
-			b = actBase.b;
-			rStep = (nextBase.r-actBase.r) / (double)stepsPerFade;
-			bStep = (nextBase.b-actBase.b) / (double)stepsPerFade;
-			gStep = (nextBase.g-actBase.g) / (double)stepsPerFade;
-			for (int j = 0; j < stepsPerFade;j++) {
-				palette[counter] = new RGB(
-						new Double(r).intValue(),
-						new Double(g).intValue(),
-						new Double(b).intValue()
-				);
-				
-				r += rStep;
-				g += gStep;
-				b += bStep;
-				counter++;
-			}
-		}
-		
-		// Fill the missing end with the last color:
-		while (counter < palette.length) {
-			palette[counter] = palette[counter-1];
-			counter++;
-		}
-		
-		return palette;
-	}
-	
-	
-	/**
-	 * Creates a color palette with a dynamic number of colors, but with constant
-	 * number of steps between two preset colors.
+	 * Creates a color palette with a dynamic number of colors, taking the number of
+	 * steps between colors from the configuration of the object.
 	 * @see createFixedSizeColorPalette()
 	 * @param nrOfStepsPerTransition
 	 * @return
 	 */
-	public RGB[] createDynamicSizeColorPalette(int nrOfStepsPerTransition, int repeat) {
-		//int repeat = 1;
-		String key = Integer.toString(nrOfStepsPerTransition) + "-" + Integer.toString(repeat);
-		if (!this.dynamicPalettes.containsKey(key)) {
-			int nrOfSteps = nrOfStepsPerTransition * (this.colors.length * repeat - 1);
-			RGB[] palette = new RGB[nrOfSteps];
+	public RGB[] createDynamicSizeColorPalette(int repeat) {
+		
+		if (!this.dynamicPalettes.containsKey(repeat)) {
+			//int nrOfSteps = nrOfStepsPerTransition * (this.colors.length * repeat - 1);
+			List<RGB> palette = new ArrayList<RGB>();
 			
 			RGB actBase, nextBase;
 			double rStep,gStep,bStep;
 			double r,g,b;
-			int counter = 0;
+			int nrOfSteps = this.defaultSteps;
 			
 			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
 				actBase = this.colors[i % this.colors.length];
@@ -151,33 +110,36 @@ public class ColorPreset {
 				r = actBase.r;
 				g = actBase.g;
 				b = actBase.b;
-				rStep = (nextBase.r-actBase.r) / (double)nrOfStepsPerTransition;
-				bStep = (nextBase.b-actBase.b) / (double)nrOfStepsPerTransition;
-				gStep = (nextBase.g-actBase.g) / (double)nrOfStepsPerTransition;
-				for (int j = 0; j < nrOfStepsPerTransition;j++) {
-					palette[counter] = new RGB(
+				nrOfSteps = this.defaultSteps;
+				if (actBase.steps > 0) {
+					nrOfSteps = actBase.steps;
+				}
+
+				rStep = (nextBase.r-actBase.r) / (double)nrOfSteps;
+				bStep = (nextBase.b-actBase.b) / (double)nrOfSteps;
+				gStep = (nextBase.g-actBase.g) / (double)nrOfSteps;
+				for (int j = 0; j < nrOfSteps;j++) {
+					palette.add(new RGB(
 							new Double(r).intValue(),
 							new Double(g).intValue(),
 							new Double(b).intValue()
-					);
+					));
 					
 					r += rStep;
 					g += gStep;
 					b += bStep;
-					counter++;
 				}
 			}
 			
-			// Fill the missing end with the last color:
-			while (counter < palette.length) {
-				palette[counter] = palette[counter-1];
-				counter++;
-			}
-			
+			RGB[] paletteArray = new RGB[palette.size()]; 
+			palette.toArray(paletteArray);
 			this.dynamicPalettes.put(
-					key, 
-					palette);
+					repeat, 
+					paletteArray);
+			palette.clear();
+			palette = null;
+			paletteArray = null;
 		}
-		return this.dynamicPalettes.get(key);
+		return this.dynamicPalettes.get(repeat);
 	}
 }

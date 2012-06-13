@@ -41,6 +41,11 @@ public class LegendPanel extends JPanel {
 		Dimension d = infoPanel.getPreferredSize();
 		d.height = infoPanel.getFontMetrics(infoPanel.getFont()).getHeight()*3; // 3 lines of text
 		infoPanel.setPreferredSize(d);
+		
+		d = this.getPreferredSize();
+		d.height = colorPalettePanel.getPreferredSize().height + infoPanel.getPreferredSize().height;
+		this.setMinimumSize(d);
+		this.setPreferredSize(d);
 	}
 	
 	public void updateInfo(FractParam param, RGB[] colorPalette) {

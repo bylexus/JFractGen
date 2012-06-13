@@ -43,8 +43,9 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		
 		g.drawString(this.colorName, 3, 15);
 		if (this.palette != null) {
-			for (int i = 0; i < this.palette.length; i++) {
-				g.setColor(new Color(this.palette[i].r,this.palette[i].g,this.palette[i].b));
+			for (int i = 0; i < 256; i++) {
+				int pIndex = new Double(1.0*i / 256 * this.palette.length).intValue();
+				g.setColor(new Color(this.palette[pIndex].r,this.palette[pIndex].g,this.palette[pIndex].b));
 				g.drawLine(i, 20, i, Math.max(20,this.getHeight()-3));
 			}
 		}
@@ -75,7 +76,8 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		this.isSelected = isSelected;
 		if (value instanceof ColorPreset) {
 			// Get color palette with 256 entries:
-			this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);
+			//this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);
+			this.palette = ((ColorPreset)value).createDynamicSizeColorPalette(1);
 		}
 		 
 		return this;

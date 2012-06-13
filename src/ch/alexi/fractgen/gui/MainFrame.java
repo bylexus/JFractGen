@@ -637,7 +637,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(256,this.actualFractCalcerResult.fractParam.colorPresetRepeat);
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPresetRepeat);
 				this.actualFractCalcerResult.fractParam.colorPreset = preset;
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
