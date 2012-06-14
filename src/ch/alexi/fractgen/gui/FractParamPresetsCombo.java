@@ -13,6 +13,6 @@ import ch.alexi.fractgen.models.FractParamPresets;
 @SuppressWarnings("serial")
 public class FractParamPresetsCombo extends JComboBox {
 	public FractParamPresetsCombo() {
-		super(FractParamPresets.getPresets());
+		super(FractParamPresets.getSystemPresets());
 	}
 }

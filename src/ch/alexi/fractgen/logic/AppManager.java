@@ -3,10 +3,14 @@ package ch.alexi.fractgen.logic;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +18,8 @@ import java.util.Properties;
 import java.util.Stack;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.simplericity.macify.eawt.Application;
@@ -36,6 +42,7 @@ public class AppManager implements ApplicationListener{
 	private MainFrame mainFrame;
 	private Stack<FractCalcerResultData> history;
 	private JSONObject presets;
+	private JSONObject userPresets;
 	private Properties userProperties;
 	
 	private AppManager() {
@@ -74,7 +81,7 @@ public class AppManager implements ApplicationListener{
 			});
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
-	        mainFrame.setFractParam(FractParamPresets.getPresets().get(0));
+	        mainFrame.setFractParam(FractParamPresets.getSystemPresets().get(0));
 	        
 			// Start the first calculation:
 			mainFrame.startCalculation();
@@ -121,6 +128,50 @@ public class AppManager implements ApplicationListener{
 	}
 	
 	/**
+	 * Reads the user presets file, if exists, from the user's configuration dir,
+	 * and returns a (possibly empty) json object.
+	 * @return
+	 */
+	public JSONObject getUserPresetsJSONObject() {
+		if (this.userPresets == null) {
+			File presetFile = new File(getUserSettingsDir() + "presets.json");
+			if (presetFile.exists()) {
+				
+				StringBuffer s = new StringBuffer();
+				String tmp;
+				BufferedReader reader;
+				try {
+					reader = new BufferedReader(new InputStreamReader(new FileInputStream(presetFile)));
+					while ((tmp = reader.readLine()) != null) {
+						s.append(tmp);
+					}
+					userPresets = new JSONObject(s.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			// make sure the  user presets object is not null:
+			if (userPresets == null) {
+				userPresets = new JSONObject();
+				try {
+					userPresets.put("fractalPresets", new JSONArray());
+					userPresets.put("colorPresets", new JSONArray());
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+			
+		return userPresets;
+	}
+	
+	/**
 	 * Adds a fractal result data object to the history stack.
 	 * @param data
 	 */
@@ -157,8 +208,7 @@ public class AppManager implements ApplicationListener{
 	}
 	
 	protected void loadUserSettings() {
-		String userHome = System.getProperty("user.home");
-		File userSettingsFile = new File(userHome + File.separator + ".jfractgen/settings.xml");
+		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		if (userSettingsFile.exists()) {
 			try {
 				this.userProperties.load(new FileInputStream(userSettingsFile));
@@ -171,19 +221,33 @@ public class AppManager implements ApplicationListener{
 		
 	}
 	
+	public String getUserSettingsDir() {
+		return System.getProperty("user.home") + File.separator + ".jfractgen";
+	}
+	
 	
 	/**
 	 * Exits the application, and do necessary things before.
 	 */
 	protected void shutdown() {
-		String userHome = System.getProperty("user.home");
-		File userSettingsFile = new File(userHome + File.separator + ".jfractgen/settings.xml");
+		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		System.out.println("User settings go to: "+userSettingsFile);
 		try {
 			userSettingsFile.mkdirs();
 			userSettingsFile.delete();
+			
+			// save user preferences:
 			this.userProperties.store(new FileOutputStream(userSettingsFile), "User preferences for JFractGen");
+			
+			// save user presets:
+			File f = new File(getUserSettingsDir() + File.separator + "presets.json");
+			BufferedWriter w =  new BufferedWriter(new FileWriter(f));
+			w.write(getUserPresetsJSONObject().toString(4));
+			w.close();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

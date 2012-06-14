@@ -22,9 +22,8 @@ public class FractParamPresets extends Vector<FractParam> {
 		
 	}
 	
-	public static Vector<FractParam> getPresets() {
+	public static Vector<FractParam> getPresets(JSONObject presets) {
 		if (inst.isEmpty()) {
-			JSONObject presets = AppManager.getInstance().getPresetsJSONObject();
 			if (presets != null && presets.has("fractalPresets")) {
 				try {
 					JSONArray entries = presets.getJSONArray("fractalPresets");
@@ -41,9 +40,25 @@ public class FractParamPresets extends Vector<FractParam> {
 		return inst;
 	}
 	
-	public static JSONArray getJSONArray() {
+	public static Vector<FractParam> getSystemPresets() {
+		return getPresets(AppManager.getInstance().getPresetsJSONObject());
+	}
+	
+	public static Vector<FractParam> getUserPresets() {
+		return getPresets(AppManager.getInstance().getUserPresetsJSONObject());
+	}
+	
+	public static JSONArray getSystemJSONArray() {
 		JSONArray arr = new JSONArray();
-		for (FractParam p : getPresets()) {
+		for (FractParam p : getSystemPresets()) {
+			arr.put(p.toJSONObject());
+		}
+		return arr;
+	}
+	
+	public static JSONArray getUserJSONArray() {
+		JSONArray arr = new JSONArray();
+		for (FractParam p : getUserPresets()) {
 			arr.put(p.toJSONObject());
 		}
 		return arr;
