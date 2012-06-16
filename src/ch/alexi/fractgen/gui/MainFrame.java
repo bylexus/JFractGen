@@ -45,6 +45,9 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -81,6 +84,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	
 	private boolean suspendUpdate = false;
 	private JTextField paletteRepeat;
+	private FractParamPresetsCombo fractParamUserPresetsCombo;
+	private JButton btnSaveAsUserFractalPreset;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -100,16 +105,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		mainHorizSplitPane.setLeftComponent(settingsPanel);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),
+				ColumnSpec.decode("max(56dlu;default):grow"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("134px:grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(35dlu;pref)"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(35dlu;default)"),
+				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("28px"),
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -151,12 +160,37 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		lblNewLabel_2.setFont(new Font("Sans Serif", Font.BOLD, 14));
 		settingsPanel.add(lblNewLabel_2, "2, 2, 3, 1, fill, default");
 		
-		JLabel lblNewLabel_1 = new JLabel("Fractals");
-		settingsPanel.add(lblNewLabel_1, "2, 4, 3, 1, fill, default");
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "System Fractals", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		settingsPanel.add(panel_1, "2, 4, 3, 2, fill, fill");
+		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("default:grow"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("134px:grow"),},
+			new RowSpec[] {
+				RowSpec.decode("28px"),}));
 		
-		fractParamPresetsCB = new FractParamPresetsCombo();
+		fractParamPresetsCB = new FractParamPresetsCombo(FractParamPresetsCombo.PRESET_SYSTEM);
+		panel_1.add(fractParamPresetsCB, "1, 1, 3, 1, fill, fill");
 		fractParamPresetsCB.addActionListener(this);
-		settingsPanel.add(fractParamPresetsCB, "2, 6, 3, 1, fill, default");
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "User Fractals", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		settingsPanel.add(panel, "2, 6, 3, 1, fill, fill");
+		panel.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("default:grow"),
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("134px:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,},
+			new RowSpec[] {
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		fractParamUserPresetsCombo = new FractParamPresetsCombo(FractParamPresetsCombo.PRESET_USER);
+		panel.add(fractParamUserPresetsCombo, "1, 1, 3, 1, fill, fill");
+		
+		JButton btnDel = new JButton("del");
+		panel.add(btnDel, "5, 1, right, default");
 		
 		JLabel lblNewLabel = new JLabel("Color Schemes");
 		settingsPanel.add(lblNewLabel, "2, 8, 3, 1, fill, default");
@@ -261,6 +295,13 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		nrOfWorkers = new JTextField();
 		settingsPanel.add(nrOfWorkers, "4, 42, fill, default");
 		nrOfWorkers.setColumns(10);
+		
+		JSeparator separator_2 = new JSeparator();
+		settingsPanel.add(separator_2, "2, 44, 3, 1");
+		
+		btnSaveAsUserFractalPreset = new JButton("Save as User Fractal Preset");
+		settingsPanel.add(btnSaveAsUserFractalPreset, "2, 46, 3, 1");
+		btnSaveAsUserFractalPreset.addActionListener(this);
 		
 		outputSplitPane = new JSplitPane();
 		outputSplitPane.setOneTouchExpandable(true);
@@ -658,6 +699,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				juliaKrField.setEnabled(false);
 				juliaKiField.setEnabled(false);
 			}
+		}
+		
+		// Save as user fractal preset clicked:
+		if (a.getSource() == btnSaveAsUserFractalPreset) {
+			FractParam p = this.getActualFractParam();
+			p.name = "222";
+			AppManager.getInstance().addUserFractalPreset(p);
+			this.fractParamUserPresetsCombo.reloadPresets();
 		}
 	}
 

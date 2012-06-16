@@ -1,6 +1,9 @@
 package ch.alexi.fractgen.gui;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+
+import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.models.FractParamPresets;
 
 /**
@@ -12,7 +15,24 @@ import ch.alexi.fractgen.models.FractParamPresets;
  */
 @SuppressWarnings("serial")
 public class FractParamPresetsCombo extends JComboBox {
-	public FractParamPresetsCombo() {
-		super(FractParamPresets.getSystemPresets());
+	public static final int PRESET_SYSTEM = 1;
+	public static final int PRESET_USER = 2;
+	
+	private int preset;
+	
+	public FractParamPresetsCombo(int preset) {
+		super();
+		this.preset = preset;
+		this.reloadPresets();
+	}
+	
+	
+	public void reloadPresets() {
+		if (preset == PRESET_SYSTEM) {
+			this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getSystemPresets()));
+		}
+		if (preset == PRESET_USER) {
+			this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getUserPresets()));
+		}
 	}
 }

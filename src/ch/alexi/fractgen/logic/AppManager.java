@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.Vector;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
@@ -28,6 +30,7 @@ import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 import ch.alexi.fractgen.gui.MainFrame;
 import ch.alexi.fractgen.models.FractCalcerResultData;
+import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.FractParamPresets;
 
 /**
@@ -44,6 +47,9 @@ public class AppManager implements ApplicationListener{
 	private JSONObject presets;
 	private JSONObject userPresets;
 	private Properties userProperties;
+	
+	private FractParamPresets userFractParamPresets;
+	private FractParamPresets systemFractParamPresets;
 	
 	private AppManager() {
 		this.history = new Stack<FractCalcerResultData>();
@@ -81,7 +87,7 @@ public class AppManager implements ApplicationListener{
 			});
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
-	        mainFrame.setFractParam(FractParamPresets.getSystemPresets().get(0));
+	        mainFrame.setFractParam(this.getSystemPresets().get(0));
 	        
 			// Start the first calculation:
 			mainFrame.startCalculation();
@@ -102,7 +108,7 @@ public class AppManager implements ApplicationListener{
 	 * 
 	 * @return All presets from the presets.json configuration file.
 	 */
-	public JSONObject getPresetsJSONObject() {
+	public JSONObject getSystemPresetsJSONObject() {
 		if (this.presets == null) {
 			InputStream is = getClass().getResourceAsStream("/presets.json");
 			if (is != null) {
@@ -134,7 +140,7 @@ public class AppManager implements ApplicationListener{
 	 */
 	public JSONObject getUserPresetsJSONObject() {
 		if (this.userPresets == null) {
-			File presetFile = new File(getUserSettingsDir() + "presets.json");
+			File presetFile = new File(getUserSettingsDir() + File.separator + "presets.json");
 			if (presetFile.exists()) {
 				
 				StringBuffer s = new StringBuffer();
@@ -169,6 +175,50 @@ public class AppManager implements ApplicationListener{
 		}
 			
 		return userPresets;
+	}
+	
+	
+	private FractParamPresets getFractParamPresets(JSONObject presets) {
+		FractParamPresets p = new FractParamPresets();
+		if (presets != null && presets.has("fractalPresets")) {
+			try {
+				JSONArray entries = presets.getJSONArray("fractalPresets");
+				for (int i = 0; i < entries.length(); i++) {
+					JSONObject entry = entries.getJSONObject(i);
+					p.add(FractParam.fromJSONObject(entry));
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return p;
+	}
+	
+	public FractParamPresets getSystemPresets() {
+		if (this.systemFractParamPresets == null) {
+			this.systemFractParamPresets = getFractParamPresets(getSystemPresetsJSONObject());
+		}
+		return this.systemFractParamPresets;
+	}
+	
+	public FractParamPresets getUserPresets() {
+		if (this.userFractParamPresets == null) {
+			this.userFractParamPresets = getFractParamPresets(getUserPresetsJSONObject());
+		}
+		return this.userFractParamPresets;
+	}
+	
+	public JSONObject addUserFractalPreset(FractParam p) {
+		JSONObject obj = this.getUserPresetsJSONObject();
+		try {
+			obj.getJSONArray("fractalPresets").put(p.toJSONObject());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return obj;
 	}
 	
 	/**

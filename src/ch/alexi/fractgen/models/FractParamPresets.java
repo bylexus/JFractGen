@@ -16,53 +16,19 @@ import ch.alexi.fractgen.logic.AppManager;
  * (c) 2012 Alexander Schenkel
  */
 public class FractParamPresets extends Vector<FractParam> {
-	private static FractParamPresets inst = new FractParamPresets();
+	//private static FractParamPresets inst = new FractParamPresets();
 	
-	private FractParamPresets() {
+	/*private FractParamPresets() {
 		
-	}
+	}*/
 	
-	public static Vector<FractParam> getPresets(JSONObject presets) {
-		if (inst.isEmpty()) {
-			if (presets != null && presets.has("fractalPresets")) {
-				try {
-					JSONArray entries = presets.getJSONArray("fractalPresets");
-					for (int i = 0; i < entries.length(); i++) {
-						JSONObject entry = entries.getJSONObject(i);
-						inst.add(FractParam.fromJSONObject(entry));
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return inst;
-	}
 	
-	public static Vector<FractParam> getSystemPresets() {
-		return getPresets(AppManager.getInstance().getPresetsJSONObject());
-	}
 	
-	public static Vector<FractParam> getUserPresets() {
-		return getPresets(AppManager.getInstance().getUserPresetsJSONObject());
-	}
-	
-	public static JSONArray getSystemJSONArray() {
+	public JSONArray getJSONArray() {
 		JSONArray arr = new JSONArray();
-		for (FractParam p : getSystemPresets()) {
+		for (FractParam p : this) {
 			arr.put(p.toJSONObject());
 		}
 		return arr;
 	}
-	
-	public static JSONArray getUserJSONArray() {
-		JSONArray arr = new JSONArray();
-		for (FractParam p : getUserPresets()) {
-			arr.put(p.toJSONObject());
-		}
-		return arr;
-	}
-	
-	
 }
