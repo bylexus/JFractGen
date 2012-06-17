@@ -211,14 +211,16 @@ public class AppManager implements ApplicationListener{
 	
 	public JSONObject addUserFractalPreset(FractParam p) {
 		JSONObject obj = this.getUserPresetsJSONObject();
-		try {
-			obj.getJSONArray("fractalPresets").put(p.toJSONObject());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		//obj.getJSONArray("fractalPresets").put(p.toJSONObject());
+		this.getUserPresets().add(p);
+		this.saveUserPresets();
 		return obj;
+	}
+	
+	public void removeUserFractalPreset(FractParam p) {
+		JSONObject obj = this.getUserPresetsJSONObject();
+		this.getUserPresets().remove(p);
+		this.saveUserPresets();
 	}
 	
 	/**
@@ -290,9 +292,21 @@ public class AppManager implements ApplicationListener{
 			this.userProperties.store(new FileOutputStream(userSettingsFile), "User preferences for JFractGen");
 			
 			// save user presets:
-			File f = new File(getUserSettingsDir() + File.separator + "presets.json");
-			BufferedWriter w =  new BufferedWriter(new FileWriter(f));
-			w.write(getUserPresetsJSONObject().toString(4));
+			this.saveUserPresets();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.exit(0);
+		
+	}
+	
+	private void saveUserPresets() {
+		File f = new File(getUserSettingsDir() + File.separator + "presets.json");
+		BufferedWriter w;
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+			w.write(getUserPresetsJSONObject().put("fractalPresets",this.getUserPresets().getJSONArray()).toString(4));
 			w.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -301,8 +315,6 @@ public class AppManager implements ApplicationListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.exit(0);
-		
 	}
 
 	@Override

@@ -86,6 +86,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JTextField paletteRepeat;
 	private FractParamPresetsCombo fractParamUserPresetsCombo;
 	private JButton btnSaveAsUserFractalPreset;
+	private JButton btnDelUserFractalPreset;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -188,9 +189,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		fractParamUserPresetsCombo = new FractParamPresetsCombo(FractParamPresetsCombo.PRESET_USER);
 		panel.add(fractParamUserPresetsCombo, "1, 1, 3, 1, fill, fill");
+		fractParamUserPresetsCombo.addActionListener(this);
 		
-		JButton btnDel = new JButton("del");
-		panel.add(btnDel, "5, 1, right, default");
+		btnDelUserFractalPreset = new JButton("del");
+		panel.add(btnDelUserFractalPreset, "5, 1, right, default");
+		btnDelUserFractalPreset.addActionListener(this);
 		
 		JLabel lblNewLabel = new JLabel("Color Schemes");
 		settingsPanel.add(lblNewLabel, "2, 8, 3, 1, fill, default");
@@ -667,11 +670,19 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	 */
 	public void actionPerformed(ActionEvent a) {
 		
-		// user selects a fractal preset: 
+		// user selects a system fractal preset: 
 		// set the fractal params from the selected preset and start the calculation.
 		if (a.getSource() == this.fractParamPresetsCB) {
 			this.suspendUpdate = true;
 			this.setFractParam((FractParam)this.fractParamPresetsCB.getSelectedItem());
+			startCalculation();
+		}
+		
+		// user selects a user fractal preset: 
+		// set the fractal params from the selected preset and start the calculation.
+		if (!this.suspendUpdate && a.getSource() == this.fractParamUserPresetsCombo) {
+			this.suspendUpdate = true;
+			this.setFractParam((FractParam)this.fractParamUserPresetsCombo.getSelectedItem());
 			startCalculation();
 		}
 		
@@ -701,12 +712,29 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		}
 		
-		// Save as user fractal preset clicked:
+		// Save a user fractal preset clicked:
 		if (a.getSource() == btnSaveAsUserFractalPreset) {
 			FractParam p = this.getActualFractParam();
-			p.name = "222";
+			String name = JOptionPane.showInputDialog(this,"Enter a preset name");
+			if (name == null || name.trim().length() == 0) {
+				name = "New Preset";
+			}
+			p.name = name;
 			AppManager.getInstance().addUserFractalPreset(p);
 			this.fractParamUserPresetsCombo.reloadPresets();
+			
+			this.suspendUpdate = true;
+			this.fractParamUserPresetsCombo.setSelectedItem(p);
+			this.suspendUpdate = false;
+		}
+		
+		// Delete a user fractal preset: {
+		if (a.getSource() == btnDelUserFractalPreset) {
+			this.suspendUpdate = true;
+			FractParam p = (FractParam)fractParamUserPresetsCombo.getSelectedItem();
+			AppManager.getInstance().removeUserFractalPreset(p);
+			fractParamUserPresetsCombo.reloadPresets();
+			this.suspendUpdate = false;
 		}
 	}
 
