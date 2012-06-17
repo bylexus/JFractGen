@@ -27,7 +27,7 @@ public class ColorPresets extends Vector<ColorPreset> {
 	 */
 	public static ColorPresets getColorPresets() {
 		if (inst.isEmpty()) {
-			JSONObject presets = AppManager.getInstance().getSystemPresetsJSONObject();
+			JSONObject presets = AppManager.getInstance().getPresetsJSONObject();
 			if (presets != null && presets.has("colorPresets")) {
 				inst.clear();
 				try {
