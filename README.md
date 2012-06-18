@@ -1,21 +1,32 @@
 JFractGen
 =========
 
+(c) 2012 Alexander Schenkel, http://www.alexi.ch alex@alexi.ch
+
 A Julia/Mandelbrot Fractal generator written in Java/Swing.
 
 This is just a weekend / Hobby project of me. At the moment the code and output is
 in a very early stage, let's call it "0.1-alpha", if already. Give me some time :-)
 
+This project does not need you to understand the Maths behind it. It is just to SHOW
+you the beauty of math.
+
 Main class: ch.alexi.fractgen.Main
+
+Run: "java -jar JFractGen.jar"
+
+See also: https://github.com/bylexus/JS-fractgen
 
 Today's already implemented features
 ------------------------------------
-- Fractal settings presets for 'nice' mandelbrot locations
+- Fractal settings presets for 'nice' mandelbrot/julia locations
 - color palette presets
+- define user-presets in json config file (<user.home>/.jfractcalc/presets.json)
 - uses chosable nr of Workers, for using multiple CPUs for calculating
 - dive deeper by click/rubberband zoom
 - history
 - dynamic color palette change (without re-calc)
+- multiply color palette
 - PNG export
 - presets defined as JSON data in properties file
 
@@ -23,10 +34,8 @@ Today's already implemented features
 Planned / future features
 -------------------------
 - JSON export of presets
-- define user-presets in json config file
-- graphic export/conversion
-- multiply color palette
-- more presets
+- create own color palettes
+- graphic bulk export/conversion/downsampling
 - drag-move
 - smooth colors
 
