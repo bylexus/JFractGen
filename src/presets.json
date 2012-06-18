@@ -287,6 +287,70 @@
             "iterFunc": "Mandelbrot",
             "colorPreset": "Pastel Blue",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 8.875640775193726E-8,
+            "maxBetragQuadrat": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 3782,
+            "colorPresetRepeat": 5,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": 0.30183791563893553,
+            "centerCY": 0.48583735034046427,
+            "name": "Mandelbrot meets Julia",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Red Alert",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 2.2282162735290527E-7,
+            "maxBetragQuadrat": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 3771,
+            "colorPresetRepeat": 4,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": 0.3018359522999055,
+            "centerCY": 0.4858385988808209,
+            "name": "Mandelbrot Coral Reef",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Patchwork",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 6.173474248535155E-7,
+            "maxBetragQuadrat": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 5361,
+            "colorPresetRepeat": 6,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.9534607432543516,
+            "centerCY": 0.2587853962809671,
+            "name": "Mandelbrot Underwater World",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Nature",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 2.0063791307739252E-8,
+            "maxBetragQuadrat": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 14302,
+            "colorPresetRepeat": 27,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.9534607713822437,
+            "centerCY": 0.2587854229580927,
+            "name": "Mandelbrot Stardust",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Shades of Blue",
+            "picHeight": 600
         }
     ],
     "colorPresets": [
@@ -586,6 +650,43 @@
             ],
             "name": "Baloooons",
             "defaultSteps": 256
+        },
+        {
+            "colors": [
+                {
+                    "g": 18,
+                    "b": 18,
+                    "r": 41
+                },
+                {
+                    "g": 62,
+                    "b": 18,
+                    "r": 19
+                },
+                {
+                    "g": 210,
+                    "b": 172,
+                    "r": 111
+                },
+                {
+                    "g": 25,
+                    "b": 73,
+                    "r": 22
+                },
+                {
+                    "g": 215,
+                    "b": 225,
+                    "r": 107,
+                    "steps": 64
+                },
+                {
+                    "g": 255,
+                    "b": 255,
+                    "r": 255,
+                    "steps": 64
+                }
+            ],
+            "name": "Nature"
         }
     ]
 }

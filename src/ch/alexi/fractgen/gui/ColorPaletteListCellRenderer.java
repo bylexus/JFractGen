@@ -24,6 +24,7 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 	private String  colorName = "";
 	private RGB[]   palette = null;
 	private boolean isSelected = false;
+	private boolean hasFocus = false;
 	
 	public ColorPaletteListCellRenderer() {
 		super();
@@ -57,7 +58,10 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 	 */
 	public Dimension getPreferredSize() {
 		Dimension d = super.getPreferredSize();
-		d.height = 50;
+		if (!this.hasFocus) {
+			d.height = 50;
+		}
+		
 		return d;
 	}
 	
@@ -71,9 +75,9 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-		
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
+		this.hasFocus = hasFocus;
 		if (value instanceof ColorPreset) {
 			// Get color palette with 256 entries:
 			//this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);

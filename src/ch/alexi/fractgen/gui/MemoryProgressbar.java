@@ -7,6 +7,7 @@ import javax.swing.SwingWorker;
 
 import ch.alexi.fractgen.logic.MathLib;
 
+@SuppressWarnings("serial")
 public class MemoryProgressbar extends JProgressBar {
 	private long maxMem = new Long(0);
 	private long actMem = new Long(0);

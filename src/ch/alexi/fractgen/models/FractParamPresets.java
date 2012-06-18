@@ -1,10 +1,8 @@
 package ch.alexi.fractgen.models;
 
 import java.util.Vector;
+
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import ch.alexi.fractgen.logic.AppManager;
 
 
 @SuppressWarnings("serial")
@@ -16,13 +14,6 @@ import ch.alexi.fractgen.logic.AppManager;
  * (c) 2012 Alexander Schenkel
  */
 public class FractParamPresets extends Vector<FractParam> {
-	//private static FractParamPresets inst = new FractParamPresets();
-	
-	/*private FractParamPresets() {
-		
-	}*/
-	
-	
 	
 	public JSONArray getJSONArray() {
 		JSONArray arr = new JSONArray();

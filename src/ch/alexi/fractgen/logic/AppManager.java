@@ -3,12 +3,10 @@ package ch.alexi.fractgen.logic;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,11 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.Stack;
-import java.util.Vector;
-
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

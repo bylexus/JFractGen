@@ -34,7 +34,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		int minX,minY,maxX,maxY, threadNr;
 		FractParam fractParam;
 		WritableRaster raster;
-		int[][] iterValues;
+		double[][] iterValues;
 		
 		/**
 		 * 
@@ -47,7 +47,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		 * @param maxX
 		 * @param maxY
 		 */
-		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, int[][] iterValues, int minX, int minY, int maxX, int maxY) {
+		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, double[][] iterValues, int minX, int minY, int maxX, int maxY) {
 			this.fractParam = param;
 			this.threadNr = threadNr;
 			this.minX = minX;
@@ -70,7 +70,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			
 			int nrOfLoops = (maxY - minY)*(maxX - minX);
 			double cx, cy;
-			int res;
+			double res;
 			
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
 			pdata.threadNr = this.threadNr;
