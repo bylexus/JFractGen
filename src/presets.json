@@ -419,6 +419,21 @@
             "iterFunc": "Mandelbrot",
             "colorPreset": "Nature",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 0.003949804687500001,
+            "juliaKr": -0.5,
+            "nrOfWorkers": 2,
+            "maxIterations": 578,
+            "colorPresetRepeat": 19,
+            "picWidth": 800,
+            "juliaKi": 0.65,
+            "centerCX": -1.0704656762695313,
+            "centerCY": 0.6984640473632813,
+            "name": "Julia Flakes",
+            "iterFunc": "Julia",
+            "colorPreset": "Shades of Blue",
+            "picHeight": 600
         }
     ],
     "colorPresets": [

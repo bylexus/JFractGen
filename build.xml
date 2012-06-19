@@ -59,6 +59,12 @@
     	</manifest>
     </jar>
   </target>
+	
+	<target name="ship" depends="makejar">
+			<copy todir=".">
+				<fileset dir="${jar.dir}" includes="${ant.project.name}.jar" />
+			</copy>
+		</target>
 
 	<target name="clean-build" depends="clean,makejar"/>
 
@@ -66,7 +72,7 @@
 	        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
 	</target>
 
-	<target name="all" depends="clean,compile,makejar" description="Clean and Build whole project">
+	<target name="all" depends="clean,compile,makejar,ship" description="Clean and Build whole project">
 		<echo>Clean and build whole project</echo>
 	</target>
 </project>

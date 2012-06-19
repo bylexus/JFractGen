@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -366,10 +367,15 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				AppManager.getInstance().setUserProperty("lastSavePath", f.getParent());
 				final JDialog d = new JDialog(this);
 				d.setModal(true);
-				d.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
+				d.getContentPane().setLayout(new BorderLayout());
 				d.setLocationRelativeTo(this);
 				d.setPreferredSize(new Dimension(200,100));
-				d.getContentPane().add(new JLabel("Saving in progress ..."));
+				
+				d.getContentPane().add(new JLabel("Saving in progress ..."),BorderLayout.CENTER);
+				JProgressBar dialogPBar = new JProgressBar();
+				dialogPBar.setIndeterminate(true);
+				d.getContentPane().add(dialogPBar,BorderLayout.SOUTH);
+				dialogPBar = null;
 				d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				SwingWorker<Void, Void> w = new SwingWorker<Void, Void>() {
 

@@ -16,7 +16,7 @@ import ch.alexi.fractgen.models.FractFunctionResult;
  * cx = initial real value, calculated from the actual pixel's x position
  * cy = initial imaginary value, calculated from the actual pixel's y position
  * 
- * The number is iterated as long as it is clear that is is either reaching the border |Z^2| > max
+ * The number is iterated as long as it is clear that is is either reaching the border |Z^4| > max
  * or the max. number of iterations is reached. 
  * 
  * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
