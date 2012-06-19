@@ -1,5 +1,7 @@
 package ch.alexi.fractgen.logic;
 
+import ch.alexi.fractgen.models.FractFunctionResult;
+
 /**
  * An implementing algorithm for the fractal function: Julia set.
  * 
@@ -26,10 +28,10 @@ public class JuliaFractFunction implements IFractFunction {
 	}
 
 	@Override
-	public int fractIterFunc(double cx, double cy, double max_betrag_quadrat,
+	public FractFunctionResult fractIterFunc(double cx, double cy, double max_betrag_quadrat,
 			double max_iter, double julia_r, double julia_i) {
 		double betrag_quadrat = 0;
-		int iter = 0;
+		double iter = 0;
 		double x = cx,xt;
 		double y = cy,yt;
 
@@ -41,6 +43,9 @@ public class JuliaFractFunction implements IFractFunction {
 			iter += 1;
 			betrag_quadrat = x*x + y*y;
 		}
-		return iter;
+		FractFunctionResult r = new FractFunctionResult();
+		r.iterValue = iter;
+		r.bailoutValue = betrag_quadrat;
+		return r;
 	}
 }

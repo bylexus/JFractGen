@@ -1,5 +1,7 @@
 package ch.alexi.fractgen.logic;
 
+import ch.alexi.fractgen.models.FractFunctionResult;
+
 /**
  * An algorithm for iterating a single Complex number to check if it is part of the fractal set or not.
  * Currently only mandelbrot/julia are supported. 
@@ -12,5 +14,5 @@ public interface IFractFunction {
 	@Override
 	public String toString();
 	
-	public int fractIterFunc(double cx,double cy,double max_betrag_quadrat, double max_iter,double julia_r,double julia_i);
+	public FractFunctionResult fractIterFunc(double cx,double cy,double max_betrag_quadrat, double max_iter,double julia_r,double julia_i);
 }

@@ -351,6 +351,22 @@
             "iterFunc": "Mandelbrot",
             "colorPreset": "Shades of Blue",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 6.406733893997191E-8,
+            "maxBetragQuadrat": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 4503,
+            "colorPresetRepeat": 18,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.1665316450376826,
+            "centerCY": 1.0362133495838854,
+            "name": "Mandelbrot Wound",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Patchwork",
+            "picHeight": 600
         }
     ],
     "colorPresets": [

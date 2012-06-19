@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
+import ch.alexi.fractgen.models.FractFunctionResult;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.RGB;
 
@@ -70,7 +71,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			
 			int nrOfLoops = (maxY - minY)*(maxX - minX);
 			double cx, cy;
-			double res;
+			FractFunctionResult res;
 			
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
 			pdata.threadNr = this.threadNr;
@@ -88,10 +89,14 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 					
 					// Check for set membership by executing the selected iteration function (julia, mandelbrot):
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
-					iterValues[x][y] = res;
+					
+					// Rough coloring: Escape time algorithm:
+					//iterValues[x][y] = res.iterValue;
+					// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
+					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
 					
 					// Colorize the pixel:
-					double percentualIterValue = (double)res / fractParam.maxIterations;
+					double percentualIterValue = iterValues[x][y] / fractParam.maxIterations;
 					colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue);
 				}
 				
