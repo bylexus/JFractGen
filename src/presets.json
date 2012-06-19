@@ -344,6 +344,81 @@
             "iterFunc": "Mandelbrot",
             "colorPreset": "Patchwork",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 4,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 40,
+            "colorPresetRepeat": 1,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": 0,
+            "centerCY": 0,
+            "name": "Mandelbrot Z^3 Total",
+            "iterFunc": "Mandelbrot Z^3",
+            "colorPreset": "Patchwork",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 1.5201032775878903E-8,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 6517,
+            "colorPresetRepeat": 6,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": 0.2529507755416894,
+            "centerCY": -0.955870931708354,
+            "name": "Mandelbrot Z^3 Blue Lagoon",
+            "iterFunc": "Mandelbrot Z^3",
+            "colorPreset": "Nature",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 1.3543938995361328E-7,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 3950,
+            "colorPresetRepeat": 8,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -1.1659069101345705,
+            "centerCY": -0.003908503961746147,
+            "name": "Mandelbrot Z^3 Mother with children",
+            "iterFunc": "Mandelbrot Z^4",
+            "colorPreset": "Women's Choice",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 1.408093650054932E-7,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 4579,
+            "colorPresetRepeat": 1,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.3278128659870592,
+            "centerCY": 1.2785310463844937,
+            "name": "Mandelbrot Z^3 Nightsky",
+            "iterFunc": "Mandelbrot Z^3",
+            "colorPreset": "Shades of Blue",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 4.914502654174805E-7,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 9115,
+            "colorPresetRepeat": 48,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.2379772873143481,
+            "centerCY": 0.845177438928908,
+            "name": "Mandelbrot Algae",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Nature",
+            "picHeight": 600
         }
     ],
     "colorPresets": [
@@ -425,14 +500,15 @@
         {
             "colors": [
                 {
-                    "g": 15,
-                    "b": 60,
-                    "r": 15
+                    "g": 0,
+                    "b": 20,
+                    "r": 0
                 },
                 {
                     "g": 128,
                     "b": 255,
-                    "r": 128
+                    "r": 128,
+                    "steps": 64
                 },
                 {
                     "g": 200,

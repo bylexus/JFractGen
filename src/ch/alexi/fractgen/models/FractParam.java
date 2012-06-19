@@ -15,7 +15,7 @@ import ch.alexi.fractgen.logic.MathLib;
 public class FractParam {
 	public String name = "Mandelbrot Total";
 
-	public double maxBetragQuadrat = 64;
+	public double maxBetragQuadrat = 800;
 	public int maxIterations = 40;
 
 	public double centerCX = -0.7;
@@ -102,7 +102,12 @@ public class FractParam {
 			p.centerCX = o.getDouble("centerCX");
 			p.centerCY = o.getDouble("centerCY");
 			p.diameterCX = o.getDouble("diameterCX");
-			p.iterFunc = (o.getString("iterFunc").equals("Julia") ? FractFunctions.julia: FractFunctions.mandelbrot);
+			IFractFunction f = FractFunctions.getFractFunction(o.getString("iterFunc"));
+			if (f != null) {
+				p.iterFunc = f;
+			} else {
+				p.iterFunc = FractFunctions.mandelbrot;
+			}
 			
 			if (o.has("juliaKr")) {
 				p.juliaKr = o.getDouble("juliaKr");

@@ -3,6 +3,8 @@ package ch.alexi.fractgen.models;
 import java.util.Vector;
 import ch.alexi.fractgen.logic.IFractFunction;
 import ch.alexi.fractgen.logic.JuliaFractFunction;
+import ch.alexi.fractgen.logic.Mandelbrot3FractFunction;
+import ch.alexi.fractgen.logic.Mandelbrot4FractFunction;
 import ch.alexi.fractgen.logic.MandelbrotFractFunction;
 
 @SuppressWarnings("serial")
@@ -15,6 +17,8 @@ import ch.alexi.fractgen.logic.MandelbrotFractFunction;
  */
 public class FractFunctions extends Vector<IFractFunction> {
 	public static IFractFunction mandelbrot = new MandelbrotFractFunction();
+	public static IFractFunction mandelbrot3 = new Mandelbrot3FractFunction();
+	public static IFractFunction mandelbrot4 = new Mandelbrot4FractFunction();
 	public static IFractFunction julia = new JuliaFractFunction();
 	
 	private static FractFunctions inst = new FractFunctions();
@@ -22,10 +26,21 @@ public class FractFunctions extends Vector<IFractFunction> {
 	
 	private FractFunctions() {
 		this.add(mandelbrot);
+		this.add(mandelbrot3);
+		this.add(mandelbrot4);
 		this.add(julia);
 	}
 	
 	public static Vector<IFractFunction> getFunctions() {
 		return inst;
+	}
+	
+	public static IFractFunction getFractFunction(String fName) {
+		for (IFractFunction f : getFunctions()) {
+			if (f.toString().equals(fName)) {
+				return f;
+			}
+		}
+		return null;
 	}
 }
