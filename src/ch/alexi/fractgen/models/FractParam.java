@@ -15,7 +15,7 @@ import ch.alexi.fractgen.logic.MathLib;
 public class FractParam {
 	public String name = "Mandelbrot Total";
 
-	public double maxBetragQuadrat = 4;
+	public double maxBetragQuadrat = 64;
 	public int maxIterations = 40;
 
 	public double centerCX = -0.7;
@@ -32,6 +32,8 @@ public class FractParam {
 	public int picHeight = 600;
 
 	public int nrOfWorkers = 2;
+	
+	public boolean smoothColors = true;
 
 	// calculated values:
 	public double min_cx = 0.0;
@@ -71,7 +73,6 @@ public class FractParam {
 		JSONObject o = new JSONObject();
 		try {
 			o.put("name", this.name);
-			o.put("maxBetragQuadrat", this.maxBetragQuadrat);
 			o.put("maxIterations", this.maxIterations);
 			o.put("centerCX", this.centerCX);
 			o.put("centerCY", this.centerCY);
@@ -97,7 +98,6 @@ public class FractParam {
 		try {
 			p.name = o.getString("name");
 
-			p.maxBetragQuadrat = o.getDouble("maxBetragQuadrat");
 			p.maxIterations = o.getInt("maxIterations");
 			p.centerCX = o.getDouble("centerCX");
 			p.centerCY = o.getDouble("centerCY");

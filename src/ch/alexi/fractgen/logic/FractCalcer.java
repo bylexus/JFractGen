@@ -90,10 +90,13 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 					// Check for set membership by executing the selected iteration function (julia, mandelbrot):
 					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
 					
-					// Rough coloring: Escape time algorithm:
-					//iterValues[x][y] = res.iterValue;
-					// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
-					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
+					if (fractParam.smoothColors == true) {
+						// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
+						iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
+					} else {
+						// Rough coloring: Escape time algorithm:
+						iterValues[x][y] = res.iterValue;
+					}
 					
 					// Colorize the pixel:
 					double percentualIterValue = iterValues[x][y] / fractParam.maxIterations;

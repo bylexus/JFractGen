@@ -48,6 +48,8 @@ import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.Color;
+import javax.swing.JCheckBox;
+import javax.swing.SwingConstants;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -65,7 +67,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JTextField centerCY;
 	private JTextField diameterCX;
 	private JTextField maxIters;
-	private JTextField maxBetragQuadrat;
 	private JTextField nrOfWorkers;
 	private FractOutPanel outPanel;
 	private JComboBox functionCB;
@@ -88,6 +89,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JButton btnDelFractParamPreset;
 	private JPanel panel;
 	private JPanel panel_2;
+	private JCheckBox chckbxSmoothColors;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -119,8 +121,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
@@ -187,6 +187,12 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		paletteRepeat = new JTextField();
 		paletteRepeat.setColumns(5);
 		panel_2.add(paletteRepeat);
+		
+		chckbxSmoothColors = new JCheckBox("smooth colors");
+		chckbxSmoothColors.setSelected(true);
+		panel_2.add(chckbxSmoothColors);
+		chckbxSmoothColors.addActionListener(this);
+		
 		paletteRepeat.addFocusListener(this);
 		colorPresetsCombo.addActionListener(this);
 		
@@ -245,46 +251,39 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		settingsPanel.add(maxIters, "4, 25, fill, default");
 		maxIters.setColumns(10);
 		
-		JLabel lblMaxz = new JLabel("max. |Z|^2:");
-		settingsPanel.add(lblMaxz, "2, 27, right, default");
-		
-		maxBetragQuadrat = new JTextField();
-		settingsPanel.add(maxBetragQuadrat, "4, 27, fill, default");
-		maxBetragQuadrat.setColumns(10);
-		
 		JLabel lblFunction = new JLabel("Function:");
-		settingsPanel.add(lblFunction, "2, 29, right, default");
+		settingsPanel.add(lblFunction, "2, 27, right, default");
 		
 		functionCB = new FractFunctionsCombo();
-		settingsPanel.add(functionCB, "4, 29, fill, default");
+		settingsPanel.add(functionCB, "4, 27, fill, default");
 		functionCB.addActionListener(this);
 		
 		JLabel lblJuliaK = new JLabel("Julia K(r):");
-		settingsPanel.add(lblJuliaK, "2, 31, right, default");
+		settingsPanel.add(lblJuliaK, "2, 29, right, default");
 		
 		juliaKrField = new JTextField();
-		settingsPanel.add(juliaKrField, "4, 31, fill, default");
+		settingsPanel.add(juliaKrField, "4, 29, fill, default");
 		juliaKrField.setColumns(10);
 		
 		JLabel lblJuliaKi = new JLabel("Julia K(i):");
-		settingsPanel.add(lblJuliaKi, "2, 33, right, default");
+		settingsPanel.add(lblJuliaKi, "2, 31, right, default");
 		
 		juliaKiField = new JTextField();
-		settingsPanel.add(juliaKiField, "4, 33, fill, default");
+		settingsPanel.add(juliaKiField, "4, 31, fill, default");
 		juliaKiField.setColumns(10);
 		
 		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 35, right, default");
+		settingsPanel.add(lblOfWorkers, "2, 33, right, default");
 		
 		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 35, fill, default");
+		settingsPanel.add(nrOfWorkers, "4, 33, fill, default");
 		nrOfWorkers.setColumns(10);
 		
 		JSeparator separator_2 = new JSeparator();
-		settingsPanel.add(separator_2, "2, 37, 3, 1");
+		settingsPanel.add(separator_2, "2, 35, 3, 1");
 		
 		btnSaveAsFractalPreset = new JButton("Save as Fractal Preset");
-		settingsPanel.add(btnSaveAsFractalPreset, "2, 39, 3, 1");
+		settingsPanel.add(btnSaveAsFractalPreset, "2, 37, 3, 1");
 		btnSaveAsFractalPreset.addActionListener(this);
 		
 		outputSplitPane = new JSplitPane();
@@ -453,11 +452,12 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		p.juliaKr = Double.parseDouble(juliaKrField.getText());
 		p.juliaKi = Double.parseDouble(juliaKiField.getText());
 		p.maxIterations = Integer.parseInt(maxIters.getText());
-		p.maxBetragQuadrat = Double.parseDouble(maxBetragQuadrat.getText());
 		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
 		
 		p.colorPreset = (ColorPreset)colorPresetsCombo.getSelectedItem();
 		p.colorPresetRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
+		
+		p.smoothColors = chckbxSmoothColors.isSelected();
 		
 		return p;
 	}
@@ -490,10 +490,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		}
 		
 		maxIters.setText(Integer.toString(p.maxIterations));
-		maxBetragQuadrat.setText(Double.toString(p.maxBetragQuadrat));
 		nrOfWorkers.setText(Integer.toString(p.nrOfWorkers));
 		
 		colorPresetsCombo.setSelectedItem(p.colorPreset);
+		
+		chckbxSmoothColors.setSelected(p.smoothColors);
 		
 		paletteRepeat.setText( Integer.toString(p.colorPresetRepeat));
 	}
@@ -708,6 +709,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			AppManager.getInstance().removeUserFractalPreset(p);
 			fractParamPresetsCB.reloadPresets();
 			this.suspendUpdate = false;
+		}
+		
+		// enable / disable color smoothing: recalc necessary:
+		if (!this.suspendUpdate && a.getSource() == chckbxSmoothColors) {
+			startCalculation();
 		}
 	}
 

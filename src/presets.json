@@ -2,7 +2,6 @@
     "fractalPresets": [
         {
             "diameterCX": 3.0769,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 40,
@@ -18,7 +17,6 @@
         },
         {
             "diameterCX": 0.53184,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 100,
@@ -34,7 +32,6 @@
         },
         {
             "diameterCX": 0.01611,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 400,
@@ -50,7 +47,6 @@
         },
         {
             "diameterCX": 0.0022878,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 500,
@@ -66,7 +62,6 @@
         },
         {
             "diameterCX": 2.9336E-6,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 4,
             "maxIterations": 3000,
@@ -82,7 +77,6 @@
         },
         {
             "diameterCX": 6.6208E-7,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 4,
             "maxIterations": 3000,
@@ -98,7 +92,6 @@
         },
         {
             "diameterCX": 0.02403828125,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 400,
@@ -114,7 +107,6 @@
         },
         {
             "diameterCX": 1.0096719999999999E-7,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 5000,
@@ -130,7 +122,6 @@
         },
         {
             "diameterCX": 0.26592,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 1000,
@@ -146,7 +137,6 @@
         },
         {
             "diameterCX": 3.6573043007812505E-5,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 2500,
@@ -162,7 +152,6 @@
         },
         {
             "diameterCX": 1.0320131581138046E-7,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 1000,
@@ -178,7 +167,6 @@
         },
         {
             "diameterCX": 9.171127505090332E-5,
-            "maxBetragQuadrat": 800,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 1000,
@@ -194,7 +182,6 @@
         },
         {
             "diameterCX": 5.6334929242238016E-11,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 25000,
@@ -210,7 +197,6 @@
         },
         {
             "diameterCX": 8.376309798955982E-6,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 5000,
@@ -226,7 +212,6 @@
         },
         {
             "diameterCX": 3,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.2,
             "nrOfWorkers": 2,
             "maxIterations": 80,
@@ -242,7 +227,6 @@
         },
         {
             "diameterCX": 6.215899658203127E-4,
-            "maxBetragQuadrat": 4,
             "juliaKr": -0.8,
             "nrOfWorkers": 2,
             "maxIterations": 750,
@@ -258,7 +242,6 @@
         },
         {
             "diameterCX": 7.448742562344572E-11,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 33655,
@@ -274,7 +257,6 @@
         },
         {
             "diameterCX": 0.0029454794999999997,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 456,
@@ -290,7 +272,6 @@
         },
         {
             "diameterCX": 8.875640775193726E-8,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 3782,
@@ -306,7 +287,6 @@
         },
         {
             "diameterCX": 2.2282162735290527E-7,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 3771,
@@ -322,7 +302,6 @@
         },
         {
             "diameterCX": 6.173474248535155E-7,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 5361,
@@ -338,7 +317,6 @@
         },
         {
             "diameterCX": 2.0063791307739252E-8,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 14302,
@@ -354,7 +332,6 @@
         },
         {
             "diameterCX": 6.406733893997191E-8,
-            "maxBetragQuadrat": 4,
             "juliaKr": 0,
             "nrOfWorkers": 2,
             "maxIterations": 4503,
