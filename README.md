@@ -23,7 +23,7 @@ Today's already implemented features
 - color palette presets
 - define user-presets in json config file (<user.home>/.jfractcalc/presets.json)
 - uses chosable nr of Workers, for using multiple CPUs for calculating
-- dive deeper by click/rubberband zoom
+- dive deeper by click/rubberband zoom, zoom out
 - drag-move the fractal viewport
 - smooth colors / hard edges
 - history
@@ -35,7 +35,7 @@ Today's already implemented features
 
 Planned / future features
 -------------------------
-- JSON export of presets
+- JSON export/import of presets
 - create own color palettes
 - graphic bulk export/conversion/downsampling
 
