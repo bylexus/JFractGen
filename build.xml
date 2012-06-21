@@ -9,22 +9,22 @@
 	<property name="main-class" value="ch.alexi.fractgen/Main" />
 
 	<path id="classpath">
-	        <fileset id="libs" dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset id="libs" dir="${lib.dir}" includes="**/*.jar"/>
 	</path>
-	
+
 	<patternset id="meta.files">
-	<include name="**/*.xml" />
-	<include name="**/*.properties" />
-	<include name="**/*.json" />
+		<include name="**/*.xml" />
+		<include name="**/*.properties" />
+		<include name="**/*.json" />
 	</patternset>
-	
+
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${lib.dir}"/>
 		<mkdir dir="${jar.dir}"/>
 	</target>
-	
+
 	<target name="copy.meta.files">
 		<copy todir="${classes.dir}">
 			<fileset dir="${src}">
@@ -36,40 +36,43 @@
 	<target name="clean" description="Removes build files" depends="init">
 		<echo>Cleaning up...</echo>
 		<delete verbose="true">
-			<fileset dir="${build.dir}"></fileset>
+			<fileset dir="${build.dir}">
+			</fileset>
 		</delete>
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="${src}" destdir="${classes.dir}"  classpathref="classpath" includeantruntime="false"></javac>
+		<javac srcdir="${src}" destdir="${classes.dir}"  classpathref="classpath" includeantruntime="false">
+		</javac>
 	</target>
 
-  <target name ="makejar" depends="compile,copy.meta.files" description="Create a jar for the ${ant.project.name} project">
-    <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
-    	<restrict>
-    	     <name name="**/*.class"/>
-    	     <archives>
-    	       <zips>
-    	         <fileset refid="libs"/>
-    	       </zips>
-    	     </archives>
-    	    </restrict>
-    	<manifest>
-    		<attribute name="Main-Class" value="${main-class}"/>
-    	</manifest>
-    </jar>
-  </target>
-	
+	<target name ="makejar" depends="compile,copy.meta.files" description="Create a jar for the ${ant.project.name} project">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<restrict>
+				<name name="**/*.class" />
+				<archives>
+					<zips>
+						<fileset refid="libs" />
+					</zips>
+				</archives>
+			</restrict>
+			<fileset dir="res"/>
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+
 	<target name="ship" depends="makejar">
-			<copy todir=".">
-				<fileset dir="${jar.dir}" includes="${ant.project.name}.jar" />
-			</copy>
-		</target>
+		<copy todir=".">
+			<fileset dir="${jar.dir}" includes="${ant.project.name}.jar" />
+		</copy>
+	</target>
 
 	<target name="clean-build" depends="clean,makejar"/>
 
 	<target name="run" depends="makejar">
-	        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
 	</target>
 
 	<target name="all" depends="clean,compile,makejar,ship" description="Clean and Build whole project">

@@ -283,7 +283,7 @@ public class AppManager implements ApplicationListener{
 	
 	
 	public Icon getIcon(String name) {
-		URL imgUrl = getClass().getResource("/res/icons/"+name+".png");
+		URL imgUrl = getClass().getResource("/icons/"+name+".png");
 		if (imgUrl != null) {
 			return new ImageIcon(imgUrl);
 		} else {
