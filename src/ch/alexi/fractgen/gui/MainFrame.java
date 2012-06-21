@@ -1,6 +1,7 @@
 package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -27,6 +29,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.alexi.fractgen.logic.AppManager;
@@ -46,11 +50,6 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-import java.awt.Color;
-import javax.swing.JCheckBox;
-import javax.swing.SwingConstants;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -103,21 +102,53 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private void initGUI() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JSplitPane mainHorizSplitPane = new JSplitPane();
-		getContentPane().add(mainHorizSplitPane, BorderLayout.CENTER);
+		FooterPanel footerPanel = new FooterPanel();
+		getContentPane().add(footerPanel, BorderLayout.SOUTH);
+		
+		outputSplitPane = new JSplitPane();
+		getContentPane().add(outputSplitPane, BorderLayout.CENTER);
+		outputSplitPane.setOneTouchExpandable(true);
+		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
+		
+		outPanel = new FractOutPanel();
+		//getContentPane().add(outPanel, BorderLayout.WEST);
+		outPanel.addZoomListener(new IZoomListener() {
+			
+			@Override
+			public void rubberBandZoom(int x, int y, int width, int height) {
+				MainFrame.this.zoomByRubberband(x, y, width, height);
+			}
+			
+			@Override
+			public void clickZoom(int x, int y) {
+				MainFrame.this.zoomByClick(x,y);
+				
+			}
+		});
+		
+		outPanel.setPreferredSize(new Dimension(805, 605));
+		
+		outputSplitPane.setTopComponent(outPanel);
+		
+		legendPanel = new LegendPanel();
+		outputSplitPane.setRightComponent(legendPanel);
+		outputSplitPane.setResizeWeight(1.0d);
 		
 		settingsPanel = new JPanel();
-		mainHorizSplitPane.setLeftComponent(settingsPanel);
+		getContentPane().add(settingsPanel, BorderLayout.WEST);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(56dlu;default):grow"),
+				ColumnSpec.decode("max(55dlu;default)"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("134px:grow"),},
+				ColumnSpec.decode("160px"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(35dlu;pref)"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -165,7 +196,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		panel_1.add(fractParamPresetsCB);
 		fractParamPresetsCB.addActionListener(this);
 		
-		btnDelFractParamPreset = new JButton("del");
+		btnDelFractParamPreset = new JButton(AppManager.getInstance().getIcon("delete"));
+		btnDelFractParamPreset.setToolTipText("Delete the current fractal preset");
 		panel_1.add(btnDelFractParamPreset, BorderLayout.EAST);
 		btnDelFractParamPreset.addActionListener(this);
 		
@@ -189,139 +221,110 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		paletteRepeat.setColumns(5);
 		panel_2.add(paletteRepeat);
 		
-		chckbxSmoothColors = new JCheckBox("smooth colors");
-		chckbxSmoothColors.setSelected(true);
-		panel_2.add(chckbxSmoothColors);
-		chckbxSmoothColors.addActionListener(this);
-		
 		paletteRepeat.addFocusListener(this);
 		colorPresetsCombo.addActionListener(this);
 		
+		chckbxSmoothColors = new JCheckBox("smooth colors");
+		settingsPanel.add(chckbxSmoothColors, "2, 8, 3, 1");
+		chckbxSmoothColors.setSelected(true);
+		chckbxSmoothColors.addActionListener(this);
+		
 		JSeparator separator = new JSeparator();
-		settingsPanel.add(separator, "2, 8, 3, 1, fill, default");
+		settingsPanel.add(separator, "2, 10, 3, 1, fill, default");
 		
 		JLabel lblFractalSettings = new JLabel("Fractal Settings");
-		settingsPanel.add(lblFractalSettings, "2, 9, 3, 1, fill, default");
+		settingsPanel.add(lblFractalSettings, "2, 11, 3, 1, fill, default");
 		
 		JLabel lblPixelW = new JLabel("Pixel W:");
-		settingsPanel.add(lblPixelW, "2, 11, right, default");
+		settingsPanel.add(lblPixelW, "2, 13, right, default");
 		
 		picWidth = new JTextField();
 		lblPixelW.setLabelFor(picWidth);
-		settingsPanel.add(picWidth, "4, 11, fill, default");
+		settingsPanel.add(picWidth, "4, 13, fill, default");
 		picWidth.setColumns(10);
 		
 		JLabel lblPixelH = new JLabel("Pixel H:");
-		settingsPanel.add(lblPixelH, "2, 13, right, default");
+		settingsPanel.add(lblPixelH, "2, 15, right, default");
 		
 		picHeight = new JTextField();
-		settingsPanel.add(picHeight, "4, 13, fill, default");
+		settingsPanel.add(picHeight, "4, 15, fill, default");
 		picHeight.setColumns(10);
 		
 		JLabel lblCenterCx = new JLabel("Center cx:");
-		settingsPanel.add(lblCenterCx, "2, 15, right, default");
+		settingsPanel.add(lblCenterCx, "2, 17, right, default");
 		
 		centerCX = new JTextField();
-		settingsPanel.add(centerCX, "4, 15, fill, default");
+		settingsPanel.add(centerCX, "4, 17, fill, default");
 		centerCX.setColumns(10);
 		
 		JLabel lblCenterCy = new JLabel("Center cy:");
-		settingsPanel.add(lblCenterCy, "2, 17, right, default");
+		settingsPanel.add(lblCenterCy, "2, 19, right, default");
 		
 		centerCY = new JTextField();
-		settingsPanel.add(centerCY, "4, 17, fill, default");
+		settingsPanel.add(centerCY, "4, 19, fill, default");
 		centerCY.setColumns(10);
 		
 		JLabel lblDiameterX = new JLabel("Diameter x:");
-		settingsPanel.add(lblDiameterX, "2, 19, right, default");
+		settingsPanel.add(lblDiameterX, "2, 21, right, default");
 		
 		diameterCX = new JTextField();
-		settingsPanel.add(diameterCX, "4, 19, fill, default");
+		settingsPanel.add(diameterCX, "4, 21, fill, default");
 		diameterCX.setColumns(10);
 		
 		JSeparator separator_1 = new JSeparator();
-		settingsPanel.add(separator_1, "2, 21, 3, 1, fill, default");
+		settingsPanel.add(separator_1, "2, 23, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_3 = new JLabel("Calculation Settings");
-		settingsPanel.add(lblNewLabel_3, "2, 23, 3, 1, fill, default");
+		settingsPanel.add(lblNewLabel_3, "2, 25, 3, 1, fill, default");
 		
-		JLabel lblNewLabel_4 = new JLabel("max. Iters.:");
-		settingsPanel.add(lblNewLabel_4, "2, 25, right, center");
+		JLabel lblNewLabel_4 = new JLabel("max. Iterations:");
+		settingsPanel.add(lblNewLabel_4, "2, 27, right, center");
 		
 		maxIters = new JTextField();
-		settingsPanel.add(maxIters, "4, 25, fill, default");
+		settingsPanel.add(maxIters, "4, 27, fill, default");
 		maxIters.setColumns(10);
 		
 		JLabel lblFunction = new JLabel("Function:");
-		settingsPanel.add(lblFunction, "2, 27, right, default");
+		settingsPanel.add(lblFunction, "2, 29, right, default");
 		
 		functionCB = new FractFunctionsCombo();
-		settingsPanel.add(functionCB, "4, 27, fill, default");
+		settingsPanel.add(functionCB, "4, 29, fill, default");
 		functionCB.addActionListener(this);
 		
 		JLabel lblJuliaK = new JLabel("Julia K(r):");
-		settingsPanel.add(lblJuliaK, "2, 29, right, default");
+		settingsPanel.add(lblJuliaK, "2, 31, right, default");
 		
 		juliaKrField = new JTextField();
-		settingsPanel.add(juliaKrField, "4, 29, fill, default");
+		settingsPanel.add(juliaKrField, "4, 31, fill, default");
 		juliaKrField.setColumns(10);
 		
 		JLabel lblJuliaKi = new JLabel("Julia K(i):");
-		settingsPanel.add(lblJuliaKi, "2, 31, right, default");
+		settingsPanel.add(lblJuliaKi, "2, 33, right, default");
 		
 		juliaKiField = new JTextField();
-		settingsPanel.add(juliaKiField, "4, 31, fill, default");
+		settingsPanel.add(juliaKiField, "4, 33, fill, default");
 		juliaKiField.setColumns(10);
 		
 		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 33, right, default");
+		settingsPanel.add(lblOfWorkers, "2, 35, right, default");
 		
 		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 33, fill, default");
+		settingsPanel.add(nrOfWorkers, "4, 35, fill, default");
 		nrOfWorkers.setColumns(10);
 		
 		JSeparator separator_2 = new JSeparator();
-		settingsPanel.add(separator_2, "2, 35, 3, 1");
+		settingsPanel.add(separator_2, "2, 37, 3, 1");
 		
-		btnSaveAsFractalPreset = new JButton("Save as Fractal Preset");
-		settingsPanel.add(btnSaveAsFractalPreset, "2, 37, 3, 1");
+		btnSaveAsFractalPreset = new JButton("Save as Fractal Preset",AppManager.getInstance().getIcon("disk"));
+		settingsPanel.add(btnSaveAsFractalPreset, "2, 39, 3, 1");
 		btnSaveAsFractalPreset.addActionListener(this);
-		
-		outputSplitPane = new JSplitPane();
-		outputSplitPane.setOneTouchExpandable(true);
-		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		mainHorizSplitPane.setRightComponent(outputSplitPane);
-		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
-		
-		outPanel = new FractOutPanel();
-		//getContentPane().add(outPanel, BorderLayout.WEST);
-		outPanel.addZoomListener(new IZoomListener() {
-			
-			@Override
-			public void rubberBandZoom(int x, int y, int width, int height) {
-				MainFrame.this.zoomByRubberband(x, y, width, height);
-			}
-			
-			@Override
-			public void clickZoom(int x, int y) {
-				MainFrame.this.zoomByClick(x,y);
-				
-			}
-		});
-		
-		outPanel.setPreferredSize(new Dimension(805, 605));
-		
-		outputSplitPane.setTopComponent(outPanel);
-		
-		legendPanel = new LegendPanel();
-		outputSplitPane.setRightComponent(legendPanel);
-		outputSplitPane.setResizeWeight(1.0d);
 		
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
 		
-		btnStartCalculation = new JButton("Start calculation");
+		btnStartCalculation = new JButton(AppManager.getInstance().getIcon("calculator"));
+		btnStartCalculation.setToolTipText("Start calculation");
 		btnStartCalculation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startCalculation();
@@ -329,7 +332,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		});
 		toolBar.add(btnStartCalculation);
 		
-		btnBack = new JButton("Back");
+		btnBack = new JButton(AppManager.getInstance().getIcon("arrow_undo"));
+		btnBack.setToolTipText("Back to the last image");
 		btnBack.setEnabled(false);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -339,16 +343,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		});
 		toolBar.add(btnBack);
 		
-		btnSaveToPng = new JButton("Save to PNG");
+		btnSaveToPng = new JButton(AppManager.getInstance().getIcon("picture_go"));
+		btnSaveToPng.setToolTipText("Save to PNG");
 		btnSaveToPng.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MainFrame.this.saveToPng();
 			}
 		});
 		toolBar.add(btnSaveToPng);
-		
-		FooterPanel footerPanel = new FooterPanel();
-		getContentPane().add(footerPanel, BorderLayout.SOUTH);
 	}
 	
 	
