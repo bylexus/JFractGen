@@ -102,11 +102,41 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private void initGUI() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JSplitPane mainHorizSplitPane = new JSplitPane();
-		getContentPane().add(mainHorizSplitPane, BorderLayout.CENTER);
+		FooterPanel footerPanel = new FooterPanel();
+		getContentPane().add(footerPanel, BorderLayout.SOUTH);
+		
+		outputSplitPane = new JSplitPane();
+		getContentPane().add(outputSplitPane, BorderLayout.CENTER);
+		outputSplitPane.setOneTouchExpandable(true);
+		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
+		
+		outPanel = new FractOutPanel();
+		//getContentPane().add(outPanel, BorderLayout.WEST);
+		outPanel.addZoomListener(new IZoomListener() {
+			
+			@Override
+			public void rubberBandZoom(int x, int y, int width, int height) {
+				MainFrame.this.zoomByRubberband(x, y, width, height);
+			}
+			
+			@Override
+			public void clickZoom(int x, int y) {
+				MainFrame.this.zoomByClick(x,y);
+				
+			}
+		});
+		
+		outPanel.setPreferredSize(new Dimension(805, 605));
+		
+		outputSplitPane.setTopComponent(outPanel);
+		
+		legendPanel = new LegendPanel();
+		outputSplitPane.setRightComponent(legendPanel);
+		outputSplitPane.setResizeWeight(1.0d);
 		
 		settingsPanel = new JPanel();
-		mainHorizSplitPane.setLeftComponent(settingsPanel);
+		getContentPane().add(settingsPanel, BorderLayout.WEST);
 		settingsPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(55dlu;default)"),
@@ -289,36 +319,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		settingsPanel.add(btnSaveAsFractalPreset, "2, 39, 3, 1");
 		btnSaveAsFractalPreset.addActionListener(this);
 		
-		outputSplitPane = new JSplitPane();
-		outputSplitPane.setOneTouchExpandable(true);
-		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		mainHorizSplitPane.setRightComponent(outputSplitPane);
-		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
-		
-		outPanel = new FractOutPanel();
-		//getContentPane().add(outPanel, BorderLayout.WEST);
-		outPanel.addZoomListener(new IZoomListener() {
-			
-			@Override
-			public void rubberBandZoom(int x, int y, int width, int height) {
-				MainFrame.this.zoomByRubberband(x, y, width, height);
-			}
-			
-			@Override
-			public void clickZoom(int x, int y) {
-				MainFrame.this.zoomByClick(x,y);
-				
-			}
-		});
-		
-		outPanel.setPreferredSize(new Dimension(805, 605));
-		
-		outputSplitPane.setTopComponent(outPanel);
-		
-		legendPanel = new LegendPanel();
-		outputSplitPane.setRightComponent(legendPanel);
-		outputSplitPane.setResizeWeight(1.0d);
-		
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -351,9 +351,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		toolBar.add(btnSaveToPng);
-		
-		FooterPanel footerPanel = new FooterPanel();
-		getContentPane().add(footerPanel, BorderLayout.SOUTH);
 	}
 	
 	
