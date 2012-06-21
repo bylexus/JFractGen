@@ -13,7 +13,7 @@ you the beauty of math.
 
 Main class: ch.alexi.fractgen.Main
 
-Run: "java -jar JFractGen.jar"
+Run: "java -Xmx512M -jar JFractGen.jar"
 
 See also: https://github.com/bylexus/JS-fractgen
 
