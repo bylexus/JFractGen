@@ -24,6 +24,7 @@ Today's already implemented features
 - define user-presets in json config file (<user.home>/.jfractcalc/presets.json)
 - uses chosable nr of Workers, for using multiple CPUs for calculating
 - dive deeper by click/rubberband zoom
+- smooth colors / hard edges
 - history
 - dynamic color palette change (without re-calc)
 - multiply color palette
@@ -37,9 +38,12 @@ Planned / future features
 - create own color palettes
 - graphic bulk export/conversion/downsampling
 - drag-move
-- smooth colors
+
 
 NOTE(s)
 -------
-This code contains the Forms layout classes from http://jgoodies.com
+This code contains the following 3rd-party libraries:
+- the Forms layout classes from http://jgoodies.com
+- the macify library from http://simplericity.org/macify/
+- the Silk icon set from http://www.famfamfam.com/lab/icons/silk/
 
