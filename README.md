@@ -13,7 +13,7 @@ you the beauty of math.
 
 Main class: ch.alexi.fractgen.Main
 
-Run: "java -jar JFractGen.jar"
+Run: "java -Xmx512M -jar JFractGen.jar"
 
 See also: https://github.com/bylexus/JS-fractgen
 
@@ -23,7 +23,9 @@ Today's already implemented features
 - color palette presets
 - define user-presets in json config file (<user.home>/.jfractcalc/presets.json)
 - uses chosable nr of Workers, for using multiple CPUs for calculating
-- dive deeper by click/rubberband zoom
+- dive deeper by click/rubberband zoom, zoom out
+- drag-move the fractal viewport
+- smooth colors / hard edges
 - history
 - dynamic color palette change (without re-calc)
 - multiply color palette
@@ -33,13 +35,18 @@ Today's already implemented features
 
 Planned / future features
 -------------------------
-- JSON export of presets
+- JSON export/import of presets
 - create own color palettes
 - graphic bulk export/conversion/downsampling
-- drag-move
-- smooth colors
+- limit max # of history entry, to save memory
+
+
+
 
 NOTE(s)
 -------
-This code contains the Forms layout classes from http://jgoodies.com
+This code contains the following 3rd-party libraries:
+- the Forms layout classes from http://jgoodies.com
+- the macify library from http://simplericity.org/macify/
+- the Silk icon set from http://www.famfamfam.com/lab/icons/silk/
 

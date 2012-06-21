@@ -54,7 +54,7 @@ let you SEE the beauty of math.</p>
 
 <p>Main class: <code>ch.alexi.fractgen.Main</code></p>
 
-<p>Run: <code>java -jar JFractGen.jar</code></p>
+<p>Run: <code>java -Xmx 512M -jar JFractGen.jar</code></p>
 
 <h2>Today's already implemented features</h2>
 
@@ -63,7 +63,9 @@ let you SEE the beauty of math.</p>
 <li>color palette presets</li>
 <li>define user-presets in json config file (<user.home>/.jfractcalc/presets.json)</li>
 <li>uses chosable nr of Workers, for using multiple CPUs for calculating</li>
-<li>dive deeper by click/rubberband zoom</li>
+<li>dive deeper by click/rubberband zoom, zoom out</li>
+<li>drag-move the fractal viewport</li>
+<li>smooth colors / hard edges</li>
 <li>history</li>
 <li>dynamic color palette change (without re-calc)</li>
 <li>multiply color palette</li>
@@ -76,8 +78,7 @@ let you SEE the beauty of math.</p>
 <li>JSON export of presets</li>
 <li>create own color palettes</li>
 <li>graphic bulk export/conversion/downsampling</li>
-<li>drag-move</li>
-<li>smooth colors</li>
+<li>limit max # of history entry, to save memory</li>
 </ul>
 
 <h2>Some Screens</h2>
@@ -96,14 +97,27 @@ let you SEE the beauty of math.</p>
 
 <h2>NOTE(s)</h2>
 
-<p>This code contains the Forms layout classes from <a href="http://jgoodies.com">http://jgoodies.com</a></p>
+
+- the Forms layout classes from http://jgoodies.com
+- the macify library from http://simplericity.org/macify/
+- the Silk icon set from http://www.famfamfam.com/lab/icons/silk/
+
+
+<p>This code contains the following 3rd-party libraries:</p>
+<ul>
+  <li>the Forms layout classes from <a href="http://jgoodies.com">http://jgoodies.com</a></li>
+  <li>the macify library from <a href="http://simplericity.org/macify/">http://simplericity.org/macify/</a></li>
+  <li>the Silk icon set from <a href="http://www.famfamfam.com/lab/icons/silk/">http://www.famfamfam.com/lab/icons/silk/</a></li>
+</ul>
+
+ <a href="http://jgoodies.com">http://jgoodies.com</a></p>
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">JFractGen maintained by <a href="https://github.com/bylexus">bylexus</a></p>
+        <p class="copyright">JFractGen: &copy; 2012 <a href="mailto:info@alexi.ch">Alexander Schenkel</a>, <a href="https://github.com/bylexus">bylexus</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
