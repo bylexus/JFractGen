@@ -434,6 +434,21 @@
             "iterFunc": "Julia",
             "colorPreset": "Shades of Blue",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 2.7877705759388686E-5,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 889,
+            "colorPresetRepeat": 5,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.9359578874888119,
+            "centerCY": 0.3016552531455419,
+            "name": "Mandelbrot Zipper Lagoon",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Shades of Blue",
+            "picHeight": 600
         }
     ],
     "colorPresets": [
