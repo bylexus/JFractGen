@@ -448,7 +448,9 @@
             "name": "Mandelbrot Zipper Lagoon",
             "iterFunc": "Mandelbrot",
             "colorPreset": "Shades of Blue",
-}, {
+            "picHeight": 600
+        },
+        {
             "diameterCX": 4.688311580400011E-8,
             "juliaKr": 0,
             "nrOfWorkers": 2,
@@ -476,6 +478,21 @@
             "name": "Mandelbrot Cells",
             "iterFunc": "Mandelbrot",
             "colorPreset": "Nature",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 6.969426439847171E-7,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 2345,
+            "colorPresetRepeat": 40,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -0.9359663204948041,
+            "centerCY": 0.3016613865465446,
+            "name": "Mandelbrot Creatures of the Sea",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Shades of Blue",
             "picHeight": 600
         }
     ],
