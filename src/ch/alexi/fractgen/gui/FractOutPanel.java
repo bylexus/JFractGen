@@ -27,6 +27,9 @@ import ch.alexi.fractgen.logic.MathLib;
  */
 @SuppressWarnings("serial")
 public class FractOutPanel extends JScrollPane {
+	public static final int MOVE_MODE_ZOOM = 1;
+	public static final int MOVE_MODE_DRAG = 2;
+	
 	private Image fractImage;
 	private JPanel drawPanel;
 	private JLayeredPane layerPane;
@@ -34,6 +37,11 @@ public class FractOutPanel extends JScrollPane {
 	private boolean mouseMoved = false;
 	private Point mouseStartPoint;
 	private List<IZoomListener> zoomListeners;
+	
+	private Point drawOffset = new Point(0, 0);
+	
+	
+	private int moveMode = MOVE_MODE_ZOOM;
 	
 	public FractOutPanel() {
 		zoomListeners = new Vector<IZoomListener>();
@@ -43,7 +51,8 @@ public class FractOutPanel extends JScrollPane {
 			@Override
 			public void paint(Graphics g) {
 				if (fractImage != null) {
-					g.drawImage(fractImage, 0, 0, this);
+					g.clearRect(0, 0, getWidth(), getHeight());
+					g.drawImage(fractImage, drawOffset.x, drawOffset.y,this);
 				}
 			}
 		};
@@ -65,12 +74,26 @@ public class FractOutPanel extends JScrollPane {
 				mouseStartPoint = e.getPoint();
 			}
 			public void mouseReleased(MouseEvent e) {
-				if (mouseMoved) {
-					performRubberbandZoom(rubberBand.getX(), rubberBand.getY(), rubberBand.getWidth(), rubberBand.getHeight());
-				} else {
-					performClickZoom(e.getPoint().x, e.getPoint().y);
+				if (moveMode == MOVE_MODE_ZOOM) {
+					if (mouseMoved) {
+						performRubberbandZoom(rubberBand.getX(), rubberBand.getY(), rubberBand.getWidth(), rubberBand.getHeight());
+					} else {
+						performClickZoom(e.getPoint().x, e.getPoint().y);
+					}
+					rubberBand.setVisible(false);
 				}
-				rubberBand.setVisible(false);
+				
+				if (moveMode == MOVE_MODE_DRAG) {
+					if (mouseStartPoint != null) {
+						int dx = e.getPoint().x-mouseStartPoint.x;
+						int dy = e.getPoint().y-mouseStartPoint.y;
+						if (dx != 0 || dy != 0) {
+							performDragPan(dx, dy);
+						}
+					}
+				}
+				drawOffset.x = 0;
+				drawOffset.y = 0;
 				mouseMoved = false;
 			}
 		});
@@ -84,13 +107,21 @@ public class FractOutPanel extends JScrollPane {
 			public void mouseDragged(MouseEvent e) {
 				mouseMoved = true;
 				if (mouseStartPoint != null) {
-					Dimension evtBound = new Dimension(Math.abs(e.getPoint().x-mouseStartPoint.x), Math.abs(e.getPoint().y-mouseStartPoint.y));
+					if (moveMode == MOVE_MODE_ZOOM) {
+						Dimension evtBound = new Dimension(Math.abs(e.getPoint().x-mouseStartPoint.x), Math.abs(e.getPoint().y-mouseStartPoint.y));
+						
+						int left = MathLib.minInt(mouseStartPoint.x, e.getPoint().x);
+						int top = MathLib.minInt(mouseStartPoint.y, e.getPoint().y);
+						
+						rubberBand.setBounds(left, top, evtBound.width,evtBound.height);
+						rubberBand.setVisible(true);
+					}
 					
-					int left = MathLib.minInt(mouseStartPoint.x, e.getPoint().x);
-					int top = MathLib.minInt(mouseStartPoint.y, e.getPoint().y);
-					
-					rubberBand.setBounds(left, top, evtBound.width,evtBound.height);
-					rubberBand.setVisible(true);
+					if (moveMode == MOVE_MODE_DRAG) {
+						drawOffset.x = e.getPoint().x-mouseStartPoint.x;
+						drawOffset.y = e.getPoint().y-mouseStartPoint.y;
+						drawPanel.repaint();
+					}
 				}
 			}
 		});
@@ -154,6 +185,22 @@ public class FractOutPanel extends JScrollPane {
 		for(IZoomListener l : zoomListeners) {
 			l.rubberBandZoom(x, y, width, height);
 		}
+	}
+	
+	private void performDragPan(int dx, int dy) {
+		for(IZoomListener l : zoomListeners) {
+			l.dragPan(dx, dy);
+		}
+	}
+	
+	public void setMoveMode(int mode) {
+		if (mode == MOVE_MODE_ZOOM || mode == MOVE_MODE_DRAG) {
+			this.moveMode = mode;
+		}
+	}
+	
+	public int getMoveMode() {
+		return this.moveMode;
 	}
 
 	

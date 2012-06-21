@@ -27,6 +27,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
@@ -50,6 +51,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.SwingConstants;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -90,6 +92,9 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JPanel panel;
 	private JPanel panel_2;
 	private JCheckBox chckbxSmoothColors;
+	private JToolBar.Separator separator_3;
+	private JToggleButton btnPinchzoom;
+	private JToggleButton btnDragpan;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -109,10 +114,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		getContentPane().add(outputSplitPane, BorderLayout.CENTER);
 		outputSplitPane.setOneTouchExpandable(true);
 		outputSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		//getContentPane().add(outputSplitPane, BorderLayout.CENTER);
 		
 		outPanel = new FractOutPanel();
-		//getContentPane().add(outPanel, BorderLayout.WEST);
 		outPanel.addZoomListener(new IZoomListener() {
 			
 			@Override
@@ -123,6 +126,12 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			@Override
 			public void clickZoom(int x, int y) {
 				MainFrame.this.zoomByClick(x,y);
+				
+			}
+
+			@Override
+			public void dragPan(int dx, int dy) {
+				MainFrame.this.dragPan(dx, dy);
 				
 			}
 		});
@@ -351,6 +360,21 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		});
 		toolBar.add(btnSaveToPng);
+		
+		separator_3 = new JToolBar.Separator();
+		toolBar.add(separator_3);
+		
+		btnPinchzoom = new JToggleButton(AppManager.getInstance().getIcon("magnifier"));
+		btnPinchzoom.setSelected(true);
+		btnPinchzoom.setToolTipText("Click/Rubberband zoom into the Fractal");
+		btnPinchzoom.addActionListener(this);
+		toolBar.add(btnPinchzoom);
+		
+		btnDragpan = new JToggleButton(AppManager.getInstance().getIcon("drag_hand"));
+		btnDragpan.setSelected(false);
+		btnDragpan.setToolTipText("Drag-pan the viewport of the fractal");
+		btnDragpan.addActionListener(this);
+		toolBar.add(btnDragpan);
 	}
 	
 	
@@ -569,6 +593,27 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	}
 	
 	/**
+	 * Performs a move of the fractal viewport, by re-calculating the
+	 * new center and re-calc the new image.
+	 * 
+	 * @param dx The x-distance of the move position relative to the start position
+	 * @param dy The y-distance of the move position relative to the start position
+	 */
+	public void dragPan(int dx, int dy) {
+		if (this.actualFractCalcerResult != null) {
+			this.setFractParam(this.actualFractCalcerResult.fractParam);
+			FractParam p = this.getActualFractParam();
+			p.initFractParams();
+			
+			p.centerCX -= dx * p.punkt_abstand;
+			p.centerCY += dy * p.punkt_abstand; // inverse y-axis on draw
+			
+			this.setFractParam(p);
+			this.startCalculation();
+		}
+	}
+	
+	/**
 	 * Starts the fractal calculation in the background, using a SwingWorker.
 	 * Shows a progress dialog during this time. A history entry from the 
 	 * old/actual fractal is taken before the calculation starts.
@@ -722,6 +767,20 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		// enable / disable color smoothing: recalc necessary:
 		if (!this.suspendUpdate && a.getSource() == chckbxSmoothColors) {
 			startCalculation();
+		}
+		
+		// User clicks the "zoom" toggle btn
+		if (a.getSource() == btnPinchzoom) {
+			btnPinchzoom.setSelected(true);
+			btnDragpan.setSelected(false);
+			outPanel.setMoveMode(FractOutPanel.MOVE_MODE_ZOOM);
+		}
+		
+		// user clicks the drag-pan button
+		if (a.getSource() == btnDragpan) {
+			btnPinchzoom.setSelected(false);
+			btnDragpan.setSelected(true);
+			outPanel.setMoveMode(FractOutPanel.MOVE_MODE_DRAG);
 		}
 	}
 
