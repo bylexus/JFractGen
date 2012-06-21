@@ -434,7 +434,8 @@
             "iterFunc": "Julia",
             "colorPreset": "Shades of Blue",
             "picHeight": 600
-        },{
+        },
+        {
             "diameterCX": 4.688311580400011E-8,
             "juliaKr": 0,
             "nrOfWorkers": 2,
@@ -447,6 +448,21 @@
             "name": "Mandelbrot Ring of Fire",
             "iterFunc": "Mandelbrot",
             "colorPreset": "Red Alert",
+            "picHeight": 600
+        },
+        {
+            "diameterCX": 9.214391588660157E-7,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 2226,
+            "colorPresetRepeat": 13,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -1.6205863436707622,
+            "centerCY": 0.006827586668927056,
+            "name": "Mandelbrot Cells",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Nature",
             "picHeight": 600
         }
     ],

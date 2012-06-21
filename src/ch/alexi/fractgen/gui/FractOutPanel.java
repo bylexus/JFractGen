@@ -76,6 +76,11 @@ public class FractOutPanel extends JScrollPane {
 		});
 		
 		drawPanel.addMouseMotionListener(new MouseAdapter() {
+			
+			/**
+			 * While drag, calculate the size/dimension of the rubber band
+			 * and draw it.
+			 */
 			public void mouseDragged(MouseEvent e) {
 				mouseMoved = true;
 				if (mouseStartPoint != null) {

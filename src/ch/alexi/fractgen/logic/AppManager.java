@@ -12,8 +12,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Properties;
 import java.util.Stack;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.json.JSONArray;
@@ -274,6 +278,16 @@ public class AppManager implements ApplicationListener{
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	
+	public Icon getIcon(String name) {
+		URL imgUrl = getClass().getResource("/res/icons/"+name+".png");
+		if (imgUrl != null) {
+			return new ImageIcon(imgUrl);
+		} else {
+			return null;
 		}
 	}
 
