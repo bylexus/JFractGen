@@ -14,6 +14,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import ch.alexi.fractgen.logic.MathLib;
+
 /**
  * The FractOutPanel draws the Fractal image and allows / initiates zooming.
  * It informs IZoomListeners of zoom events. 
@@ -77,8 +79,12 @@ public class FractOutPanel extends JScrollPane {
 			public void mouseDragged(MouseEvent e) {
 				mouseMoved = true;
 				if (mouseStartPoint != null) {
-					Dimension evtBound = new Dimension(e.getPoint().x-mouseStartPoint.x, e.getPoint().y-mouseStartPoint.y);
-					rubberBand.setBounds(mouseStartPoint.x, mouseStartPoint.y, evtBound.width,evtBound.height);
+					Dimension evtBound = new Dimension(Math.abs(e.getPoint().x-mouseStartPoint.x), Math.abs(e.getPoint().y-mouseStartPoint.y));
+					
+					int left = MathLib.minInt(mouseStartPoint.x, e.getPoint().x);
+					int top = MathLib.minInt(mouseStartPoint.y, e.getPoint().y);
+					
+					rubberBand.setBounds(left, top, evtBound.width,evtBound.height);
 					rubberBand.setVisible(true);
 				}
 			}
