@@ -434,6 +434,20 @@
             "iterFunc": "Julia",
             "colorPreset": "Shades of Blue",
             "picHeight": 600
+        },{
+            "diameterCX": 4.688311580400011E-8,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 4513,
+            "colorPresetRepeat": 14,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -1.1528405468794645,
+            "centerCY": 0.3059746056603645,
+            "name": "Mandelbrot Ring of Fire",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Red Alert",
+            "picHeight": 600
         }
     ],
     "colorPresets": [
