@@ -74,7 +74,9 @@
 
 	<target name="run" depends="makejar">
 		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
-			<arg value="-Xmx512M"/>	
+			<arg value="-Xmx512M"/>
+			<arg value="-Dcom.apple.laf.useScreenMenuBar=true" />
+			<arg value="-Xdock:${ant.project.name}" />
 		</java>
 	</target>
 

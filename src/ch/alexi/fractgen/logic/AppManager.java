@@ -18,8 +18,11 @@ import java.util.Stack;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +30,8 @@ import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
+
+import ch.alexi.fractgen.gui.AboutDialog;
 import ch.alexi.fractgen.gui.MainFrame;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
@@ -66,6 +71,19 @@ public class AppManager implements ApplicationListener{
 	 * @return
 	 */
 	public MainFrame createAndShowGUI() {
+		// OS X? see http://simplericity.org/macify/
+		Application app = new DefaultApplication();
+		//app.addPreferencesMenuItem();
+		//app.setEnabledPreferencesMenu(false);
+		app.addApplicationListener(this);
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "JFractGen");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("CheckBox.font",new Font("Sans Serif",Font.PLAIN,11));
@@ -83,6 +101,10 @@ public class AppManager implements ApplicationListener{
 	        		shutdown();
 	        	}
 			});
+	        
+	        if (!app.isMac()) {
+	        	// Add menu entries for non-mac GUIs:
+	        }
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
 	        mainFrame.setFractParam(this.getFractParamPresets().get(0));
@@ -90,12 +112,6 @@ public class AppManager implements ApplicationListener{
 			// Start the first calculation:
 			mainFrame.startCalculation();
 		}
-		
-		// OS X? see http://simplericity.org/macify/
-		Application app = new DefaultApplication();
-		//app.addPreferencesMenuItem();
-		//app.setEnabledPreferencesMenu(false);
-		app.addApplicationListener(this);
 		
         return mainFrame;
     }
@@ -294,7 +310,8 @@ public class AppManager implements ApplicationListener{
 
 	@Override
 	public void handleAbout(ApplicationEvent arg0) {
-		// TODO Auto-generated method stub
+		AboutDialog.display();
+		arg0.setHandled(true);
 		
 	}
 

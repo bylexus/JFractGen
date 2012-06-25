@@ -38,6 +38,10 @@ Planned / future features
 - JSON export/import of presets
 - create own color palettes
 - graphic bulk export/conversion/downsampling
+- simplify presets / use useful defaults
+- preferences:
+  - nr of workers / CPU dependant
+  - 
 
 
 
