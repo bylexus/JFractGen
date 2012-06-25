@@ -68,6 +68,7 @@ public class AppManager implements ApplicationListener{
 	public MainFrame createAndShowGUI() {
 		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,11));
+		UIManager.put("CheckBox.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("TextField.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("Button.font",new Font("Sans Serif",Font.PLAIN,11));
 

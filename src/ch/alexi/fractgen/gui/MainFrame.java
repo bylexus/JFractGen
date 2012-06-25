@@ -52,6 +52,8 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.SwingConstants;
+import javax.swing.BoxLayout;
+import java.awt.Component;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -96,6 +98,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JToggleButton btnPinchzoom;
 	private JToggleButton btnDragpan;
 	private JButton btnZoomOut;
+	private JPanel panel_3;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -161,8 +164,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
@@ -220,113 +221,120 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		panel.add(colorPresetsCombo);
 		
 		panel_2 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
+		panel_2.setAlignmentY(Component.TOP_ALIGNMENT);
+		panel_2.setAlignmentX(Component.LEFT_ALIGNMENT);
 		panel.add(panel_2, BorderLayout.SOUTH);
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
+		
+		panel_3 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEADING);
+		panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
+		panel_2.add(panel_3);
 		
 		JLabel lblColorPresetRepeat = new JLabel("Color preset repeat:");
-		panel_2.add(lblColorPresetRepeat);
+		panel_3.add(lblColorPresetRepeat);
 		
 		paletteRepeat = new JTextField();
+		panel_3.add(paletteRepeat);
 		paletteRepeat.setColumns(5);
-		panel_2.add(paletteRepeat);
 		
 		paletteRepeat.addFocusListener(this);
-		colorPresetsCombo.addActionListener(this);
 		
 		chckbxSmoothColors = new JCheckBox("smooth colors");
-		settingsPanel.add(chckbxSmoothColors, "2, 8, 3, 1");
+		panel_2.add(chckbxSmoothColors);
 		chckbxSmoothColors.setSelected(true);
 		chckbxSmoothColors.addActionListener(this);
+		colorPresetsCombo.addActionListener(this);
 		
 		JSeparator separator = new JSeparator();
-		settingsPanel.add(separator, "2, 10, 3, 1, fill, default");
+		settingsPanel.add(separator, "2, 8, 3, 1, fill, default");
 		
 		JLabel lblFractalSettings = new JLabel("Fractal Settings");
-		settingsPanel.add(lblFractalSettings, "2, 11, 3, 1, fill, default");
+		settingsPanel.add(lblFractalSettings, "2, 9, 3, 1, fill, default");
 		
 		JLabel lblPixelW = new JLabel("Pixel W:");
-		settingsPanel.add(lblPixelW, "2, 13, right, default");
+		settingsPanel.add(lblPixelW, "2, 11, right, default");
 		
 		picWidth = new JTextField();
 		lblPixelW.setLabelFor(picWidth);
-		settingsPanel.add(picWidth, "4, 13, fill, default");
+		settingsPanel.add(picWidth, "4, 11, fill, default");
 		picWidth.setColumns(10);
 		
 		JLabel lblPixelH = new JLabel("Pixel H:");
-		settingsPanel.add(lblPixelH, "2, 15, right, default");
+		settingsPanel.add(lblPixelH, "2, 13, right, default");
 		
 		picHeight = new JTextField();
-		settingsPanel.add(picHeight, "4, 15, fill, default");
+		settingsPanel.add(picHeight, "4, 13, fill, default");
 		picHeight.setColumns(10);
 		
 		JLabel lblCenterCx = new JLabel("Center cx:");
-		settingsPanel.add(lblCenterCx, "2, 17, right, default");
+		settingsPanel.add(lblCenterCx, "2, 15, right, default");
 		
 		centerCX = new JTextField();
-		settingsPanel.add(centerCX, "4, 17, fill, default");
+		settingsPanel.add(centerCX, "4, 15, fill, default");
 		centerCX.setColumns(10);
 		
 		JLabel lblCenterCy = new JLabel("Center cy:");
-		settingsPanel.add(lblCenterCy, "2, 19, right, default");
+		settingsPanel.add(lblCenterCy, "2, 17, right, default");
 		
 		centerCY = new JTextField();
-		settingsPanel.add(centerCY, "4, 19, fill, default");
+		settingsPanel.add(centerCY, "4, 17, fill, default");
 		centerCY.setColumns(10);
 		
 		JLabel lblDiameterX = new JLabel("Diameter x:");
-		settingsPanel.add(lblDiameterX, "2, 21, right, default");
+		settingsPanel.add(lblDiameterX, "2, 19, right, default");
 		
 		diameterCX = new JTextField();
-		settingsPanel.add(diameterCX, "4, 21, fill, default");
+		settingsPanel.add(diameterCX, "4, 19, fill, default");
 		diameterCX.setColumns(10);
 		
 		JSeparator separator_1 = new JSeparator();
-		settingsPanel.add(separator_1, "2, 23, 3, 1, fill, default");
+		settingsPanel.add(separator_1, "2, 21, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_3 = new JLabel("Calculation Settings");
-		settingsPanel.add(lblNewLabel_3, "2, 25, 3, 1, fill, default");
+		settingsPanel.add(lblNewLabel_3, "2, 23, 3, 1, fill, default");
 		
 		JLabel lblNewLabel_4 = new JLabel("max. Iterations:");
-		settingsPanel.add(lblNewLabel_4, "2, 27, right, center");
+		settingsPanel.add(lblNewLabel_4, "2, 25, right, center");
 		
 		maxIters = new JTextField();
-		settingsPanel.add(maxIters, "4, 27, fill, default");
+		settingsPanel.add(maxIters, "4, 25, fill, default");
 		maxIters.setColumns(10);
 		
 		JLabel lblFunction = new JLabel("Function:");
-		settingsPanel.add(lblFunction, "2, 29, right, default");
+		settingsPanel.add(lblFunction, "2, 27, right, default");
 		
 		functionCB = new FractFunctionsCombo();
-		settingsPanel.add(functionCB, "4, 29, fill, default");
+		settingsPanel.add(functionCB, "4, 27, fill, default");
 		functionCB.addActionListener(this);
 		
 		JLabel lblJuliaK = new JLabel("Julia K(r):");
-		settingsPanel.add(lblJuliaK, "2, 31, right, default");
+		settingsPanel.add(lblJuliaK, "2, 29, right, default");
 		
 		juliaKrField = new JTextField();
-		settingsPanel.add(juliaKrField, "4, 31, fill, default");
+		settingsPanel.add(juliaKrField, "4, 29, fill, default");
 		juliaKrField.setColumns(10);
 		
 		JLabel lblJuliaKi = new JLabel("Julia K(i):");
-		settingsPanel.add(lblJuliaKi, "2, 33, right, default");
+		settingsPanel.add(lblJuliaKi, "2, 31, right, default");
 		
 		juliaKiField = new JTextField();
-		settingsPanel.add(juliaKiField, "4, 33, fill, default");
+		settingsPanel.add(juliaKiField, "4, 31, fill, default");
 		juliaKiField.setColumns(10);
 		
 		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 35, right, default");
+		settingsPanel.add(lblOfWorkers, "2, 33, right, default");
 		
 		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 35, fill, default");
+		settingsPanel.add(nrOfWorkers, "4, 33, fill, default");
 		nrOfWorkers.setColumns(10);
 		
 		JSeparator separator_2 = new JSeparator();
-		settingsPanel.add(separator_2, "2, 37, 3, 1");
+		settingsPanel.add(separator_2, "2, 35, 3, 1");
 		
 		btnSaveAsFractalPreset = new JButton("Save as Fractal Preset",AppManager.getInstance().getIcon("disk"));
-		settingsPanel.add(btnSaveAsFractalPreset, "2, 39, 3, 1");
+		settingsPanel.add(btnSaveAsFractalPreset, "2, 37, 3, 1");
 		btnSaveAsFractalPreset.addActionListener(this);
 		
 		
@@ -782,11 +790,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		
 		// Delete a fract param preset:
 		if (a.getSource() == btnDelFractParamPreset) {
-			this.suspendUpdate = true;
-			FractParam p = (FractParam)fractParamPresetsCB.getSelectedItem();
-			AppManager.getInstance().removeUserFractalPreset(p);
-			fractParamPresetsCB.reloadPresets();
-			this.suspendUpdate = false;
+			int ret = JOptionPane.showConfirmDialog(this, "Really delete this preset?", "Delete preset",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+			if (ret == JOptionPane.YES_OPTION) {
+				this.suspendUpdate = true;
+				FractParam p = (FractParam)fractParamPresetsCB.getSelectedItem();
+				AppManager.getInstance().removeUserFractalPreset(p);
+				fractParamPresetsCB.reloadPresets();
+				this.suspendUpdate = false;
+			}
 		}
 		
 		// enable / disable color smoothing: recalc necessary:
