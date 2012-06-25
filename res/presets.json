@@ -494,6 +494,21 @@
             "iterFunc": "Mandelbrot",
             "colorPreset": "Shades of Blue",
             "picHeight": 600
+        },
+        {
+            "diameterCX": 5.328256758619744E-6,
+            "juliaKr": 0,
+            "nrOfWorkers": 2,
+            "maxIterations": 1506,
+            "colorPresetRepeat": 3,
+            "picWidth": 800,
+            "juliaKi": 0,
+            "centerCX": -1.1089070487028683,
+            "centerCY": 0.22943043445336692,
+            "name": "Mandelbrot Spiral",
+            "iterFunc": "Mandelbrot",
+            "colorPreset": "Nature",
+            "picHeight": 600
         }
     ],
     "colorPresets": [

@@ -51,7 +51,7 @@ public class Colorizer {
 	public void colorizeRasterPixel(WritableRaster raster, int x, int y, RGB[] palette, double percentualIterValue) {
 		int palettePos = new Double(percentualIterValue * palette.length).intValue();
 		if (palettePos < palette.length && palettePos >= 0) {
-			this.colorizeRasterPixel(raster, x, y, palette[MathLib.maxInt(0,palettePos)]);
+			this.colorizeRasterPixel(raster, x, y, palette[palettePos]);
 		} else {
 			this.colorizeRasterPixel(raster, x, y, RGB_BLACK);
 		}
