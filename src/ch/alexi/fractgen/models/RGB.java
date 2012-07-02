@@ -10,7 +10,7 @@ import org.json.JSONObject;
  * @author Alexander Schenkel, www.alexi.ch
  * (c) 2012 Alexander Schenkel
  */
-public class RGB {
+public class RGB implements Cloneable {
 	public int r;
 	public int g;
 	public int b;
@@ -68,4 +68,11 @@ public class RGB {
 		return arr;
 	}
 	
+	
+	@Override
+	public RGB clone() {
+		RGB c = new RGB(this.r,this.g,this.b);
+		c.steps = this.steps;
+		return c;
+	}
 }

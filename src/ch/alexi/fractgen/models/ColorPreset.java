@@ -19,7 +19,7 @@ import org.json.JSONObject;
  * @author Alexander Schenkel, www.alexi.ch
  * (c) 2012 Alexander Schenkel
  */
-public class ColorPreset {
+public class ColorPreset implements Cloneable {
 	public String name;
 	public RGB[] colors;
 	public int defaultSteps = 256;
@@ -141,5 +141,16 @@ public class ColorPreset {
 			paletteArray = null;
 		}
 		return this.dynamicPalettes.get(repeat);
+	}
+	
+	
+	@Override
+	public ColorPreset clone() {
+		ColorPreset c = new ColorPreset();
+		c.name = this.name;
+		c.defaultSteps = this.defaultSteps;
+		c.colors = this.colors.clone();
+		
+		return c;
 	}
 }

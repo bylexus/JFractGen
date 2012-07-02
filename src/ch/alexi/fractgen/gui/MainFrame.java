@@ -54,6 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.SwingConstants;
 import javax.swing.BoxLayout;
 import java.awt.Component;
+import javax.swing.Box;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -99,6 +100,10 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JToggleButton btnDragpan;
 	private JButton btnZoomOut;
 	private JPanel panel_3;
+	private JButton btnEditColorSchemes;
+	private Component horizontalGlue;
+	
+	private ColorSchemeEditDialog colorSchemeEditDialog = null;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -391,6 +396,16 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		toolBar.add(btnDragpan);
 		toolBar.add(new JToolBar.Separator());
 		toolBar.add(btnZoomOut);
+		
+		JToolBar.Separator sep4 = new JToolBar.Separator();
+		toolBar.add(sep4);
+		
+		horizontalGlue = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue);
+		
+		btnEditColorSchemes = new JButton("Edit Color Schemes");
+		btnEditColorSchemes.addActionListener(this);
+		toolBar.add(btnEditColorSchemes);
 	}
 	
 	
@@ -822,6 +837,14 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		// User clicks the zoom out btn:
 		if (a.getSource() == btnZoomOut) {
 			zoomOut();
+		}
+		
+		// User clicks the edit schemes btn:
+		if (a.getSource() == btnEditColorSchemes) {
+			if (colorSchemeEditDialog == null) {
+				colorSchemeEditDialog = new ColorSchemeEditDialog(this);
+			}
+			colorSchemeEditDialog.display();
 		}
 	}
 
