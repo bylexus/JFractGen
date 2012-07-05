@@ -1,6 +1,7 @@
 package ch.alexi.fractgen.logic;
 
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -20,6 +21,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -33,6 +35,7 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import ch.alexi.fractgen.gui.AboutDialog;
 import ch.alexi.fractgen.gui.MainFrame;
+import ch.alexi.fractgen.gui.MainMenu;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.FractParamPresets;
@@ -105,6 +108,14 @@ public class AppManager implements ApplicationListener{
 	        if (!app.isMac()) {
 	        	// Add menu entries for non-mac GUIs:
 	        }
+	        
+	        JMenuBar menuBar = mainFrame.getJMenuBar();
+	        if (menuBar == null) {
+	        	menuBar = new JMenuBar();
+	        	mainFrame.setJMenuBar(menuBar);
+	        }
+	        menuBar.add(new MainMenu());
+	        
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
 	        mainFrame.setFractParam(this.getFractParamPresets().get(0));
@@ -115,6 +126,10 @@ public class AppManager implements ApplicationListener{
 		
         return mainFrame;
     }
+	
+	public Frame getMainFrame() {
+		return this.mainFrame;
+	}
 	
 	/**
 	 * Reads the presets configuration file (presets.json) and returns
@@ -262,7 +277,7 @@ public class AppManager implements ApplicationListener{
 	/**
 	 * Exits the application, and do necessary things before.
 	 */
-	protected void shutdown() {
+	public void shutdown() {
 		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		System.out.println("User settings go to: "+userSettingsFile);
 		try {

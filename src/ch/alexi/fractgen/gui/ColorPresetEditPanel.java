@@ -9,6 +9,13 @@ import java.awt.FlowLayout;
 import java.awt.Dimension;
 
 @SuppressWarnings("serial")
+/**
+ * This is the main edit panel for editing a single color preset.
+ * 
+ * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
+ * @author Alexander Schenkel, www.alexi.ch
+ * (c) 2012 Alexander Schenkel
+ */
 public class ColorPresetEditPanel extends JPanel {
 	private ColorPreset actPreset;
 	private JLabel presetNameLabel;
@@ -37,7 +44,6 @@ public class ColorPresetEditPanel extends JPanel {
 		colorPresetPreviewPanel.setPreferredSize(new Dimension(10, 40));
 		add(colorPresetPreviewPanel, BorderLayout.SOUTH);
 	}
-	
 	
 	public void setColorPreset(ColorPreset p) {
 		this.actPreset = p.clone();
