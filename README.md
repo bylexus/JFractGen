@@ -31,15 +31,16 @@ Today's already implemented features
 - multiply color palette
 - PNG export
 - presets defined as JSON data in properties file
+- JSON export/import of presets
 
 
 Planned / future features
 -------------------------
-- JSON export/import of presets
 - create own color palettes
 - graphic bulk export/conversion/downsampling
-- limit max # of history entry, to save memory
-
+- preferences:
+  - nr of workers / CPU dependant
+  - max. Nr of history entries
 
 
 
