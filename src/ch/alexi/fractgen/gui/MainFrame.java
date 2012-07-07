@@ -49,6 +49,8 @@ import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractFunctions;
 import ch.alexi.fractgen.models.FractParam;
+import ch.alexi.fractgen.models.PresetChangeListener;
+import ch.alexi.fractgen.models.PresetsCollection;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -64,7 +66,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * (c) 2012 Alexander Schenkel
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener, FocusListener {
+public class MainFrame extends JFrame 
+	implements IFractCalcObserver, ActionListener, FocusListener, PresetChangeListener {
 	private JTextField picWidth;
 	private JTextField picHeight;
 	private JTextField centerCX;
@@ -76,7 +79,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private JComboBox functionCB;
 	private JButton btnStartCalculation;
 	private JPanel settingsPanel;
-	private JComboBox colorPresetsCombo;
+	private ColorPresetsCombo colorPresetsCombo;
 	private FractParamPresetsCombo fractParamPresetsCB;
 	private JButton btnBack;
 	private JButton btnSaveToPng;
@@ -86,7 +89,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private FractCalcerResultData actualFractCalcerResult;
 	private JTextField juliaKrField;
 	private JTextField juliaKiField;
-	
 	private boolean suspendUpdate = false;
 	private JTextField paletteRepeat;
 	private JButton btnSaveAsFractalPreset;
@@ -103,6 +105,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 	private Component horizontalGlue;
 	
 	private ColorSchemeEditDialog colorSchemeEditDialog = null;
+	private JButton btnDelColorPreset;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -134,13 +137,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			@Override
 			public void clickZoom(int x, int y) {
 				MainFrame.this.zoomByClick(x,y);
-				
 			}
 
 			@Override
 			public void dragPan(int dx, int dy) {
 				MainFrame.this.dragPan(dx, dy);
-				
 			}
 		});
 		
@@ -248,6 +249,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		chckbxSmoothColors = new JCheckBox("smooth colors");
 		panel_2.add(chckbxSmoothColors);
 		chckbxSmoothColors.setSelected(true);
+		
+		btnDelColorPreset = new JButton(AppManager.getInstance().getIcon("delete"));
+		btnDelColorPreset.setToolTipText("Delete the current color preset");
+		btnDelColorPreset.addActionListener(this);
+		panel.add(btnDelColorPreset, BorderLayout.EAST);
 		chckbxSmoothColors.addActionListener(this);
 		colorPresetsCombo.addActionListener(this);
 		
@@ -403,6 +409,8 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		toolBar.add(horizontalGlue);
 		
 		btnEditColorSchemes = new JButton("Edit Color Schemes");
+		btnEditColorSchemes.setToolTipText("COMING SOON");
+		btnEditColorSchemes.setEnabled(false);
 		btnEditColorSchemes.addActionListener(this);
 		toolBar.add(btnEditColorSchemes);
 	}
@@ -790,15 +798,15 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			FractParam p = this.getActualFractParam();
 			String name = JOptionPane.showInputDialog(this,"Enter a preset name");
 			if (name == null || name.trim().length() == 0) {
-				name = "New Preset";
+				return;
 			}
 			p.name = name;
 			AppManager.getInstance().addFractalPreset(p);
-			this.fractParamPresetsCB.reloadPresets();
 			
 			this.suspendUpdate = true;
 			this.fractParamPresetsCB.setSelectedItem(p);
 			this.suspendUpdate = false;
+			
 		}
 		
 		// Delete a fract param preset:
@@ -808,8 +816,16 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 				this.suspendUpdate = true;
 				FractParam p = (FractParam)fractParamPresetsCB.getSelectedItem();
 				AppManager.getInstance().removeUserFractalPreset(p);
-				fractParamPresetsCB.reloadPresets();
 				this.suspendUpdate = false;
+			}
+		}
+		
+		// Delete a color preset:
+		if (a.getSource() == btnDelColorPreset) {
+			int ret = JOptionPane.showConfirmDialog(this, "Really delete this preset?", "Delete preset",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+			if (ret == JOptionPane.YES_OPTION) {
+				ColorPreset p = (ColorPreset)colorPresetsCombo.getSelectedItem();
+				AppManager.getInstance().removeUserColorPreset(p);
 			}
 		}
 		
@@ -867,5 +883,11 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			}
 		}
 		
+	}
+
+	@Override
+	public void presetsChanged(PresetsCollection c) {
+		this.fractParamPresetsCB.reloadPresets();
+		this.colorPresetsCombo.reloadPresets();
 	}
 }

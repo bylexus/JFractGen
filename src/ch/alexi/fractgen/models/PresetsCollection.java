@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Vector;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,15 +22,38 @@ public class PresetsCollection {
 	private FractParamPresets fractPresets = new FractParamPresets();
 	private ColorPresets colorPresets = new ColorPresets();
 	
+	private Vector<PresetChangeListener> presetChangeListeners = new Vector<PresetChangeListener>();
+	private boolean emitInformEvents = true;
+	
 	public PresetsCollection() {
 	}
 	
 	public void addFractalPreset(FractParam p) {
 		fractPresets.add(p);
+		if (this.emitInformEvents) {
+			this.informPresetChangeListeners();
+		}
+	}
+	
+	public void removeFractalPreset(FractParam p) {
+		fractPresets.remove(p);
+		if (this.emitInformEvents) {
+			this.informPresetChangeListeners();
+		}
 	}
 	
 	public void addColorPreset(ColorPreset p) {
 		colorPresets.add(p);
+		if (this.emitInformEvents) {
+			this.informPresetChangeListeners();
+		}
+	}
+	
+	public void removeColorPreset(ColorPreset p) {
+		colorPresets.remove(p);
+		if (this.emitInformEvents) {
+			this.informPresetChangeListeners();
+		}
 	}
 	
 	public FractParamPresets getFractalPresets() {
@@ -61,13 +85,36 @@ public class PresetsCollection {
 	 * @return
 	 */
 	public ColorPreset getColorPresetByName(String name) {
-		ColorPresets pres = getColorPresets();
 		for (ColorPreset p : getColorPresets()) {
 			if (name.equals(p.name)) {
 				return p;
 			}
 		}
-		return null;
+		return getColorPresets().firstElement(); // default
+	}
+	
+	public void appendPresets(PresetsCollection newP) {
+		this.emitInformEvents = false;
+		for (FractParam p : newP.getFractalPresets()) {
+			this.addFractalPreset(p);
+		}
+		
+		for (ColorPreset c : newP.getColorPresets()) {
+			this.addColorPreset(c);
+		}
+		
+		informPresetChangeListeners();
+		this.emitInformEvents = true;
+	}
+	
+	public void replacePresets(PresetsCollection newP) {
+		if (newP.getFractalPresets().size() > 0) {
+			this.getFractalPresets().clear();
+		}
+		if (newP.getColorPresets().size() > 0) {
+			this.getColorPresets().clear();
+		}
+		this.appendPresets(newP);
 	}
 	
 	public JSONObject getPresetsJsonObject() {
@@ -139,7 +186,9 @@ public class PresetsCollection {
 			e.printStackTrace();
 			return false;
 		}
-		
+		if (emitInformEvents) {
+			informPresetChangeListeners();
+		}
 		return true;
 	}
 	
@@ -149,6 +198,19 @@ public class PresetsCollection {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	
+	public void addPresetChangeListener(PresetChangeListener p) {
+		if (!presetChangeListeners.contains(p)) {
+			presetChangeListeners.add(p);
+		}
+	}
+	
+	private void informPresetChangeListeners() {
+		for (PresetChangeListener p : presetChangeListeners) {
+			p.presetsChanged(this);
 		}
 	}
 }

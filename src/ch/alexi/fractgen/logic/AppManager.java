@@ -21,20 +21,18 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 
 import ch.alexi.fractgen.gui.AboutDialog;
+import ch.alexi.fractgen.gui.FileMenu;
 import ch.alexi.fractgen.gui.MainFrame;
-import ch.alexi.fractgen.gui.MainMenu;
+import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
-import ch.alexi.fractgen.models.FractParamPresets;
 import ch.alexi.fractgen.models.PresetsCollection;
 
 /**
@@ -51,8 +49,6 @@ public class AppManager implements ApplicationListener{
 	//private JSONObject presets;
 	private PresetsCollection presets;
 	private Properties userProperties;
-	
-	private FractParamPresets fractParamPresets;
 	
 	private AppManager() {
 		this.history = new Stack<FractCalcerResultData>();
@@ -112,11 +108,13 @@ public class AppManager implements ApplicationListener{
 	        	menuBar = new JMenuBar();
 	        	mainFrame.setJMenuBar(menuBar);
 	        }
-	        menuBar.add(new MainMenu());
+	        menuBar.add(new FileMenu());
+	        
+	        getPresets().addPresetChangeListener(mainFrame);
 	        
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
-	        mainFrame.setFractParam(this.getFractParamPresets().get(0));
+	        mainFrame.setFractParam(this.getPresets().getFractalPresets().get(0));
 	        
 			// Start the first calculation:
 			mainFrame.startCalculation();
@@ -156,12 +154,8 @@ public class AppManager implements ApplicationListener{
 	}
 	
 	
-	public FractParamPresets getFractParamPresets() {
-		return getPresets().getFractalPresets();
-	}
-	
 	public void addFractalPreset(FractParam p) {
-		this.getFractParamPresets().add(p);
+		this.getPresets().addFractalPreset(p);
 		this.saveUserPresets();
 	}
 	
@@ -171,8 +165,15 @@ public class AppManager implements ApplicationListener{
 	 * @param p
 	 */
 	public void removeUserFractalPreset(FractParam p) {
-		if (this.getFractParamPresets().size() > 1) {
-			this.getFractParamPresets().remove(p);
+		if (this.getPresets().getFractalPresets().size() > 1) {
+			this.getPresets().removeFractalPreset(p);
+			this.saveUserPresets();
+		}
+	}
+	
+	public void removeUserColorPreset(ColorPreset p) {
+		if (this.getPresets().getColorPresets().size() > 1) {
+			this.getPresets().removeColorPreset(p);
 			this.saveUserPresets();
 		}
 	}

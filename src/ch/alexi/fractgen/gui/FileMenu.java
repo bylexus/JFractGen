@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import ch.alexi.fractgen.logic.AppManager;
+import ch.alexi.fractgen.logic.ImportPresetsAction;
 
 /**
  * The main menu of the FractGen program.
@@ -18,18 +19,18 @@ import ch.alexi.fractgen.logic.AppManager;
  * (c) 2012 Alexander Schenkel
  */
 @SuppressWarnings("serial")
-public class MainMenu extends JMenu implements ActionListener{
+public class FileMenu extends JMenu implements ActionListener{
 	
 	private JMenuItem exportPresetsItem;
 	private JMenuItem importPresetsItem;
 	private JMenuItem quitItem;
 	
-	public MainMenu() {
+	public FileMenu() {
 		super("File");
 		
 		exportPresetsItem = new JMenuItem("Export Presets to JSON");
 		exportPresetsItem.addActionListener(this);
-		importPresetsItem = new JMenuItem("Import Presets to JSON");
+		importPresetsItem = new JMenuItem(new ImportPresetsAction());
 		importPresetsItem.addActionListener(this);
 		quitItem = new JMenuItem("Quit program");
 		quitItem.addActionListener(this);
@@ -52,6 +53,10 @@ public class MainMenu extends JMenu implements ActionListener{
 			exportDlg.pack();
 			exportDlg.setLocationRelativeTo(null);
 			exportDlg.setVisible(true);
+		}
+		
+		if (e.getSource() == importPresetsItem) {
+			
 		}
 	}
 }

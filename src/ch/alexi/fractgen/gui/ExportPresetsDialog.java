@@ -58,7 +58,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 		panel.add(scrollPane);
 		
 		fractPresetsList = new JList();
-		fractPresetsList.setListData(AppManager.getInstance().getFractParamPresets());
+		fractPresetsList.setListData(AppManager.getInstance().getPresets().getFractalPresets());
 		scrollPane.setViewportView(fractPresetsList);
 		
 		JLabel lblFractalPresets = new JLabel("Fractal Presets:");

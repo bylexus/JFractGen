@@ -21,6 +21,6 @@ public class FractParamPresetsCombo extends JComboBox {
 	
 	
 	public void reloadPresets() {
-			this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getFractParamPresets()));
+		this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getPresets().getFractalPresets()));
 	}
 }

@@ -3,10 +3,10 @@ package ch.alexi.fractgen.logic;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
+
 import javax.swing.SwingWorker;
 
 import ch.alexi.fractgen.models.ColorPreset;
-import ch.alexi.fractgen.models.ColorPresets;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractFunctionResult;

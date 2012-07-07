@@ -1,5 +1,6 @@
 package ch.alexi.fractgen.gui;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import ch.alexi.fractgen.logic.AppManager;
@@ -15,7 +16,12 @@ import ch.alexi.fractgen.logic.AppManager;
  */
 public class ColorPresetsCombo extends JComboBox {
 	public ColorPresetsCombo() {
-		super(AppManager.getInstance().getPresets().getColorPresets());
+		super();
+		this.reloadPresets();
 		this.setRenderer(new ColorPaletteListCellRenderer());
+	}
+	
+	public void reloadPresets() {
+		this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getPresets().getColorPresets()));
 	}
 }

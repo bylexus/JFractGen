@@ -53,19 +53,6 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 	}
 	
 	@Override
-	/**
-	 * Make sure the entry height is limited to 50px
-	 */
-	public Dimension getPreferredSize() {
-		Dimension d = super.getPreferredSize();
-		if (!this.hasFocus) {
-			d.height = 50;
-		}
-		
-		return d;
-	}
-	
-	@Override
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean hasFocus) {
 		if (isSelected) {
@@ -75,6 +62,7 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
+		
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
 		this.hasFocus = hasFocus;
@@ -83,8 +71,15 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 			//this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);
 			this.palette = ((ColorPreset)value).createDynamicSizeColorPalette(1);
 		}
+		
+		Dimension d = new Dimension();
+		if (list.getSelectedIndex() != index) {
+			d.height = 50;
+		} else {
+			d.height = 0;
+		}
+		this.setPreferredSize(d);
 		 
 		return this;
 	}
-
 }
