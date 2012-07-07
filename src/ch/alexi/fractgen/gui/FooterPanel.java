@@ -54,7 +54,7 @@ public class FooterPanel extends Box {
 			}
 		});
 		
-		JLabel label_1 = new JLabel("Version 0.1-alpha");
+		JLabel label_1 = new JLabel("Version 0.3-alpha");
 		label_1.setMaximumSize(new Dimension(100,20));
 		add(label_1);
 		
