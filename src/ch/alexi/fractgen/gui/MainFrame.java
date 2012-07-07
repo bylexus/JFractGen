@@ -2,6 +2,7 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,6 +15,8 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -51,10 +54,6 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import javax.swing.SwingConstants;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import javax.swing.Box;
 
 /**
  * The MainFrame is the GUI Workhorse here: It represents the main window with all its 
@@ -517,7 +516,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		p.maxIterations = Integer.parseInt(maxIters.getText());
 		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
 		
-		p.colorPreset = (ColorPreset)colorPresetsCombo.getSelectedItem();
+		p.colorPreset = ((ColorPreset)colorPresetsCombo.getSelectedItem()).toString();
 		p.colorPresetRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
 		
 		p.smoothColors = chckbxSmoothColors.isSelected();
@@ -555,7 +554,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 		maxIters.setText(Integer.toString(p.maxIterations));
 		nrOfWorkers.setText(Integer.toString(p.nrOfWorkers));
 		
-		colorPresetsCombo.setSelectedItem(p.colorPreset);
+		colorPresetsCombo.setSelectedItem(AppManager.getInstance().getPresets().getColorPresetByName(p.colorPreset));
 		
 		chckbxSmoothColors.setSelected(p.smoothColors);
 		
@@ -733,7 +732,6 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			btnBack.setEnabled(true);
 		} catch (InterruptedException e) {
 			// Thrown when the user hits the cancel button
-			//e.printStackTrace();
 			this.popHistory(false);  // When canceled, restore the old state.
 		} catch (ExecutionException e) {
 			e.printStackTrace();
@@ -768,7 +766,7 @@ public class MainFrame extends JFrame implements IFractCalcObserver, ActionListe
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
 				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPresetRepeat);
-				this.actualFractCalcerResult.fractParam.colorPreset = preset;
+				this.actualFractCalcerResult.fractParam.colorPreset = preset.toString();
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
 				this.updateOutput(this.actualFractCalcerResult);

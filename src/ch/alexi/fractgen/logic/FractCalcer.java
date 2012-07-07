@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.List;
 import javax.swing.SwingWorker;
+
+import ch.alexi.fractgen.models.ColorPreset;
+import ch.alexi.fractgen.models.ColorPresets;
 import ch.alexi.fractgen.models.FractCalcerProgressData;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractFunctionResult;
@@ -135,7 +138,8 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		System.gc();
 		
 		// Create color palette
-		this.palette = fractParam.colorPreset.createDynamicSizeColorPalette(fractParam.colorPresetRepeat);
+		ColorPreset cpreset = AppManager.getInstance().getPresets().getColorPresetByName(fractParam.colorPreset);
+		this.palette = cpreset.createDynamicSizeColorPalette(fractParam.colorPresetRepeat);
 		initFractParams(this.fractParam);
 		
 		BufferedImage img = new BufferedImage(fractParam.picWidth, fractParam.picHeight, BufferedImage.TYPE_INT_RGB);

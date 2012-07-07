@@ -1,33 +1,27 @@
 package ch.alexi.fractgen.gui;
 
-import java.awt.Frame;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.JButton;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.models.ColorPreset;
-import ch.alexi.fractgen.models.ColorPresets;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.PresetsCollection;
-
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 @SuppressWarnings("serial")
 /**
@@ -75,7 +69,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 		
 		colorPresetsList = new JList();
 		
-		colorPresetsList.setListData(ColorPresets.getColorPresets());
+		colorPresetsList.setListData(AppManager.getInstance().getPresets().getColorPresets());
 		scrollPane_1.setViewportView(colorPresetsList);
 		
 		JLabel lblColorPresets = new JLabel("Color Presets:");
@@ -131,16 +125,10 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 				}
 			}
 			
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-				bw.write(pc.getPresetsJsonString());
-				bw.close();
-				JOptionPane.showMessageDialog(this.getOwner(), "Presets saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
-				this.close();
-				AppManager.getInstance().setUserProperty("lastPresetExportPath", f.getAbsolutePath());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			pc.saveToJsonFile(f);
+			JOptionPane.showMessageDialog(this.getOwner(), "Presets saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
+			this.close();
+			AppManager.getInstance().setUserProperty("lastPresetExportPath", f.getParent());
 		}
 	}
 	

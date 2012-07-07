@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,18 +11,15 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Stack;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +35,7 @@ import ch.alexi.fractgen.gui.MainMenu;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.FractParamPresets;
+import ch.alexi.fractgen.models.PresetsCollection;
 
 /**
  * The AppManager offers some application-wide functions and data. Singleton. 
@@ -51,7 +48,8 @@ public class AppManager implements ApplicationListener{
 	private static AppManager inst = new AppManager();
 	private MainFrame mainFrame;
 	private Stack<FractCalcerResultData> history;
-	private JSONObject presets;
+	//private JSONObject presets;
+	private PresetsCollection presets;
 	private Properties userProperties;
 	
 	private FractParamPresets fractParamPresets;
@@ -137,47 +135,19 @@ public class AppManager implements ApplicationListener{
 	 * 
 	 * @return All presets from the presets.json configuration file.
 	 */
-	public JSONObject getPresetsJSONObject() {
+	public PresetsCollection getPresets() {
 		if (this.presets == null) {
+			presets = new PresetsCollection();
+			
 			File presetFile = new File(getUserSettingsDir() + File.separator + "presets.json");
 			if (presetFile.exists()) {
-				
-				StringBuffer s = new StringBuffer();
-				String tmp;
-				BufferedReader reader;
-				try {
-					reader = new BufferedReader(new InputStreamReader(new FileInputStream(presetFile)));
-					while ((tmp = reader.readLine()) != null) {
-						s.append(tmp);
-					}
-					presets = new JSONObject(s.toString());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				presets.loadFromJsonFile(presetFile);
 			} else {
 				// Read the system-delivered preset file, if the user
 				// preset is not present:
 				InputStream is = getClass().getResourceAsStream("/presets.json");
 				if (is != null) {
-					StringBuffer s = new StringBuffer();
-					String tmp;
-					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-					try {
-						while ((tmp = reader.readLine()) != null) {
-							s.append(tmp);
-						}
-						presets = new JSONObject(s.toString());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					presets.loadFromJsonStream(is);
 				}
 			}
 		}
@@ -187,26 +157,7 @@ public class AppManager implements ApplicationListener{
 	
 	
 	public FractParamPresets getFractParamPresets() {
-		if (this.fractParamPresets == null) {
-			JSONObject jsonPresets = getPresetsJSONObject();
-			FractParamPresets p = new FractParamPresets();
-			
-			if (jsonPresets != null && jsonPresets.has("fractalPresets")) {
-				try {
-					JSONArray entries = jsonPresets.getJSONArray("fractalPresets");
-					for (int i = 0; i < entries.length(); i++) {
-						JSONObject entry = entries.getJSONObject(i);
-						p.add(FractParam.fromJSONObject(entry));
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			this.fractParamPresets = p;
-		}
-		
-		return this.fractParamPresets;
+		return getPresets().getFractalPresets();
 	}
 	
 	public void addFractalPreset(FractParam p) {
@@ -214,9 +165,16 @@ public class AppManager implements ApplicationListener{
 		this.saveUserPresets();
 	}
 	
+	/**
+	 * Removes the fractal preset given from the list of available ones,
+	 * but only if it is not the last one.
+	 * @param p
+	 */
 	public void removeUserFractalPreset(FractParam p) {
-		this.getFractParamPresets().remove(p);
-		this.saveUserPresets();
+		if (this.getFractParamPresets().size() > 1) {
+			this.getFractParamPresets().remove(p);
+			this.saveUserPresets();
+		}
 	}
 	
 	/**
@@ -302,7 +260,9 @@ public class AppManager implements ApplicationListener{
 		BufferedWriter w;
 		try {
 			w = new BufferedWriter(new FileWriter(f));
-			w.write(getPresetsJSONObject().put("fractalPresets",this.getFractParamPresets().getJSONArray()).toString(4));
+			
+			w.write(getPresets().getPresetsJsonObject().toString(4));
+			//w.write(getPresetsJSONObject().put("fractalPresets",this.getFractParamPresets().getJSONArray()).toString(4));
 			w.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

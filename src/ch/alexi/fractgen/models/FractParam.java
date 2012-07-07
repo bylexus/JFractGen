@@ -22,7 +22,6 @@ public class FractParam {
 	public double centerCY = 0.0;
 	public double diameterCX = 3.0769;
 
-
 	public IFractFunction iterFunc = FractFunctions.mandelbrot;
 	
 	public double juliaKr = -0.6;
@@ -42,7 +41,8 @@ public class FractParam {
 	public double max_cy = 0.0;
 	public double punkt_abstand = 0.0;
 
-	public ColorPreset colorPreset = ColorPresets.getColorPresets().firstElement();
+	//public ColorPreset colorPreset = ColorPresets.getColorPresets().firstElement();
+	public String colorPreset = "Patchwork";
 	public int colorPresetRepeat = 1;
 
 	/**
@@ -63,7 +63,7 @@ public class FractParam {
 
 		this.punkt_abstand = (this.max_cx - this.min_cx) / this.picWidth;
 	}
-
+	
 	@Override
 	public String toString() {
 		return new String(name);
@@ -83,7 +83,7 @@ public class FractParam {
 			o.put("picWidth", this.picWidth);
 			o.put("picHeight", this.picHeight);
 			o.put("nrOfWorkers", this.nrOfWorkers);
-			o.put("colorPreset",this.colorPreset.name);
+			o.put("colorPreset",this.colorPreset);
 			o.put("colorPresetRepeat",MathLib.maxInt(1, this.colorPresetRepeat));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -96,40 +96,47 @@ public class FractParam {
 	public static FractParam fromJSONObject(JSONObject o) {
 		FractParam p = new FractParam();
 		try {
-			p.name = o.getString("name");
+			if (o.has("name"))
+				p.name = o.getString("name");
 
-			p.maxIterations = o.getInt("maxIterations");
-			p.centerCX = o.getDouble("centerCX");
-			p.centerCY = o.getDouble("centerCY");
-			p.diameterCX = o.getDouble("diameterCX");
-			IFractFunction f = FractFunctions.getFractFunction(o.getString("iterFunc"));
-			if (f != null) {
-				p.iterFunc = f;
-			} else {
-				p.iterFunc = FractFunctions.mandelbrot;
-			}
+			if (o.has("maxIterations"))
+				p.maxIterations = o.getInt("maxIterations");
+			if (o.has("centerCX"))
+				p.centerCX = o.getDouble("centerCX");
+			if (o.has("centerCY"))
+				p.centerCY = o.getDouble("centerCY");
+			if (o.has("diameterCX"))
+				p.diameterCX = o.getDouble("diameterCX");
 			
-			if (o.has("juliaKr")) {
-				p.juliaKr = o.getDouble("juliaKr");
-			}
-			if (o.has("juliaKi")) {
-				p.juliaKi = o.getDouble("juliaKi");
-			}
-			
-			p.picWidth = o.getInt("picWidth");
-			p.picHeight = o.getInt("picHeight");
-			p.nrOfWorkers = o.getInt("nrOfWorkers");
-			
-			if (o.has("colorPreset")) {
-				ColorPreset cp = ColorPresets.getColorPresetByName(o.getString("colorPreset"));
-				if (cp != null) {
-					p.colorPreset = cp;
+			if (o.has("iterFunc")) {
+				Object obj = o.get("iterFunc");
+				if (! (obj instanceof String)) {
+					System.out.println(obj);
+				}
+				IFractFunction f = FractFunctions.getFractFunction(o.getString("iterFunc"));
+				if (f != null) {
+					p.iterFunc = f;
+				} else {
+					p.iterFunc = FractFunctions.mandelbrot;
 				}
 			}
 			
-			if (o.has("colorPresetRepeat")) {
+			if (o.has("juliaKr"))
+				p.juliaKr = o.getDouble("juliaKr");
+			if (o.has("juliaKi"))
+				p.juliaKi = o.getDouble("juliaKi");
+			
+			if (o.has("picWidth")) 
+				p.picWidth = o.getInt("picWidth");
+			if (o.has("picHeight"))
+				p.picHeight = o.getInt("picHeight");
+			if (o.has("nrOfWorkers"))
+				p.nrOfWorkers = o.getInt("nrOfWorkers");
+			
+			if (o.has("colorPreset"))
+				p.colorPreset = o.getString("colorPreset");
+			if (o.has("colorPresetRepeat"))
 				p.colorPresetRepeat = MathLib.maxInt(1, o.getInt("colorPresetRepeat"));
-			}
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

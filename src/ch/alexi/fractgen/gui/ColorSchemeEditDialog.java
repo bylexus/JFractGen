@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
+
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,8 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.models.ColorPreset;
-import ch.alexi.fractgen.models.ColorPresets;
 
 @SuppressWarnings("serial")
 public class ColorSchemeEditDialog extends JDialog implements ActionListener,ListSelectionListener {
@@ -71,7 +73,7 @@ public class ColorSchemeEditDialog extends JDialog implements ActionListener,Lis
 		getContentPane().add(listPanel, BorderLayout.WEST);
 		listPanel.setLayout(new BorderLayout(0, 0));
 		
-		schemeList = new JList(new SchemeListModel(ColorPresets.getColorPresets()));
+		schemeList = new JList(new SchemeListModel(AppManager.getInstance().getPresets().getColorPresets()));
 		schemeList.addListSelectionListener(this);
 		listPanel.add(new JScrollPane(schemeList), BorderLayout.CENTER);
 		
@@ -113,7 +115,7 @@ public class ColorSchemeEditDialog extends JDialog implements ActionListener,Lis
 		pack();
 		setVisible(true);
 		setLocationRelativeTo(getParent());
-		((SchemeListModel)schemeList.getModel()).updateList(ColorPresets.getColorPresets());
+		((SchemeListModel)schemeList.getModel()).updateList(AppManager.getInstance().getPresets().getColorPresets());
 	}
 
 	@Override
