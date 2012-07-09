@@ -30,7 +30,7 @@ public class FractParam {
 	public int picWidth = 800;
 	public int picHeight = 600;
 
-	public int nrOfWorkers = 2;
+	//public int nrOfWorkers = 2;
 	
 	public boolean smoothColors = true;
 
@@ -82,7 +82,7 @@ public class FractParam {
 			o.put("juliaKi", this.juliaKi);
 			o.put("picWidth", this.picWidth);
 			o.put("picHeight", this.picHeight);
-			o.put("nrOfWorkers", this.nrOfWorkers);
+			//o.put("nrOfWorkers", this.nrOfWorkers);
 			o.put("colorPreset",this.colorPreset);
 			o.put("colorPresetRepeat",MathLib.maxInt(1, this.colorPresetRepeat));
 		} catch (JSONException e) {
@@ -130,8 +130,11 @@ public class FractParam {
 				p.picWidth = o.getInt("picWidth");
 			if (o.has("picHeight"))
 				p.picHeight = o.getInt("picHeight");
+			/*
+			
 			if (o.has("nrOfWorkers"))
 				p.nrOfWorkers = o.getInt("nrOfWorkers");
+			*/
 			
 			if (o.has("colorPreset"))
 				p.colorPreset = o.getString("colorPreset");

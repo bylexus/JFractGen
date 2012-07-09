@@ -40,6 +40,7 @@ Planned / future features
 - graphic bulk export/conversion/downsampling
 - preferences:
   - nr of workers / CPU dependant
+  - max. Nr of history entries
 
 
 

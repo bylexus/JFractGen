@@ -6,13 +6,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Properties;
 import java.util.Stack;
 
 import javax.swing.Icon;
@@ -34,6 +31,7 @@ import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerResultData;
 import ch.alexi.fractgen.models.FractParam;
 import ch.alexi.fractgen.models.PresetsCollection;
+import ch.alexi.fractgen.models.UserPreferences;
 
 /**
  * The AppManager offers some application-wide functions and data. Singleton. 
@@ -46,13 +44,12 @@ public class AppManager implements ApplicationListener{
 	private static AppManager inst = new AppManager();
 	private MainFrame mainFrame;
 	private Stack<FractCalcerResultData> history;
-	//private JSONObject presets;
 	private PresetsCollection presets;
-	private Properties userProperties;
+	private UserPreferences prefs;
 	
 	private AppManager() {
 		this.history = new Stack<FractCalcerResultData>();
-		this.userProperties = new Properties();
+		this.prefs = new UserPreferences();
 		this.loadUserSettings();
 	}
 	
@@ -184,6 +181,9 @@ public class AppManager implements ApplicationListener{
 	 */
 	public void addHistory(FractCalcerResultData data) {
 		history.push(data);
+		if (history.size() > getUserPrefs().getNrOfHistoryEntries()) {
+			history.removeElementAt(0);
+		}
 	}
 	
 	/**
@@ -206,24 +206,14 @@ public class AppManager implements ApplicationListener{
 		return this.history.size();
 	}
 	
-	public String getUserProperty(String key) {
-		return this.userProperties.getProperty(key);
-	}
-	
-	public void setUserProperty(String key, String value) {
-		this.userProperties.setProperty(key, value);
+	public UserPreferences getUserPrefs() {
+		return this.prefs;
 	}
 	
 	protected void loadUserSettings() {
 		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		if (userSettingsFile.exists()) {
-			try {
-				this.userProperties.load(new FileInputStream(userSettingsFile));
-				System.out.println("User loaded from: "+userSettingsFile);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			getUserPrefs().loadPrefsFromFile(userSettingsFile);
 		}
 		
 	}
@@ -239,19 +229,14 @@ public class AppManager implements ApplicationListener{
 	public void shutdown() {
 		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		System.out.println("User settings go to: "+userSettingsFile);
-		try {
-			userSettingsFile.mkdirs();
-			userSettingsFile.delete();
-			
-			// save user preferences:
-			this.userProperties.store(new FileOutputStream(userSettingsFile), "User preferences for JFractGen");
-			
-			// save user presets:
-			this.saveUserPresets();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		userSettingsFile.mkdirs();
+		userSettingsFile.delete();
+		
+		// save user preferences:
+		this.getUserPrefs().savePrefsToFile(userSettingsFile);
+		
+		// save user presets:
+		this.saveUserPresets();
 		System.exit(0);
 		
 	}

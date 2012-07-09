@@ -19,7 +19,7 @@ public class ImportPresetsAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Show file open dialog to select a JSON file
-		String lastSavePath = AppManager.getInstance().getUserProperty("lastPresetExportPath");
+		String lastSavePath = AppManager.getInstance().getUserPrefs().getLastPresetExportPath();
 		
 		JFileChooser dialog = new JFileChooser(lastSavePath);
 		dialog.setFileFilter(new FileNameExtensionFilter("JSON File","json"));
@@ -40,7 +40,7 @@ public class ImportPresetsAction extends AbstractAction {
 					AppManager.getInstance().getPresets().replacePresets(pc);
 				}
 				
-				AppManager.getInstance().setUserProperty("lastPresetExportPath", f.getParent());
+				AppManager.getInstance().getUserPrefs().setLastPresetExportPath(f.getParent());
 			}
 		}
 	}

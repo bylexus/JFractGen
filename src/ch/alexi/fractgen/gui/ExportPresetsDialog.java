@@ -102,7 +102,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 	}
 	
 	private void showSaveDialogAndSave() {
-		String lastSavePath = AppManager.getInstance().getUserProperty("lastPresetExportPath");
+		String lastSavePath = AppManager.getInstance().getUserPrefs().getLastPresetExportPath();
 		
 		JFileChooser dialog = new JFileChooser(lastSavePath);
 		dialog.setFileFilter(new FileNameExtensionFilter("JSON File","json"));
@@ -128,7 +128,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 			pc.saveToJsonFile(f);
 			JOptionPane.showMessageDialog(this.getOwner(), "Presets saved: "+f.getAbsolutePath(),"Info",JOptionPane.INFORMATION_MESSAGE);
 			this.close();
-			AppManager.getInstance().setUserProperty("lastPresetExportPath", f.getParent());
+			AppManager.getInstance().getUserPrefs().setLastPresetExportPath(f.getParent());
 		}
 	}
 	

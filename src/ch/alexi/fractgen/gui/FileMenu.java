@@ -23,6 +23,7 @@ public class FileMenu extends JMenu implements ActionListener{
 	
 	private JMenuItem exportPresetsItem;
 	private JMenuItem importPresetsItem;
+	private JMenuItem preferencesItem;
 	private JMenuItem quitItem;
 	
 	public FileMenu() {
@@ -31,12 +32,15 @@ public class FileMenu extends JMenu implements ActionListener{
 		exportPresetsItem = new JMenuItem("Export Presets to JSON");
 		exportPresetsItem.addActionListener(this);
 		importPresetsItem = new JMenuItem(new ImportPresetsAction());
-		importPresetsItem.addActionListener(this);
+		preferencesItem = new JMenuItem("Preferences ...");
+		preferencesItem.addActionListener(this);
 		quitItem = new JMenuItem("Quit program");
 		quitItem.addActionListener(this);
 		
 		this.add(exportPresetsItem);
 		this.add(importPresetsItem);
+		this.add(new JSeparator());
+		this.add(preferencesItem);
 		this.add(new JSeparator());
 		this.add(quitItem);
 		
@@ -55,8 +59,11 @@ public class FileMenu extends JMenu implements ActionListener{
 			exportDlg.setVisible(true);
 		}
 		
-		if (e.getSource() == importPresetsItem) {
-			
+		if (e.getSource() == preferencesItem) {
+			PreferencesDialog prefDlg = new PreferencesDialog();
+			prefDlg.pack();
+			prefDlg.setLocationRelativeTo(null);
+			prefDlg.setVisible(true);
 		}
 	}
 }

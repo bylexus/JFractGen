@@ -422,13 +422,13 @@ public class MainFrame extends JFrame
 	private void saveToPng() {
 		final BufferedImage img = (BufferedImage)outPanel.getFractalImage();
 		if (img != null) {
-			String lastPath = AppManager.getInstance().getUserProperty("lastSavePath");
+			String lastPath = AppManager.getInstance().getUserPrefs().getLastSavePath();
 			JFileChooser dialog = new JFileChooser(lastPath);
 			dialog.setFileFilter(new FileNameExtensionFilter("PNG Image","png"));
 			int ret = dialog.showSaveDialog(MainFrame.this);
 			if (ret == JFileChooser.APPROVE_OPTION) {
 				final File f = dialog.getSelectedFile();
-				AppManager.getInstance().setUserProperty("lastSavePath", f.getParent());
+				AppManager.getInstance().getUserPrefs().setLastSavePath(f.getParent());
 				final JDialog d = new JDialog(this);
 				d.setModal(true);
 				d.getContentPane().setLayout(new BorderLayout());
@@ -522,7 +522,6 @@ public class MainFrame extends JFrame
 		p.juliaKr = Double.parseDouble(juliaKrField.getText());
 		p.juliaKi = Double.parseDouble(juliaKiField.getText());
 		p.maxIterations = Integer.parseInt(maxIters.getText());
-		p.nrOfWorkers = Integer.parseInt(nrOfWorkers.getText());
 		
 		p.colorPreset = ((ColorPreset)colorPresetsCombo.getSelectedItem()).toString();
 		p.colorPresetRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
@@ -560,7 +559,6 @@ public class MainFrame extends JFrame
 		}
 		
 		maxIters.setText(Integer.toString(p.maxIterations));
-		nrOfWorkers.setText(Integer.toString(p.nrOfWorkers));
 		
 		colorPresetsCombo.setSelectedItem(AppManager.getInstance().getPresets().getColorPresetByName(p.colorPreset));
 		
@@ -688,7 +686,7 @@ public class MainFrame extends JFrame
 		
 		final FractCalcer sw = new FractCalcer(p,this);
 		
-		progressDialog = new ProgressDialog(p.nrOfWorkers, this);
+		progressDialog = new ProgressDialog(AppManager.getInstance().getUserPrefs().getNrOfWorkers(), this);
 		progressDialog.addActionListener(new ActionListener() {
 			
 			@Override

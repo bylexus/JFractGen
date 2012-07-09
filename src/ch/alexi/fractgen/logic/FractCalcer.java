@@ -147,10 +147,11 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		FractCalcerResultData result = new FractCalcerResultData(this.fractParam, img,this.palette);
 		
 		// Build a vertical image stripe for each worker
-		Thread[] workers = new Thread[fractParam.nrOfWorkers];
+		int nrOfWorkers = AppManager.getInstance().getUserPrefs().getNrOfWorkers();
+		Thread[] workers = new Thread[nrOfWorkers];
 		for (int i = 0; i < workers.length; i++) {
-			int minX = fractParam.picWidth / fractParam.nrOfWorkers * i;
-			int maxX = fractParam.picWidth / fractParam.nrOfWorkers * (i+1) - 1;
+			int minX = fractParam.picWidth / nrOfWorkers * i;
+			int maxX = fractParam.picWidth / nrOfWorkers * (i+1) - 1;
 			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result.iterValues,minX, 0, maxX, fractParam.picHeight-1);
 			if (!isCancelled()) {
 				workers[i].start();

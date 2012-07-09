@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.RGB;
 
@@ -24,7 +26,6 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 	private String  colorName = "";
 	private RGB[]   palette = null;
 	private boolean isSelected = false;
-	private boolean hasFocus = false;
 	
 	public ColorPaletteListCellRenderer() {
 		super();
@@ -65,10 +66,8 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
-		this.hasFocus = hasFocus;
 		if (value instanceof ColorPreset) {
 			// Get color palette with 256 entries:
-			//this.palette = ((ColorPreset)value).createFixedSizeColorPalette(256);
 			this.palette = ((ColorPreset)value).createDynamicSizeColorPalette(1);
 		}
 		
