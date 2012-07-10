@@ -74,7 +74,6 @@ public class MainFrame extends JFrame
 	private JTextField centerCY;
 	private JTextField diameterCX;
 	private JTextField maxIters;
-	private JTextField nrOfWorkers;
 	private FractOutPanel outPanel;
 	private JComboBox functionCB;
 	private JButton btnStartCalculation;
@@ -106,6 +105,8 @@ public class MainFrame extends JFrame
 	
 	private ColorSchemeEditDialog colorSchemeEditDialog = null;
 	private JButton btnDelColorPreset;
+	private JPanel panel_4;
+	private JCheckBox chckbxFixedsizePalette;
 	
 	public MainFrame(String title) {
 		super(title);
@@ -195,8 +196,6 @@ public class MainFrame extends JFrame
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
 		JLabel lblNewLabel_2 = new JLabel("Presets");
@@ -234,7 +233,6 @@ public class MainFrame extends JFrame
 		panel_3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEADING);
-		panel_3.setAlignmentX(Component.LEFT_ALIGNMENT);
 		panel_2.add(panel_3);
 		
 		JLabel lblColorPresetRepeat = new JLabel("Color preset repeat:");
@@ -246,15 +244,25 @@ public class MainFrame extends JFrame
 		
 		paletteRepeat.addFocusListener(this);
 		
+		panel_4 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
+		flowLayout_1.setVgap(0);
+		flowLayout_1.setAlignment(FlowLayout.LEADING);
+		panel_2.add(panel_4);
+		
 		chckbxSmoothColors = new JCheckBox("smooth colors");
-		panel_2.add(chckbxSmoothColors);
+		panel_4.add(chckbxSmoothColors);
 		chckbxSmoothColors.setSelected(true);
+		
+		chckbxFixedsizePalette = new JCheckBox("rotating palette");
+		chckbxFixedsizePalette.setEnabled(false);
+		panel_4.add(chckbxFixedsizePalette);
+		chckbxSmoothColors.addActionListener(this);
 		
 		btnDelColorPreset = new JButton(AppManager.getInstance().getIcon("delete"));
 		btnDelColorPreset.setToolTipText("Delete the current color preset");
 		btnDelColorPreset.addActionListener(this);
 		panel.add(btnDelColorPreset, BorderLayout.EAST);
-		chckbxSmoothColors.addActionListener(this);
 		colorPresetsCombo.addActionListener(this);
 		
 		JSeparator separator = new JSeparator();
@@ -333,18 +341,11 @@ public class MainFrame extends JFrame
 		settingsPanel.add(juliaKiField, "4, 31, fill, default");
 		juliaKiField.setColumns(10);
 		
-		JLabel lblOfWorkers = new JLabel("# of Workers:");
-		settingsPanel.add(lblOfWorkers, "2, 33, right, default");
-		
-		nrOfWorkers = new JTextField();
-		settingsPanel.add(nrOfWorkers, "4, 33, fill, default");
-		nrOfWorkers.setColumns(10);
-		
 		JSeparator separator_2 = new JSeparator();
-		settingsPanel.add(separator_2, "2, 35, 3, 1");
+		settingsPanel.add(separator_2, "2, 33, 3, 1");
 		
 		btnSaveAsFractalPreset = new JButton("Save as Fractal Preset",AppManager.getInstance().getIcon("disk"));
-		settingsPanel.add(btnSaveAsFractalPreset, "2, 37, 3, 1");
+		settingsPanel.add(btnSaveAsFractalPreset, "2, 35, 3, 1");
 		btnSaveAsFractalPreset.addActionListener(this);
 		
 		

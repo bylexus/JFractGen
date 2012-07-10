@@ -2,7 +2,10 @@ package ch.alexi.fractgen.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -14,6 +17,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import ch.alexi.fractgen.logic.AppManager;
 import ch.alexi.fractgen.logic.MathLib;
 
 /**
@@ -151,6 +155,23 @@ public class FractOutPanel extends JScrollPane {
 	public void drawImage(Image i) {
 		if (i != null) {
 			this.fractImage = i;
+			
+			// add copyright information
+			if (!AppManager.getInstance().getUserPrefs().copyrightDisabled()) {
+				Graphics2D g = (Graphics2D)i.getGraphics();
+				g.setFont(new Font("Helvetica", Font.ITALIC, Math.round(i.getHeight(this)*2.0f/100.0f)));
+				FontMetrics fm = g.getFontMetrics();
+				String text = "© 2012 JFractGen Alexander Schenkel";
+				int offsetX = i.getWidth(this)-fm.stringWidth(text)-10;
+				int offsetY = i.getHeight(this)-fm.getHeight();
+				
+				g.setColor(new Color(0x66ffffff, true));
+				g.drawString(text, offsetX, offsetY);
+				
+				g.setColor(new Color(0x66000000, true));
+				g.drawString(text, offsetX+1, offsetY+1);
+			}
+			
 			drawPanel.setPreferredSize(new Dimension(i.getWidth(this),i.getHeight(this)));
 			layerPane.setPreferredSize(new Dimension(i.getWidth(this),i.getHeight(this)));
 			drawPanel.setBounds(0, 0, fractImage.getWidth(this), fractImage.getHeight(this));

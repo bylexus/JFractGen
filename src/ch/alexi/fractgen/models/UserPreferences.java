@@ -110,6 +110,21 @@ public class UserPreferences {
 		prefs.setProperty("lastSavePath", path);
 	}
 	
+	/**
+	 * a read-only, not well-known property. If set, no copyright info is
+	 * drawn in images.
+	 * @return
+	 */
+	public boolean copyrightDisabled() {
+		if (prefs.containsKey("disableCopyright")) {
+			String value = prefs.getProperty("disableCopyright");
+			if (value.equals("true") || value.equals("1")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	
 }
