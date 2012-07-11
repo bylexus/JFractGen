@@ -581,7 +581,7 @@ public class MainFrame extends JFrame
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
 			p.diameterCX = p.diameterCX * 0.5;
-			p.maxIterations = new Double(p.maxIterations * 1.2).intValue(); // Nr of iterations is +20% per zoom doubling
+			p.maxIterations = new Double(p.maxIterations * 1.3).intValue(); // Nr of iterations is +30% per zoom doubling
 			
 			p.centerCX = p.min_cx + centerX * p.punkt_abstand;
 			p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
@@ -617,8 +617,8 @@ public class MainFrame extends JFrame
 			// The scale factor: selected area is scaleFactor times smaller than the original width
 			double scaleFactor = (double)p.picWidth / width;
 			
-			// Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.2 times increased by every doubling of the zoom level:
-			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.2, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
+			// Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.3 times increased by every doubling of the zoom level:
+			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
 			
 			// New center in fractal coordinates:
 			p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
@@ -639,7 +639,7 @@ public class MainFrame extends JFrame
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
 			p.diameterCX = p.diameterCX * 2;
-			p.maxIterations = new Double(p.maxIterations / 1.2).intValue(); // Nr of iterations is +20% per zoom doubling
+			p.maxIterations = new Double(p.maxIterations / 1.3).intValue(); // Nr of iterations is +20% per zoom doubling
 			
 			this.setFractParam(p);
 			this.startCalculation();

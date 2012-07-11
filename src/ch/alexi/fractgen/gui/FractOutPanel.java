@@ -164,12 +164,12 @@ public class FractOutPanel extends JScrollPane {
 				String text = "© 2012 JFractGen Alexander Schenkel";
 				int offsetX = i.getWidth(this)-fm.stringWidth(text)-10;
 				int offsetY = i.getHeight(this)-fm.getHeight();
+
+				g.setColor(new Color(0x66000000, true));
+				g.drawString(text, offsetX+1, offsetY+1);
 				
 				g.setColor(new Color(0x66ffffff, true));
 				g.drawString(text, offsetX, offsetY);
-				
-				g.setColor(new Color(0x66000000, true));
-				g.drawString(text, offsetX+1, offsetY+1);
 			}
 			
 			drawPanel.setPreferredSize(new Dimension(i.getWidth(this),i.getHeight(this)));
