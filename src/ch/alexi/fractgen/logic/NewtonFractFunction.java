@@ -25,77 +25,39 @@ public class NewtonFractFunction implements IFractFunction {
 	public String toString() {
 		return "Newton";
 	}
+	
+	private Complex f(Complex z) {
+		//return z.times(z).times(z).minus(1.0d);
+		return z.times(z).times(z).minus(z.times(z)).plus(2.0d);
+	}
 
 	@Override
 	public FractFunctionResult fractIterFunc(double cx, double cy, double max_betrag_quadrat,
 			double max_iter, double julia_r, double julia_i) {
-		double threshold = 0.001;
+		double threshold = 0.00001;
+		Complex h = new Complex(0.000006, 0.000006);
 		double result = 1;
 		double iter = 0;
-		double x = cx,xt;
-		double y = cy,yt;
 
 		/**
 		 * Z(n+1)  = Z(n) - (p(z(n) / p'(z(n)))
-		 * (xt,yt) = (x + yi) - ((x+yi)^3-1) / (3*(x+yi)^2)
-		 *         = x + yi - (x^3 + 3*x^2*yi + 3*x*yi^2 + yi^3 -1) / (3* (x^2 + 2*x*yi+yi^2))
-		 *         = x + yi - (x^3 + 3*x^2*yi - 3*x*y^2 - y^3i -1) / (3* (x^2 + 2*x*yi -y))
 		 */
-		/**
-		 * A python example:
-		 * http://code.activestate.com/recipes/577166-newton-fractals/
-		 * # Newton fractals
-# FB - 201003291
-from PIL import Image
-imgx = 512
-imgy = 512
-image = Image.new("RGB", (imgx, imgy))
-
-# drawing area
-xa = -1.0
-xb = 1.0
-ya = -1.0
-yb = 1.0
-
-maxIt = 20 # max iterations allowed
-h = 1e-6 # step size for numerical derivative
-eps = 1e-3 # max error allowed
-
-# put any complex function here to generate a fractal for it!
-def f(z):
-    return z * z * z - 1.0
-
-# draw the fractal
-for y in range(imgy):
-    zy = y * (yb - ya) / (imgy - 1) + ya
-    for x in range(imgx):
-        zx = x * (xb - xa) / (imgx - 1) + xa
-        z = complex(zx, zy)
-        for i in range(maxIt):
-            # complex numerical derivative
-            dz = (f(z + complex(h, h)) - f(z)) / complex(h, h)
-            z0 = z - f(z) / dz # Newton iteration
-            if abs(z0 - z) < eps: # stop when close enough to any root
-                break
-            z = z0
-        image.putpixel((x, y), (i % 4 * 64, i % 8 * 32, i % 16 * 16))
-
-image.save("newtonFr.png", "PNG")
-
-		Complex nrs i java:
-		http://xahlee.info/java-a-day/ex_complex.html
-		 */
-		while (result > threshold && iter < max_iter) {
+		Complex dz;
+		Complex z, z0;
+		
+		z = new Complex(cx, cy);
+		
+		
+		while (result > threshold*threshold && iter < max_iter) {
+			dz = (f(z.plus(h)).minus(f(z))).dividedBy(h);
+			z0 = z.minus(f(z).dividedBy(dz));
 			
-			
-			
-			xt = x * x - y*y + julia_r;
-			yt = 2*x*y + julia_i;
-			x = xt;
-			y = yt;
+			dz = z0.minus(z);
+			result = dz.re*dz.re + dz.im*dz.im; // abs(z) = sqrt(re^2+im^2) --> we only calc re^2+im^2
+			z = z0;
 			iter += 1;
-			result = x*x + y*y;
 		}
+		z = dz = z0 = null;
 		FractFunctionResult r = new FractFunctionResult();
 		r.iterValue = iter;
 		r.bailoutValue = result;
