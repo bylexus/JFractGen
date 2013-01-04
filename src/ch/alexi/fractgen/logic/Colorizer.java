@@ -17,7 +17,7 @@ import ch.alexi.fractgen.models.RGB;
  * (c) 2012 Alexander Schenkel
  */
 public class Colorizer {
-	public static RGB RGB_BLACK = new RGB(0,0,0);
+	public static RGB RGB_BLACK = new RGB(0,0,0,255);
 
 	/**
 	 * Set the colors for each pixel in the fractal image, by using 

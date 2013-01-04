@@ -100,8 +100,8 @@ public class ColorPreset implements Cloneable {
 			List<RGB> palette = new ArrayList<RGB>();
 			
 			RGB actBase, nextBase;
-			double rStep,gStep,bStep;
-			double r,g,b;
+			double rStep,gStep,bStep,aStep;
+			double r,g,b,a;
 			int nrOfSteps = this.defaultSteps;
 			
 			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
@@ -110,6 +110,7 @@ public class ColorPreset implements Cloneable {
 				r = actBase.r;
 				g = actBase.g;
 				b = actBase.b;
+				a = actBase.a;
 				nrOfSteps = this.defaultSteps;
 				if (actBase.steps > 0) {
 					nrOfSteps = actBase.steps;
@@ -118,16 +119,19 @@ public class ColorPreset implements Cloneable {
 				rStep = (nextBase.r-actBase.r) / (double)nrOfSteps;
 				bStep = (nextBase.b-actBase.b) / (double)nrOfSteps;
 				gStep = (nextBase.g-actBase.g) / (double)nrOfSteps;
+				aStep = (nextBase.a-actBase.a) / (double)nrOfSteps;
 				for (int j = 0; j < nrOfSteps;j++) {
 					palette.add(new RGB(
 							new Double(r).intValue(),
 							new Double(g).intValue(),
-							new Double(b).intValue()
+							new Double(b).intValue(),
+							new Double(a).intValue()
 					));
 					
 					r += rStep;
 					g += gStep;
 					b += bStep;
+					a += aStep;
 				}
 			}
 			
