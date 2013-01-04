@@ -42,10 +42,10 @@ public class FractOutPanel extends JScrollPane {
 	private Point mouseStartPoint;
 	private List<IZoomListener> zoomListeners;
 	
-	private Color white = new Color(255,255,255);
+	/*private Color white = new Color(255,255,255);
 	private Color gray = new Color(196,196,196);
 	private int transparentTileSize = 20;
-	
+	*/
 	private Point drawOffset = new Point(0, 0);
 	
 	
@@ -58,6 +58,7 @@ public class FractOutPanel extends JScrollPane {
 			@Override
 			public void paint(Graphics g) {
 				// Draw tiles for transparental indication
+				/*
 				int tilesX = this.getWidth() / FractOutPanel.this.transparentTileSize + 1;
 				int tilesY = this.getHeight() / FractOutPanel.this.transparentTileSize + 1;
 				boolean toggle = false;
@@ -71,7 +72,12 @@ public class FractOutPanel extends JScrollPane {
 						toggle = !toggle;
 						g.fillRect(tx*transparentTileSize, ty*transparentTileSize, transparentTileSize, transparentTileSize);
 					}
-				}
+				}*/
+				
+				// Draw Background Color:
+				//g.setColor()
+				g.setColor(AppManager.getInstance().getUserPrefs().getBackgroundColor());
+				g.fillRect(0, 0, getWidth(), getHeight());
 				
 				// Draw the fractal image:
 				if (fractImage != null) {

@@ -32,6 +32,7 @@ Today's already implemented features
 - PNG export
 - presets defined as JSON data in properties file
 - JSON export/import of presets
+- Transparency support in color schemes
 
 
 Planned / future features

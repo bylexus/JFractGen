@@ -889,4 +889,9 @@ public class MainFrame extends JFrame
 		this.fractParamPresetsCB.reloadPresets();
 		this.colorPresetsCombo.reloadPresets();
 	}
+	
+	
+	public FractOutPanel getOutputPanel() {
+		return this.outPanel;
+	}
 }

@@ -26,6 +26,7 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import ch.alexi.fractgen.gui.AboutDialog;
 import ch.alexi.fractgen.gui.FileMenu;
+import ch.alexi.fractgen.gui.FractOutPanel;
 import ch.alexi.fractgen.gui.MainFrame;
 import ch.alexi.fractgen.models.ColorPreset;
 import ch.alexi.fractgen.models.FractCalcerResultData;
@@ -120,7 +121,7 @@ public class AppManager implements ApplicationListener{
         return mainFrame;
     }
 	
-	public Frame getMainFrame() {
+	public MainFrame getMainFrame() {
 		return this.mainFrame;
 	}
 	

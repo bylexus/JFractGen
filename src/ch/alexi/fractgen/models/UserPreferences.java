@@ -1,5 +1,6 @@
 package ch.alexi.fractgen.models;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ public class UserPreferences {
 	public static final String NR_OF_HISTORY_ENTRIES = "nrOfHistoryEntries";
 	public static final String NR_OF_WORKERS = "perCPU";
 	public static final int WORKERS_PER_CPU = -1;
+	
 	
 	private Properties prefs;
 	
@@ -123,6 +125,26 @@ public class UserPreferences {
 			}
 		}
 		return false;
+	}
+	
+	
+	public Color getBackgroundColor() {
+		try {
+			Color c = Color.decode("#"+prefs.getProperty("backgroundColor"));
+			//Color c = new Color(Integer.decode(prefs.getProperty("backgroundColor")));
+			if (c != null) {
+				return c;
+			}
+		} catch (Exception e) {
+			System.out.println("Ooops");
+		}
+		return new Color(0,0,0);
+	}
+	
+	public void setBackgroundColor(Color c) {
+		String cssValue = Integer.toHexString(c.getRGB());
+		cssValue = cssValue.substring(2, cssValue.length());
+		prefs.setProperty("backgroundColor", cssValue);
 	}
 	
 	

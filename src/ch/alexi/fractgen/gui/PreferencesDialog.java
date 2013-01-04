@@ -1,12 +1,14 @@
 package ch.alexi.fractgen.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,6 +31,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 	private JRadioButton rdbtnFixed;
 	private JButton btnOK;
 	private JButton btnCancel;
+	private JLabel lblBackgroundColor;
+	private JButton btnChooseColor;
+	private Color bgColor;
+	
 	public PreferencesDialog() {
 		initGUI();
 		setValues();
@@ -49,6 +55,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("top:default"),
+				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),}));
@@ -63,18 +71,25 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		contentPanel.add(nrOfHistoryEntriesTxt, "4, 2, left, default");
 		nrOfHistoryEntriesTxt.setColumns(3);
 		
+		lblBackgroundColor = new JLabel("Background Color:");
+		contentPanel.add(lblBackgroundColor, "2, 4");
+		
+		btnChooseColor = new JButton("Choose Color ...");
+		btnChooseColor.addActionListener(this);
+		contentPanel.add(btnChooseColor, "4, 4");
+		
 		JLabel lblNumberOfWorkers = new JLabel("Number of workers:");
-		contentPanel.add(lblNumberOfWorkers, "2, 4");
+		contentPanel.add(lblNumberOfWorkers, "2, 6");
 		
 		rdbtnNrOfCpus = new JRadioButton("nr of CPUs");
-		contentPanel.add(rdbtnNrOfCpus, "4, 4");
+		contentPanel.add(rdbtnNrOfCpus, "4, 6");
 		
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setVgap(0);
 		flowLayout.setHgap(0);
 		flowLayout.setAlignment(FlowLayout.LEADING);
-		contentPanel.add(panel, "4, 6, fill, fill");
+		contentPanel.add(panel, "4, 8, fill, fill");
 		
 		rdbtnFixed = new JRadioButton("fixed:");
 		panel.add(rdbtnFixed);
@@ -107,6 +122,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		UserPreferences p = AppManager.getInstance().getUserPrefs();
 		nrOfHistoryEntriesTxt.setText(Integer.toString(p.getNrOfHistoryEntries()));
 		
+		bgColor = p.getBackgroundColor();
+		btnChooseColor.setBackground(bgColor);
+		btnChooseColor.setOpaque(true);
+		
 		if (p.cpuDependantNrOfWorkers()) {
 			rdbtnNrOfCpus.setSelected(true);
 		} else {
@@ -119,6 +138,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		UserPreferences p = AppManager.getInstance().getUserPrefs();
 		
 		p.setNrOfHistoryEntries(Integer.parseInt(nrOfHistoryEntriesTxt.getText()));
+		
+		p.setBackgroundColor(bgColor);
 		
 		if (rdbtnNrOfCpus.isSelected()) {
 			p.setNrOfWorkers(UserPreferences.WORKERS_PER_CPU);
@@ -136,8 +157,18 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		
 		if (e.getSource() == btnOK) {
 			storeValues();
+			AppManager.getInstance().getMainFrame().getOutputPanel().repaint();
 			this.setVisible(false);
 			this.dispose();
+		}
+		
+		if (e.getSource() == btnChooseColor) {
+			Color newColor = JColorChooser.showDialog(PreferencesDialog.this, "Choose Background Color", bgColor);
+			if (newColor != null) {
+				bgColor = newColor;
+				btnChooseColor.setBackground(bgColor);
+				btnChooseColor.setOpaque(true);
+			}
 		}
 		
 	}
