@@ -23,7 +23,7 @@ import ch.alexi.jfractgen.models.ColorPreset;
 
 @SuppressWarnings("serial")
 public class ColorSchemeEditDialog extends JDialog implements ActionListener,ListSelectionListener {
-	class SchemeListModel extends AbstractListModel {
+	class SchemeListModel extends AbstractListModel<ColorPreset> {
 		private Vector<ColorPreset> list = new Vector<ColorPreset>();
 
 		public SchemeListModel(Vector<ColorPreset> list) {
@@ -38,7 +38,7 @@ public class ColorSchemeEditDialog extends JDialog implements ActionListener,Lis
 			}
 		}
 
-		public Object getElementAt(int index) {
+		public ColorPreset getElementAt(int index) {
 			if (index >= 0 && index < list.size()) {
 				return list.get(index);
 			}
@@ -52,7 +52,7 @@ public class ColorSchemeEditDialog extends JDialog implements ActionListener,Lis
 
 
 	JButton btnCancel;
-	JList schemeList;
+	JList<ColorPreset> schemeList;
 	private ColorPresetEditPanel colorPresetEditPanel;
 
 	public ColorSchemeEditDialog(Frame parent) {
@@ -71,7 +71,7 @@ public class ColorSchemeEditDialog extends JDialog implements ActionListener,Lis
 		getContentPane().add(listPanel, BorderLayout.WEST);
 		listPanel.setLayout(new BorderLayout(0, 0));
 
-		schemeList = new JList(new SchemeListModel(AppManager.getInstance().getPresets().getColorPresets()));
+		schemeList = new JList<ColorPreset>(new SchemeListModel(AppManager.getInstance().getPresets().getColorPresets()));
 		schemeList.addListSelectionListener(this);
 		listPanel.add(new JScrollPane(schemeList), BorderLayout.CENTER);
 

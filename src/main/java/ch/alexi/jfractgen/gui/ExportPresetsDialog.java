@@ -36,8 +36,8 @@ import ch.alexi.jfractgen.models.PresetsCollection;
 public class ExportPresetsDialog extends JDialog implements ActionListener {
 	private JButton btnCancel;
 	private JButton btnExport;
-	private JList fractPresetsList;
-	private JList colorPresetsList;
+	private JList<FractParam> fractPresetsList;
+	private JList<ColorPreset> colorPresetsList;
 
 
 	public ExportPresetsDialog(Frame owner) {
@@ -57,7 +57,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 		JScrollPane scrollPane = new JScrollPane();
 		panel.add(scrollPane);
 
-		fractPresetsList = new JList();
+		fractPresetsList = new JList<FractParam>();
 		fractPresetsList.setListData(AppManager.getInstance().getPresets().getFractalPresets());
 		scrollPane.setViewportView(fractPresetsList);
 
@@ -67,7 +67,7 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		panel.add(scrollPane_1);
 
-		colorPresetsList = new JList();
+		colorPresetsList = new JList<ColorPreset>();
 
 		colorPresetsList.setListData(AppManager.getInstance().getPresets().getColorPresets());
 		scrollPane_1.setViewportView(colorPresetsList);
@@ -113,12 +113,12 @@ public class ExportPresetsDialog extends JDialog implements ActionListener {
 			}
 
 			PresetsCollection pc = new PresetsCollection();
-			for (Object o : fractPresetsList.getSelectedValues()) {
+			for (Object o : fractPresetsList.getSelectedValuesList()) {
 				if (o instanceof FractParam) {
 					pc.addFractalPreset((FractParam)o);
 				}
 			}
-			for (Object o : colorPresetsList.getSelectedValues()) {
+			for (Object o : colorPresetsList.getSelectedValuesList()) {
 				if (o instanceof ColorPreset) {
 					pc.addColorPreset((ColorPreset)o);
 				}

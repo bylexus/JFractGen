@@ -4,6 +4,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import ch.alexi.jfractgen.logic.AppManager;
+import ch.alexi.jfractgen.models.ColorPreset;
 
 @SuppressWarnings("serial")
 /**
@@ -14,7 +15,7 @@ import ch.alexi.jfractgen.logic.AppManager;
  * @author Alexander Schenkel, www.alexi.ch
  * (c) 2012 Alexander Schenkel
  */
-public class ColorPresetsCombo extends JComboBox {
+public class ColorPresetsCombo extends JComboBox<ColorPreset> {
 	public ColorPresetsCombo() {
 		super();
 		this.reloadPresets();
@@ -22,6 +23,6 @@ public class ColorPresetsCombo extends JComboBox {
 	}
 
 	public void reloadPresets() {
-		this.setModel(new DefaultComboBoxModel(AppManager.getInstance().getPresets().getColorPresets()));
+		this.setModel(new DefaultComboBoxModel<ColorPreset>(AppManager.getInstance().getPresets().getColorPresets()));
 	}
 }

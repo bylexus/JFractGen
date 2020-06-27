@@ -75,7 +75,7 @@ public class MainFrame extends JFrame
 	private JTextField diameterCX;
 	private JTextField maxIters;
 	private FractOutPanel outPanel;
-	private JComboBox functionCB;
+	private JComboBox<IFractFunction> functionCB;
 	private JButton btnStartCalculation;
 	private JPanel settingsPanel;
 	private ColorPresetsCombo colorPresetsCombo;

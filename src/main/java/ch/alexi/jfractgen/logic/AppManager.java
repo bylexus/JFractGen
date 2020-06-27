@@ -1,7 +1,6 @@
 package ch.alexi.jfractgen.logic;
 
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -26,7 +25,6 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import ch.alexi.jfractgen.gui.AboutDialog;
 import ch.alexi.jfractgen.gui.FileMenu;
-import ch.alexi.jfractgen.gui.FractOutPanel;
 import ch.alexi.jfractgen.gui.MainFrame;
 import ch.alexi.jfractgen.models.ColorPreset;
 import ch.alexi.jfractgen.models.FractCalcerResultData;

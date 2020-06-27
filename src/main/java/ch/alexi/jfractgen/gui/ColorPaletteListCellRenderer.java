@@ -22,7 +22,7 @@ import ch.alexi.jfractgen.models.RGB;
  */
 
 @SuppressWarnings("serial")
-public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRenderer {
+public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRenderer<ColorPreset> {
 	private String  colorName = "";
 	private RGB[]   palette = null;
 	private boolean isSelected = false;
@@ -53,7 +53,7 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		}
 	}
 
-	public Component getListCellRendererComponent(JList list, Object value,
+	public Component getListCellRendererComponent(JList<? extends ColorPreset> list, ColorPreset value,
 			int index, boolean isSelected, boolean hasFocus) {
 		if (isSelected) {
             setBackground(list.getSelectionBackground());
@@ -65,10 +65,8 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
-		if (value instanceof ColorPreset) {
-			// Get color palette with 256 entries:
-			this.palette = ((ColorPreset)value).createDynamicSizeColorPalette(1);
-		}
+		// Get color palette with 256 entries:
+		this.palette = value.createDynamicSizeColorPalette(1);
 
 		Dimension d = new Dimension();
 		if (list.getSelectedIndex() != index) {
