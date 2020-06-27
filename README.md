@@ -11,7 +11,7 @@ in a very early stage, let's call it "0.1-alpha", if already. Give me some time 
 This project does not need you to understand the Maths behind it. It is just to SHOW
 you the beauty of math.
 
-Main class: ch.alexi.fractgen.Main
+Main class: ch.alexi.jfractgen.Main
 
 Run: "java -Xmx512M -jar JFractGen.jar"
 
