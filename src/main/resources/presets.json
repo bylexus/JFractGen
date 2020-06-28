@@ -1,7 +1,7 @@
 {
     "fractalPresets": [
         {
-            "diameterCX": 3.0769,
+            "diameterCX": 4.0,
             "juliaKr": -0.6,
             "nrOfWorkers": 2,
             "maxIterations": 40,

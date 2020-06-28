@@ -38,10 +38,15 @@ Today's already implemented features
 Planned / future features
 -------------------------
 - create own color palettes
+- fixed repeat pattern: repeat after 256 steps
+- flip-flop color repeating: when repeating, repeat the palette forward-backward, instead of flipping back
 - graphic bulk export/conversion/downsampling
 - preferences:
   - nr of workers / CPU dependant
   - max. Nr of history entries
+- better rendering speed: adapt thread algorithm: pixel render queue with workers
+   or pixel offset per thread
+- Zoom indicator
 
 
 

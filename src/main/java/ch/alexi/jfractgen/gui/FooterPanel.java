@@ -29,7 +29,7 @@ public class FooterPanel extends Box {
 	}
 
 	private void initGUI() {
-		JLabel label = new JLabel("<html>JFractGen - &copy; 2012</html>");
+		JLabel label = new JLabel("<html>JFractGen - &copy; 2012-2020</html>");
 		label.setMaximumSize(new Dimension(100,20));
 		add(label);
 		JButton linkBtn = new JButton();

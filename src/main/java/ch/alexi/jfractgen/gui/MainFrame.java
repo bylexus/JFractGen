@@ -68,6 +68,11 @@ import ch.alexi.jfractgen.models.PresetsCollection;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame
 	implements IFractCalcObserver, ActionListener, FocusListener, PresetChangeListener {
+	/**
+	 * Zx diameter that is taken as "Zoom level 1"
+	 */
+	static double FULL_ZOOM_DIAMETER = 4.0;
+	
 	private JTextField picWidth;
 	private JTextField picHeight;
 	private JTextField centerCX;
@@ -107,6 +112,8 @@ public class MainFrame extends JFrame
 	private JButton btnDelColorPreset;
 	private JPanel panel_4;
 	private JCheckBox chckbxFixedsizePalette;
+	private JLabel lblZoomLevelText;
+	private JLabel lblZoomLevel;
 
 	public MainFrame(String title) {
 		super(title);
@@ -402,6 +409,12 @@ public class MainFrame extends JFrame
 
 		JToolBar.Separator sep4 = new JToolBar.Separator();
 		toolBar.add(sep4);
+		
+		lblZoomLevelText = new JLabel("act. Zoom level: ");
+		toolBar.add(lblZoomLevelText);
+		
+		lblZoomLevel = new JLabel("1");
+		toolBar.add(lblZoomLevel);
 
 		horizontalGlue = Box.createHorizontalGlue();
 		toolBar.add(horizontalGlue);
@@ -673,7 +686,7 @@ public class MainFrame extends JFrame
 		// set up GUI for waiting:
 		this.suspendUpdate = true;
 		btnStartCalculation.setEnabled(false);
-
+		
 		// Create history entry, if we have a fract already:
 		if (this.actualFractCalcerResult != null) {
 			AppManager.getInstance().addHistory(this.actualFractCalcerResult);
@@ -681,6 +694,7 @@ public class MainFrame extends JFrame
 
 		// Get all params
 		FractParam p = getActualFractParam();
+		updateZoomLabel(p);
 
 		final FractCalcer sw = new FractCalcer(p,this);
 
@@ -881,5 +895,10 @@ public class MainFrame extends JFrame
 
 	public FractOutPanel getOutputPanel() {
 		return this.outPanel;
+	}
+	
+	protected void updateZoomLabel(FractParam actParams) {
+		double zoomLevel = FULL_ZOOM_DIAMETER / actParams.diameterCX;
+		this.lblZoomLevel.setText(String.format("%.2f", zoomLevel));
 	}
 }
