@@ -35,7 +35,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	 * @author alex
 	 */
 	class FractCalcThread extends Thread {
-		int minX,minY,maxX,maxY, threadNr;
+		int width,height, threadNr,pixelIncrement;
 		FractParam fractParam;
 		WritableRaster raster;
 		double[][] iterValues;
@@ -51,28 +51,27 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		 * @param maxX
 		 * @param maxY
 		 */
-		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, double[][] iterValues, int minX, int minY, int maxX, int maxY) {
+		public FractCalcThread(int threadNr, FractParam param,WritableRaster raster, double[][] iterValues, int width, int height, int pixelIncrement) {
 			this.fractParam = param;
 			this.threadNr = threadNr;
-			this.minX = minX;
-			this.minY = minY;
-			this.maxX = maxX;
-			this.maxY = maxY;
+			this.width = width;
+			this.height = height;
 			this.raster = raster;
 			this.iterValues = iterValues;
+			this.pixelIncrement = pixelIncrement;
 		}
 
 		@Override
 		/**
 		 * Calculates a part of the Julia/Mandelbrot set and fills the image raster with the correct color.
-		 * Loops over each image pixel, calculate the corresponding Complex number, and runs the
+		 * Loops over each nth image pixel (processes each 'pixelIncrement'+threadNr pixels),
+		 * calculate the corresponding Complex number, and runs the
 		 * iteration function for all Complex number to see if it is part of Julia/Mandelbrot.
 		 *
 		 * Informs the parent thread of its progress in a percentage value.
 		 */
 		public void run() {
 
-			int nrOfLoops = (maxY - minY)*(maxX - minX);
 			double cx, cy;
 			FractFunctionResult res;
 
@@ -80,35 +79,40 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			pdata.threadNr = this.threadNr;
 			pdata.threadName = this.getName();
 
-			for (int y = minY; y <= maxY; y++) {
-				// cy = C(i) for the pixel y (C(i) = imaginary part of C)
-				cy = fractParam.min_cy + (maxY - y) * fractParam.punkt_abstand;
-				for (int x = minX; x <= maxX; x++) {
-					if (isCancelled()) {
-						return;
-					}
-					// cx = C(r) for the pixel x (C(r) = real part of C)
-					cx = fractParam.min_cx + x * fractParam.punkt_abstand;
-
-					// Check for set membership by executing the selected iteration function (julia, mandelbrot):
-					res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
-
-					if (fractParam.smoothColors == true) {
-						// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
-						iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
-					} else {
-						// Rough coloring: Escape time algorithm:
-						iterValues[x][y] = res.iterValue;
-					}
-
-					// Colorize the pixel:
-					double percentualIterValue = iterValues[x][y] / fractParam.maxIterations;
-					colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue);
+			// the threadNr is taken as start offset for this thread, and we increment by pixelIncrement.
+			for (int pixel = this.threadNr; pixel < width * height; pixel += pixelIncrement) {
+				if (isCancelled()) {
+					return;
 				}
+				
+				int y = pixel / width;
+				int x = pixel % width;
+				
+				// cy = C(i) for the pixel y (C(i) = imaginary part of C)
+				// and we also reverse the y axis:
+				cy = fractParam.min_cy + ((height - y) * fractParam.punkt_abstand);
+					
+				// cx = C(r) for the pixel x (C(r) = real part of C)
+				cx = fractParam.min_cx + x * fractParam.punkt_abstand;
+
+				// Check for set membership by executing the selected iteration function (julia, mandelbrot):
+				res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
+
+				if (fractParam.smoothColors == true) {
+					// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
+					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
+				} else {
+					// Rough coloring: Escape time algorithm:
+					iterValues[x][y] = res.iterValue;
+				}
+
+				// Colorize the pixel:
+				double percentualIterValue = iterValues[x][y] / fractParam.maxIterations;
+				colorizer.colorizeRasterPixel(raster, x, y, palette, percentualIterValue, iterValues[x][y]);
 
 				// Progress update, all 50 lines only to save resources:
 				if (y % 50 == 0) {
-					pdata.threadProgress = (y*(maxX - minX))/(double)nrOfLoops;
+					pdata.threadProgress = pixel/(double)(width*height);
 					FractCalcer.this.publish(pdata);
 				}
 			}
@@ -147,12 +151,16 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		FractCalcerResultData result = new FractCalcerResultData(this.fractParam, img,this.palette);
 
 		// Build a vertical image stripe for each worker
+		// Each thread processes ever nth pixel: if we have 2 worker threads,
+		// thread 1 will process all even pixels (0, 2, 4,...), while thread 2 will
+		// work on all odd pixels (1,3,5 ...).
 		int nrOfWorkers = AppManager.getInstance().getUserPrefs().getNrOfWorkers();
 		Thread[] workers = new Thread[nrOfWorkers];
 		for (int i = 0; i < workers.length; i++) {
-			int minX = fractParam.picWidth / nrOfWorkers * i;
-			int maxX = fractParam.picWidth / nrOfWorkers * (i+1) - 1;
-			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result.iterValues,minX, 0, maxX, fractParam.picHeight-1);
+			
+			//int minX = fractParam.picWidth / nrOfWorkers * i;
+			//int maxX = fractParam.picWidth / nrOfWorkers * (i+1) - 1;
+			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result.iterValues, fractParam.picWidth, fractParam.picHeight, nrOfWorkers);
 			if (!isCancelled()) {
 				workers[i].start();
 			}
