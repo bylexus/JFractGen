@@ -186,7 +186,7 @@ public class FractOutPanel extends JScrollPane {
 				Graphics2D g = (Graphics2D)i.getGraphics();
 				g.setFont(new Font("Helvetica", Font.ITALIC, Math.round(i.getHeight(this)*2.0f/100.0f)));
 				FontMetrics fm = g.getFontMetrics();
-				String text = "© 2012 JFractGen Alexander Schenkel";
+				String text = "© JFractGen Alexander Schenkel";
 				int offsetX = i.getWidth(this)-fm.stringWidth(text)-10;
 				int offsetY = i.getHeight(this)-fm.getHeight();
 

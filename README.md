@@ -47,6 +47,8 @@ Planned / future features
 - better rendering speed: adapt thread algorithm: pixel render queue with workers
    or pixel offset per thread
 - Zoom indicator
+- aspect-ratio presets
+- rubber band should respect actual image aspect ratio
 
 
 
