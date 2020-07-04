@@ -15,7 +15,7 @@ import ch.alexi.jfractgen.logic.MathLib;
 public class FractParam {
 	public String name = "Mandelbrot Total";
 
-	public double maxBetragQuadrat = 800;
+	private double maxBetragQuadrat = 4;
 	public int maxIterations = 40;
 
 	public double centerCX = -0.7;
@@ -146,5 +146,9 @@ public class FractParam {
 			e.printStackTrace();
 		}
 		return p;
+	}
+	
+	public double getMaxBetragQuadrat() {
+		return this.maxBetragQuadrat;
 	}
 }
