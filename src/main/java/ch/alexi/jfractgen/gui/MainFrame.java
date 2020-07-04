@@ -37,6 +37,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apfloat.Apfloat;
+
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -44,6 +46,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import ch.alexi.jfractgen.logic.AppManager;
 import ch.alexi.jfractgen.logic.Colorizer;
+import ch.alexi.jfractgen.logic.Constants;
 import ch.alexi.jfractgen.logic.FractCalcer;
 import ch.alexi.jfractgen.logic.IFractCalcObserver;
 import ch.alexi.jfractgen.logic.IFractFunction;
@@ -525,13 +528,13 @@ public class MainFrame extends JFrame
 		p.picWidth = Integer.parseInt(picWidth.getText());
 		p.picHeight = Integer.parseInt(picHeight.getText());
 
-		p.centerCX = Double.parseDouble(centerCX.getText());
-		p.centerCY = Double.parseDouble(centerCY.getText());
+		p.centerCX = new Apfloat(centerCX.getText(), Constants.precision);
+		p.centerCY = new Apfloat(centerCY.getText(), Constants.precision);
 
-		p.diameterCX = Double.parseDouble(diameterCX.getText());
+		p.diameterCX = new Apfloat(diameterCX.getText(), Constants.precision);
 		p.iterFunc = (IFractFunction)functionCB.getSelectedItem();
-		p.juliaKr = Double.parseDouble(juliaKrField.getText());
-		p.juliaKi = Double.parseDouble(juliaKiField.getText());
+		p.juliaKr = new Apfloat(juliaKrField.getText(), Constants.precision);
+		p.juliaKi = new Apfloat(juliaKiField.getText(), Constants.precision);
 		p.maxIterations = Integer.parseInt(maxIters.getText());
 
 		p.colorPreset = ((ColorPreset)colorPresetsCombo.getSelectedItem()).toString();
@@ -550,16 +553,16 @@ public class MainFrame extends JFrame
 		picWidth.setText(Integer.toString(p.picWidth));
 		picHeight.setText(Integer.toString(p.picHeight));
 
-		centerCX.setText(Double.toString(p.centerCX));
-		centerCY.setText(Double.toString(p.centerCY));
+		centerCX.setText(p.centerCX.toString(true));
+		centerCY.setText(p.centerCY.toString(true));
 
-		diameterCX.setText(Double.toString(p.diameterCX));
+		diameterCX.setText(p.diameterCX.toString(true));
 
 		functionCB.setSelectedItem(p.iterFunc);
 
 		if (p.iterFunc == FractFunctions.julia) {
-			juliaKrField.setText(Double.toString(p.juliaKr));
-			juliaKiField.setText(Double.toString(p.juliaKi));
+			juliaKrField.setText(p.juliaKr.toString(true));
+			juliaKiField.setText(p.juliaKi.toString(true));
 			juliaKrField.setEnabled(true);
 			juliaKiField.setEnabled(true);
 		} else {
@@ -590,11 +593,11 @@ public class MainFrame extends JFrame
 			this.setFractParam(this.actualFractCalcerResult.fractParam);
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
-			p.diameterCX = p.diameterCX * 0.5;
+			p.diameterCX = p.diameterCX.multiply(Constants.DOT_FIVE);
 			p.maxIterations = new Double(p.maxIterations * 1.3).intValue(); // Nr of iterations is +30% per zoom doubling
 
-			p.centerCX = p.min_cx + centerX * p.punkt_abstand;
-			p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
+			p.centerCX = p.min_cx.add(p.punkt_abstand.multiply(new Apfloat(centerX, Constants.precision)));
+			p.centerCY = p.min_cy.add(p.punkt_abstand.multiply(new Apfloat(p.picHeight - centerY, Constants.precision))); // inverse y-axis on draw
 
 			this.setFractParam(p);
 			this.startCalculation();
@@ -622,7 +625,7 @@ public class MainFrame extends JFrame
 			int pixelCenterY = top + height / 2;
 
 			// The new fractal diameter on the real axis, in fractal scale (rubberband width percentage * old diameter)
-			p.diameterCX = width / (double)p.picWidth * p.diameterCX;
+			p.diameterCX = p.diameterCX.multiply(new Apfloat(width / (double)p.picWidth, Constants.precision));
 
 			// The scale factor: selected area is scaleFactor times smaller than the original width
 			double scaleFactor = (double)p.picWidth / width;
@@ -631,8 +634,8 @@ public class MainFrame extends JFrame
 			p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor)/Math.log(2.0)))).intValue();
 
 			// New center in fractal coordinates:
-			p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
-			p.centerCY = p.min_cy + (p.picHeight - pixelCenterY) * p.punkt_abstand; // inverse y-axis on draw
+			p.centerCX = p.min_cx.add(p.punkt_abstand.multiply(new Apfloat(pixelCenterX, Constants.precision)));
+			p.centerCY = p.min_cy.add(p.punkt_abstand.multiply(new Apfloat(p.picHeight - pixelCenterY, Constants.precision))); // inverse y-axis on draw
 
 			this.setFractParam(p);
 			this.startCalculation();
@@ -648,7 +651,7 @@ public class MainFrame extends JFrame
 			this.setFractParam(this.actualFractCalcerResult.fractParam);
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
-			p.diameterCX = p.diameterCX * 2;
+			p.diameterCX = p.diameterCX.multiply(Constants.TWO);
 			p.maxIterations = new Double(p.maxIterations / 1.3).intValue(); // Nr of iterations is +20% per zoom doubling
 
 			this.setFractParam(p);
@@ -669,8 +672,8 @@ public class MainFrame extends JFrame
 			FractParam p = this.getActualFractParam();
 			p.initFractParams();
 
-			p.centerCX -= dx * p.punkt_abstand;
-			p.centerCY += dy * p.punkt_abstand; // inverse y-axis on draw
+			p.centerCX = p.centerCX.subtract(p.punkt_abstand.multiply(new Apfloat(dx, Constants.precision)));
+			p.centerCY = p.centerCY.add(p.punkt_abstand.multiply(new Apfloat(dy, Constants.precision))); // inverse y-axis on draw
 
 			this.setFractParam(p);
 			this.startCalculation();
@@ -898,7 +901,7 @@ public class MainFrame extends JFrame
 	}
 	
 	protected void updateZoomLabel(FractParam actParams) {
-		double zoomLevel = FULL_ZOOM_DIAMETER / actParams.diameterCX;
-		this.lblZoomLevel.setText(String.format("%.2f", zoomLevel));
+		Apfloat zoomLevel = new Apfloat(FULL_ZOOM_DIAMETER, Constants.precision).divide(actParams.diameterCX);
+		this.lblZoomLevel.setText(String.format("%.2s", zoomLevel.toString(true)));
 	}
 }

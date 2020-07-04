@@ -1,5 +1,7 @@
 package ch.alexi.jfractgen.logic;
 
+import org.apfloat.Apfloat;
+
 import ch.alexi.jfractgen.models.FractFunctionResult;
 
 /**
@@ -27,20 +29,23 @@ public class JuliaFractFunction implements IFractFunction {
 		return "Julia";
 	}
 
-	public FractFunctionResult fractIterFunc(double cx, double cy, double max_betrag_quadrat,
-			double max_iter, double julia_r, double julia_i) {
-		double betrag_quadrat = 0;
+	public FractFunctionResult fractIterFunc(Apfloat cx, Apfloat cy, Apfloat max_betrag_quadrat,
+			double max_iter, Apfloat julia_r, Apfloat julia_i) {
+		Apfloat betrag_quadrat = Constants.ZERO;
 		double iter = 0;
-		double x = cx,xt;
-		double y = cy,yt;
+		Apfloat x = cx,xt;
+		Apfloat y = cy,yt;
 
-		while (betrag_quadrat <= max_betrag_quadrat && iter < max_iter) {
-			xt = x * x - y*y + julia_r;
-			yt = 2*x*y + julia_i;
+		while (betrag_quadrat.compareTo(max_betrag_quadrat) <= 0 && iter < max_iter) {
+			//xt = x * x - y*y + julia_r;
+			xt = x.multiply(x).subtract(y.multiply(y)).add(julia_r);
+			
+			//yt = 2*x*y + julia_i;
+			yt = x.multiply(y).multiply(Constants.TWO).add(julia_i);
 			x = xt;
 			y = yt;
 			iter += 1;
-			betrag_quadrat = x*x + y*y;
+			betrag_quadrat = x.multiply(x).add(y.multiply(y));
 		}
 		FractFunctionResult r = new FractFunctionResult();
 		r.iterValue = iter;

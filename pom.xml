@@ -62,5 +62,11 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apfloat</groupId>
+			<artifactId>apfloat</artifactId>
+			<version>1.9.1</version>
+		</dependency>
 	</dependencies>
 </project>

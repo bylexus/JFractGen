@@ -1,5 +1,7 @@
 package ch.alexi.jfractgen.logic;
 
+import org.apfloat.Apfloat;
+
 import ch.alexi.jfractgen.models.FractFunctionResult;
 
 /**
@@ -29,28 +31,24 @@ public class MandelbrotFractFunction implements IFractFunction {
 		return "Mandelbrot";
 	}
 
-	public FractFunctionResult fractIterFunc(double cx, double cy, double max_betrag_quadrat,
-			double max_iter, double julia_r, double julia_i) {
-		double betrag_quadrat = 0;
+	public FractFunctionResult fractIterFunc(Apfloat cx, Apfloat cy, Apfloat max_betrag_quadrat,
+			double max_iter, Apfloat julia_r, Apfloat julia_i) {
+		Apfloat betrag_quadrat = Constants.ZERO;
 		double iter = 0;
-		double x = 0, xt;
-		double y = 0, yt;
+		Apfloat x = Constants.ZERO, xt;
+		Apfloat y = Constants.ZERO, yt;
 
-		while (betrag_quadrat <= max_betrag_quadrat && iter < max_iter) {
-			xt = x * x - y*y + cx;
-			yt = 2*x*y + cy;
+		while (betrag_quadrat.compareTo(max_betrag_quadrat) <= 0 && iter < max_iter) {
+			// xt = x * x - y*y + cx;
+			xt = (x.multiply(x)).subtract(y.multiply(y)).add(cx);
+			
+			// yt = 2*x*y + cy;
+			yt = x.multiply(y).multiply(Constants.TWO).add(cy);
 
-			// Z^3 + c:
-			//xt = x*(x*x - 3*y*y) + cx;
-			//yt = y*(3*x*x - y*y) + cy;
-
-			// Z^4 + c:
-			//xt = x*x*x*x -6*x*x*y*y + y*y*y*y + cx;
-			//yt = 4*x*x*x*y - 4*x*y*y*y + cy;
 			x = xt;
 			y = yt;
 			iter += 1;
-			betrag_quadrat = x*x + y*y;
+			betrag_quadrat = x.multiply(x).add(y.multiply(y));
 		}
 		FractFunctionResult r = new FractFunctionResult();
 		r.iterValue = iter;

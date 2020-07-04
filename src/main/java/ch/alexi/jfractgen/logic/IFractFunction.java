@@ -1,5 +1,7 @@
 package ch.alexi.jfractgen.logic;
 
+import org.apfloat.Apfloat;
+
 import ch.alexi.jfractgen.models.FractFunctionResult;
 
 /**
@@ -14,5 +16,5 @@ public interface IFractFunction {
 	@Override
 	public String toString();
 
-	public FractFunctionResult fractIterFunc(double cx,double cy,double max_betrag_quadrat, double max_iter,double julia_r,double julia_i);
+	public FractFunctionResult fractIterFunc(Apfloat cx,Apfloat cy,Apfloat max_betrag_quadrat, double max_iter,Apfloat julia_r,Apfloat julia_i);
 }

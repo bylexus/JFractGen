@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import org.apfloat.Apfloat;
+
 import ch.alexi.jfractgen.models.ColorPreset;
 import ch.alexi.jfractgen.models.FractCalcerProgressData;
 import ch.alexi.jfractgen.models.FractCalcerResultData;
@@ -72,7 +74,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		 */
 		public void run() {
 
-			double cx, cy;
+			Apfloat cx, cy;
 			FractFunctionResult res;
 
 			FractCalcerProgressData pdata = new FractCalcerProgressData();
@@ -90,17 +92,20 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 				
 				// cy = C(i) for the pixel y (C(i) = imaginary part of C)
 				// and we also reverse the y axis:
-				cy = fractParam.min_cy + ((height - y) * fractParam.punkt_abstand);
+				// cy = fractParam.min_cy + ((height - y) * fractParam.punkt_abstand);
+				cy = fractParam.min_cy.add(fractParam.punkt_abstand.multiply(new Apfloat(height - y, Constants.precision)));
 					
 				// cx = C(r) for the pixel x (C(r) = real part of C)
-				cx = fractParam.min_cx + x * fractParam.punkt_abstand;
+				// cx = fractParam.min_cx + x * fractParam.punkt_abstand;
+				cx = fractParam.min_cx.add(fractParam.punkt_abstand.multiply(new Apfloat(x)));
 
 				// Check for set membership by executing the selected iteration function (julia, mandelbrot):
 				res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.maxBetragQuadrat, fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
 
 				if (fractParam.smoothColors == true) {
 					// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
-					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Math.log(4)) / Math.log(2);;
+					// TODO: Check if bailout value.toDouble() is really enough precise.
+					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue.doubleValue()) / Math.log(4)) / Math.log(2);
 				} else {
 					// Rough coloring: Escape time algorithm:
 					iterValues[x][y] = res.iterValue;

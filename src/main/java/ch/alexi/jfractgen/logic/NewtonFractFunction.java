@@ -1,5 +1,8 @@
 package ch.alexi.jfractgen.logic;
 
+import org.apfloat.Apcomplex;
+import org.apfloat.Apfloat;
+
 import ch.alexi.jfractgen.models.FractFunctionResult;
 
 /**
@@ -26,40 +29,39 @@ public class NewtonFractFunction implements IFractFunction {
 		return "Newton";
 	}
 
-	private Complex f(Complex z) {
-		//return z.times(z).times(z).minus(1.0d);
-		return z.times(z).times(z).minus(z.times(z)).plus(2.0d);
+	private Apcomplex f(Apcomplex z) {
+		return z.multiply(z).multiply(z).subtract(z.multiply(z)).add(Constants.TWO);
 	}
 
-	public FractFunctionResult fractIterFunc(double cx, double cy, double max_betrag_quadrat,
-			double max_iter, double julia_r, double julia_i) {
+	public FractFunctionResult fractIterFunc(Apfloat cx, Apfloat cy, Apfloat max_betrag_quadrat,
+			double max_iter, Apfloat julia_r, Apfloat julia_i) {
 		double threshold = 0.00001;
-		Complex h = new Complex(0.000006, 0.000006);
+		Apcomplex h = new Apcomplex(new Apfloat(0.000006, Constants.precision), new Apfloat(0.000006, Constants.precision));
 		double result = 1;
 		double iter = 0;
 
 		/**
 		 * Z(n+1)  = Z(n) - (p(z(n) / p'(z(n)))
 		 */
-		Complex dz;
-		Complex z, z0;
+		Apcomplex dz;
+		Apcomplex z, z0;
 
-		z = new Complex(cx, cy);
+		z = new Apcomplex(cx, cy);
 
 
 		while (result > threshold*threshold && iter < max_iter) {
-			dz = (f(z.plus(h)).minus(f(z))).dividedBy(h);
-			z0 = z.minus(f(z).dividedBy(dz));
+			dz = (f(z.add(h)).subtract(f(z))).divide(h);
+			z0 = z.subtract(f(z).divide(dz));
 
-			dz = z0.minus(z);
-			result = dz.re*dz.re + dz.im*dz.im; // abs(z) = sqrt(re^2+im^2) --> we only calc re^2+im^2
+			dz = z0.subtract(z);
+			result = dz.real().multiply(dz.real()).add(dz.imag().multiply(dz.imag())).doubleValue(); // abs(z) = sqrt(re^2+im^2) --> we only calc re^2+im^2
 			z = z0;
 			iter += 1;
 		}
 		z = dz = z0 = null;
 		FractFunctionResult r = new FractFunctionResult();
 		r.iterValue = iter;
-		r.bailoutValue = result;
+		r.bailoutValue = new Apfloat(result);
 		return r;
 	}
 }

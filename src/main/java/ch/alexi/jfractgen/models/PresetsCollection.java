@@ -194,6 +194,7 @@ public class PresetsCollection {
 
 	public boolean loadFromJsonFile(File f) {
 		try {
+			System.out.println("Reading Preset from " + f.getAbsolutePath());
 			return loadFromJsonStream(new FileInputStream(f));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

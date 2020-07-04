@@ -53,8 +53,8 @@ public class LegendPanel extends JPanel {
 		if (param != null) {
 			infoTextArea.setText("");
 			infoTextArea.append("Fractal Information:\n");
-			infoTextArea.append("min C(r): "+param.min_cx+", max C(r): "+param.max_cx+", diameter C(r): "+(param.max_cx-param.min_cx)+"\n");
-			infoTextArea.append("min C(i): "+param.min_cy+", max C(i): "+param.max_cy+", diameter C(i): "+(param.max_cy-param.min_cy));
+			infoTextArea.append("min C(r): "+param.min_cx.toString(true)+", max C(r): "+param.max_cx.toString(true)+", diameter C(r): "+param.max_cx.subtract(param.min_cx).toString(true)+"\n");
+			infoTextArea.append("min C(i): "+param.min_cy.toString(true)+", max C(i): "+param.max_cy.toString(true)+", diameter C(i): "+param.max_cy.subtract(param.min_cy).toString(true));
 		}
 	}
 
