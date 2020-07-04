@@ -94,9 +94,9 @@ public class ColorPreset implements Cloneable {
 	 * @return
 	 */
 	public RGB[] createDynamicSizeColorPalette(int repeat) {
-
+		// TEST:
+		// repeat = 1;
 		if (!this.dynamicPalettes.containsKey(repeat)) {
-			//int nrOfSteps = nrOfStepsPerTransition * (this.colors.length * repeat - 1);
 			List<RGB> palette = new ArrayList<RGB>();
 
 			RGB actBase, nextBase;
