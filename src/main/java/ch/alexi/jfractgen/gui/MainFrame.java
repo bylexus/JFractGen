@@ -35,6 +35,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -94,7 +96,7 @@ public class MainFrame extends JFrame
 	private JTextField juliaKrField;
 	private JTextField juliaKiField;
 	private boolean suspendUpdate = false;
-	private JTextField paletteRepeat;
+	private JTextField paletteLength;
 	private JButton btnSaveAsFractalPreset;
 	private JButton btnDelFractParamPreset;
 	private JPanel panel;
@@ -155,7 +157,7 @@ public class MainFrame extends JFrame
 		outputSplitPane.setTopComponent(outPanel);
 
 		legendPanel = new LegendPanel();
-		outputSplitPane.setRightComponent(legendPanel);
+		outputSplitPane.setBottomComponent(legendPanel);
 		outputSplitPane.setResizeWeight(1.0d);
 
 		settingsPanel = new JPanel();
@@ -239,14 +241,14 @@ public class MainFrame extends JFrame
 		flowLayout.setAlignment(FlowLayout.LEADING);
 		panel_2.add(panel_3);
 
-		JLabel lblColorPresetRepeat = new JLabel("Color preset repeat:");
+		JLabel lblColorPresetRepeat = new JLabel("Palette Length:");
 		panel_3.add(lblColorPresetRepeat);
 
-		paletteRepeat = new JTextField();
-		panel_3.add(paletteRepeat);
-		paletteRepeat.setColumns(5);
+		paletteLength = new JTextField();
+		panel_3.add(paletteLength);
+		paletteLength.setColumns(5);
 
-		paletteRepeat.addFocusListener(this);
+		paletteLength.addFocusListener(this);
 
 		panel_4 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
@@ -279,6 +281,22 @@ public class MainFrame extends JFrame
 		settingsPanel.add(lblPixelW, "2, 11, right, default");
 
 		picWidth = new JTextField();
+		picWidth.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				System.out.println("removeUpdate: " + picWidth.getText());
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				System.out.println("insertUpdate: " + picWidth.getText());
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				System.out.println("changedUpdate: " + picWidth.getText());
+			}
+		});;
 		lblPixelW.setLabelFor(picWidth);
 		settingsPanel.add(picWidth, "4, 11, fill, default");
 		picWidth.setColumns(10);
@@ -535,7 +553,7 @@ public class MainFrame extends JFrame
 		p.maxIterations = Integer.parseInt(maxIters.getText());
 
 		p.colorPreset = ((ColorPreset)colorPresetsCombo.getSelectedItem()).toString();
-		p.colorPresetRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
+		p.colorPaletteLength = MathLib.maxInt(Integer.parseInt( paletteLength.getText()),1);
 
 		p.smoothColors = chckbxSmoothColors.isSelected();
 
@@ -575,7 +593,7 @@ public class MainFrame extends JFrame
 
 		chckbxSmoothColors.setSelected(p.smoothColors);
 
-		paletteRepeat.setText( Integer.toString(p.colorPresetRepeat));
+		paletteLength.setText( Integer.toString(p.colorPaletteLength));
 	}
 
 	/**
@@ -777,7 +795,7 @@ public class MainFrame extends JFrame
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPresetRepeat);
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPaletteLength);
 				this.actualFractCalcerResult.fractParam.colorPreset = preset.toString();
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
@@ -872,13 +890,13 @@ public class MainFrame extends JFrame
 	}
 
 	public void focusLost(FocusEvent ev) {
-		if (ev.getSource() == this.paletteRepeat) {
-			// If the palette repeat value changes, redraw the actual fractal using the new palette repeat value:
+		if (ev.getSource() == this.paletteLength) {
+			// If the palette length value changes, redraw the actual fractal using the new palette length value:
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
-				this.actualFractCalcerResult.fractParam.colorPresetRepeat = Integer.parseInt(this.paletteRepeat.getText());
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPresetRepeat);
+				this.actualFractCalcerResult.fractParam.colorPaletteLength = Integer.parseInt(this.paletteLength.getText());
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPaletteLength);
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
 				this.updateOutput(this.actualFractCalcerResult);

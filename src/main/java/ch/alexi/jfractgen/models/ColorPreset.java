@@ -90,13 +90,14 @@ public class ColorPreset implements Cloneable {
 	 * Creates a color palette with a dynamic number of colors, taking the number of
 	 * steps between colors from the configuration of the object.
 	 * @see createFixedSizeColorPalette()
-	 * @param nrOfStepsPerTransition
+	 * @param length The number of colors calculated: The number of iterations map to the number of the color in the palette,
+	 *     rotated if overflown (so the palette repeats indefinitely)
 	 * @return
 	 */
-	public RGB[] createDynamicSizeColorPalette(int repeat) {
+	public RGB[] createDynamicSizeColorPalette(int length) {
 		// TEST:
 		// repeat = 1;
-		if (!this.dynamicPalettes.containsKey(repeat)) {
+		if (!this.dynamicPalettes.containsKey(length)) {
 			List<RGB> palette = new ArrayList<RGB>();
 
 			RGB actBase, nextBase;
@@ -104,7 +105,9 @@ public class ColorPreset implements Cloneable {
 			double r,g,b,a;
 			int nrOfSteps = this.defaultSteps;
 
-			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
+			// Create a color palette for all defined colors in the preset
+			// that smoothly transist from color to color, independent of the requested length first:
+			for (int i = 0; i < this.colors.length - 1; i++) {
 				actBase = this.colors[i % this.colors.length];
 				nextBase = this.colors[(i+1) % this.colors.length];
 				r = actBase.r;
@@ -135,16 +138,20 @@ public class ColorPreset implements Cloneable {
 				}
 			}
 
-			RGB[] paletteArray = new RGB[palette.size()];
-			palette.toArray(paletteArray);
+			// Now we only need 'length' colors from the generated palette:
+			RGB[] paletteArray = new RGB[length];
+			for (int i = 0; i < paletteArray.length; i++) {
+				// Choose the colors at the percentage index from the original palette:
+				paletteArray[i] = palette.get((int)(i / (double)paletteArray.length * palette.size()));
+			}
 			this.dynamicPalettes.put(
-					repeat,
+					length,
 					paletteArray);
 			palette.clear();
 			palette = null;
 			paletteArray = null;
 		}
-		return this.dynamicPalettes.get(repeat);
+		return this.dynamicPalettes.get(length);
 	}
 
 

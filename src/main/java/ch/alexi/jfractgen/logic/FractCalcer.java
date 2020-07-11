@@ -143,7 +143,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 
 		// Create color palette
 		ColorPreset cpreset = AppManager.getInstance().getPresets().getColorPresetByName(fractParam.colorPreset);
-		this.palette = cpreset.createDynamicSizeColorPalette(fractParam.colorPresetRepeat);
+		this.palette = cpreset.createDynamicSizeColorPalette(fractParam.colorPaletteLength);
 		initFractParams(this.fractParam);
 
 		BufferedImage img = new BufferedImage(fractParam.picWidth, fractParam.picHeight, BufferedImage.TYPE_INT_ARGB);
