@@ -116,6 +116,9 @@ public class MainFrame extends JFrame
 	private JCheckBox chckbxFixedsizePalette;
 	private JLabel lblZoomLevelText;
 	private JLabel lblZoomLevel;
+	private JPanel panel_5;
+	private JLabel lblPaletteRepeat;
+	private JTextField paletteRepeat;
 
 	public MainFrame(String title) {
 		super(title);
@@ -152,7 +155,7 @@ public class MainFrame extends JFrame
 			}
 		});
 
-		outPanel.setPreferredSize(new Dimension(805, 605));
+		outPanel.setPreferredSize(new Dimension(965, 605));
 
 		outputSplitPane.setTopComponent(outPanel);
 
@@ -238,7 +241,7 @@ public class MainFrame extends JFrame
 
 		panel_3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEADING);
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel_2.add(panel_3);
 
 		JLabel lblColorPresetRepeat = new JLabel("Palette Length:");
@@ -249,6 +252,19 @@ public class MainFrame extends JFrame
 		paletteLength.setColumns(5);
 
 		paletteLength.addFocusListener(this);
+		
+		panel_5 = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) panel_5.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.LEFT);
+		panel_2.add(panel_5);
+		
+		lblPaletteRepeat = new JLabel("Palette Repeat:");
+		panel_5.add(lblPaletteRepeat);
+		
+		paletteRepeat = new JTextField();
+		panel_5.add(paletteRepeat);
+		paletteRepeat.setColumns(5);
+		paletteRepeat.addFocusListener(this);
 
 		panel_4 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
@@ -553,7 +569,8 @@ public class MainFrame extends JFrame
 		p.maxIterations = Integer.parseInt(maxIters.getText());
 
 		p.colorPreset = ((ColorPreset)colorPresetsCombo.getSelectedItem()).toString();
-		p.colorPaletteLength = MathLib.maxInt(Integer.parseInt( paletteLength.getText()),1);
+		p.colorPaletteLength = MathLib.maxInt(Integer.parseInt( paletteLength.getText()),1024);
+		p.colorPaletteRepeat = MathLib.maxInt(Integer.parseInt( paletteRepeat.getText()),1);
 
 		p.smoothColors = chckbxSmoothColors.isSelected();
 
@@ -594,6 +611,7 @@ public class MainFrame extends JFrame
 		chckbxSmoothColors.setSelected(p.smoothColors);
 
 		paletteLength.setText( Integer.toString(p.colorPaletteLength));
+		paletteRepeat.setText( Integer.toString(p.colorPaletteRepeat));
 	}
 
 	/**
@@ -795,7 +813,10 @@ public class MainFrame extends JFrame
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPaletteLength);
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(
+					this.actualFractCalcerResult.fractParam.colorPaletteLength,
+					this.actualFractCalcerResult.fractParam.colorPaletteRepeat
+				);
 				this.actualFractCalcerResult.fractParam.colorPreset = preset.toString();
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
@@ -890,13 +911,17 @@ public class MainFrame extends JFrame
 	}
 
 	public void focusLost(FocusEvent ev) {
-		if (ev.getSource() == this.paletteLength) {
+		if (ev.getSource() == this.paletteLength || ev.getSource() == this.paletteRepeat) {
 			// If the palette length value changes, redraw the actual fractal using the new palette length value:
 			// Re-render the color values of the actual fractal image:
 			if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
 				ColorPreset preset = (ColorPreset)this.colorPresetsCombo.getSelectedItem();
 				this.actualFractCalcerResult.fractParam.colorPaletteLength = Integer.parseInt(this.paletteLength.getText());
-				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(this.actualFractCalcerResult.fractParam.colorPaletteLength);
+				this.actualFractCalcerResult.fractParam.colorPaletteRepeat = Integer.parseInt(this.paletteRepeat.getText());
+				this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(
+					this.actualFractCalcerResult.fractParam.colorPaletteLength,
+					this.actualFractCalcerResult.fractParam.colorPaletteRepeat
+				);
 				Colorizer c = new Colorizer();
 				c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
 				this.updateOutput(this.actualFractCalcerResult);

@@ -135,10 +135,12 @@ public class AppManager implements ApplicationListener{
 			
 			File presetFile = new File(getUserSettingsDir() + File.separator + "presets.json");
 			if (presetFile.exists()) {
+				System.out.println("Loading presets file from " + presetFile.getAbsolutePath());
 				presets.loadFromJsonFile(presetFile);
 			} else {
 				// Read the system-delivered preset file, if the user
 				// preset is not present:
+				System.out.println("Loading default presets file");
 				InputStream is = getClass().getResourceAsStream("/presets.json");
 				if (is != null) {
 					presets.loadFromJsonStream(is);

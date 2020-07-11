@@ -66,7 +66,7 @@ public class ColorPaletteListCellRenderer extends JPanel implements	ListCellRend
 		this.colorName = value.toString();
 		this.isSelected = isSelected;
 		// Get color palette with 256 entries:
-		this.palette = value.createDynamicSizeColorPalette(1);
+		this.palette = value.createDynamicSizeColorPalette(256, 1);
 
 		Dimension d = new Dimension();
 		if (list.getSelectedIndex() != index) {

@@ -22,6 +22,30 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-Xmx1024m</argument>
+						<argument>-classpath</argument>
+						<!-- automatically creates the classpath using all project dependencies, 
+							also adding the project build directory -->
+						<classpath />
+						<argument>ch.alexi.jfractgen.Main</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>

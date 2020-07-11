@@ -49,12 +49,8 @@ public class Colorizer {
 	 */
 	public void colorizeRasterPixel(WritableRaster raster, int x, int y, RGB[] palette, FractCalcerResultData data) {
 		double percentageIterValue = data.iterValues[x][y] / (double)data.fractParam.maxIterations;
-		// int palettePos = new Double(percentageIterValue * palette.length - 1).intValue();
-		int palettePos = (int)(data.iterValues[x][y] % palette.length);
-		int dir = (int)(data.iterValues[x][y] / palette.length) % 2;
-		if (dir == 1) {
-			palettePos = palette.length - palettePos - 1;
-		}
+		int palettePos = new Double(percentageIterValue * palette.length - 1).intValue();
+		
 		if (data.iterValues[x][y] >= 0 && data.iterValues[x][y] < data.fractParam.maxIterations) {
 			this.colorizeRasterPixel(raster, x, y, palette[palettePos]);
 		} else {
