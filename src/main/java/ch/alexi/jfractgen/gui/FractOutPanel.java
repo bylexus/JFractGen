@@ -137,10 +137,14 @@ public class FractOutPanel extends JScrollPane {
 				mouseMoved = true;
 				if (mouseStartPoint != null) {
 					if (moveMode == MOVE_MODE_ZOOM) {
-						Dimension evtBound = new Dimension(Math.abs(e.getPoint().x-mouseStartPoint.x), Math.abs(e.getPoint().y-mouseStartPoint.y));
+						int dX = e.getPoint().x-mouseStartPoint.x;
+						// dY is based on the image's aspect ration:
+						int dY = Math.abs((int)(dX * (getFractalImage().getHeight(FractOutPanel.this) / (double)(getFractalImage().getWidth(FractOutPanel.this)))));
+						dY = mouseStartPoint.y > e.getY() ? dY * -1 : dY;
+						Dimension evtBound = new Dimension(Math.abs(dX), Math.abs(dY));
 
 						int left = MathLib.minInt(mouseStartPoint.x, e.getPoint().x);
-						int top = MathLib.minInt(mouseStartPoint.y, e.getPoint().y);
+						int top = MathLib.minInt(mouseStartPoint.y, mouseStartPoint.y + dY);
 
 						rubberBand.setBounds(left, top, evtBound.width,evtBound.height);
 						rubberBand.setVisible(true);
