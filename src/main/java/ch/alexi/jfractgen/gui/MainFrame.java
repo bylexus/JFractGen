@@ -297,22 +297,6 @@ public class MainFrame extends JFrame
 		settingsPanel.add(lblPixelW, "2, 11, right, default");
 
 		picWidth = new JTextField();
-		picWidth.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				System.out.println("removeUpdate: " + picWidth.getText());
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				System.out.println("insertUpdate: " + picWidth.getText());
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				System.out.println("changedUpdate: " + picWidth.getText());
-			}
-		});;
 		lblPixelW.setLabelFor(picWidth);
 		settingsPanel.add(picWidth, "4, 11, fill, default");
 		picWidth.setColumns(10);
