@@ -24,7 +24,7 @@ public class ColorPreset implements Cloneable {
 	public RGB[] colors;
 	public int defaultSteps = 256;
 
-	private Map<Integer, RGB[]> dynamicPalettes = new HashMap<Integer, RGB[]>();
+	private Map<String, RGB[]> dynamicPalettes = new HashMap<String, RGB[]>();
 
 	public ColorPreset() {
 
@@ -90,13 +90,15 @@ public class ColorPreset implements Cloneable {
 	 * Creates a color palette with a dynamic number of colors, taking the number of
 	 * steps between colors from the configuration of the object.
 	 * @see createFixedSizeColorPalette()
-	 * @param nrOfStepsPerTransition
+	 * @param length The number of colors calculated: The number of iterations map to the number of the color in the palette,
+	 *     rotated if overflown (so the palette repeats indefinitely)
 	 * @return
 	 */
-	public RGB[] createDynamicSizeColorPalette(int repeat) {
-		// TEST:
-		// repeat = 1;
-		if (!this.dynamicPalettes.containsKey(repeat)) {
+	public RGB[] createDynamicSizeColorPalette(int length, int repeat) {
+		repeat = Math.max(1, repeat); // at least 1 repetition, otherwise we have an empty palette
+		String paletteKey = Integer.toString(length) + "." + Integer.toString(repeat);
+		
+		if (!this.dynamicPalettes.containsKey(paletteKey)) {
 			List<RGB> palette = new ArrayList<RGB>();
 
 			RGB actBase, nextBase;
@@ -104,6 +106,8 @@ public class ColorPreset implements Cloneable {
 			double r,g,b,a;
 			int nrOfSteps = this.defaultSteps;
 
+			// Create a color palette for all defined colors in the preset
+			// that smoothly transist from color to color, independent of the requested length first:
 			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
 				actBase = this.colors[i % this.colors.length];
 				nextBase = this.colors[(i+1) % this.colors.length];
@@ -135,16 +139,20 @@ public class ColorPreset implements Cloneable {
 				}
 			}
 
-			RGB[] paletteArray = new RGB[palette.size()];
-			palette.toArray(paletteArray);
+			// Now we only need 'length' colors from the generated palette:
+			RGB[] paletteArray = new RGB[length];
+			for (int i = 0; i < paletteArray.length; i++) {
+				// Choose the colors at the percentage index from the original palette:
+				paletteArray[i] = palette.get((int)(i / (double)paletteArray.length * palette.size()));
+			}
 			this.dynamicPalettes.put(
-					repeat,
+					paletteKey,
 					paletteArray);
 			palette.clear();
 			palette = null;
 			paletteArray = null;
 		}
-		return this.dynamicPalettes.get(repeat);
+		return this.dynamicPalettes.get(paletteKey);
 	}
 
 

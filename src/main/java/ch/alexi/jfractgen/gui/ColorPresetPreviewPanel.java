@@ -41,7 +41,7 @@ public class ColorPresetPreviewPanel extends JPanel {
 		if (this.preset == null) {
 			return;
 		}
-		RGB[] palette = this.preset.createDynamicSizeColorPalette(1);
+		RGB[] palette = this.preset.createDynamicSizeColorPalette(this.getWidth(), 1);
 
 		if (this.orientation == HORIZONTAL) {
 			for (int i = 0; i < this.getWidth(); i++) {

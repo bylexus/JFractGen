@@ -27,7 +27,7 @@ public class FractParam {
 	public double juliaKr = -0.6;
 	public double juliaKi = 0.6;
 
-	public int picWidth = 800;
+	public int picWidth = 960;
 	public int picHeight = 600;
 
 	//public int nrOfWorkers = 2;
@@ -43,7 +43,8 @@ public class FractParam {
 
 	//public ColorPreset colorPreset = ColorPresets.getColorPresets().firstElement();
 	public String colorPreset = "Patchwork";
-	public int colorPresetRepeat = 1;
+	public int colorPaletteLength = 1024;
+	public int colorPaletteRepeat = 1;
 
 	/**
 	 * before calling, the following values need to be set: - picWidth,
@@ -84,7 +85,8 @@ public class FractParam {
 			o.put("picHeight", this.picHeight);
 			//o.put("nrOfWorkers", this.nrOfWorkers);
 			o.put("colorPreset",this.colorPreset);
-			o.put("colorPresetRepeat",MathLib.maxInt(1, this.colorPresetRepeat));
+			o.put("colorPaletteLength",MathLib.maxInt(1, this.colorPaletteLength));
+			o.put("colorPaletteRepeat",MathLib.maxInt(1, this.colorPaletteRepeat));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -138,8 +140,10 @@ public class FractParam {
 
 			if (o.has("colorPreset"))
 				p.colorPreset = o.getString("colorPreset");
-			if (o.has("colorPresetRepeat"))
-				p.colorPresetRepeat = MathLib.maxInt(1, o.getInt("colorPresetRepeat"));
+			if (o.has("colorPaletteLength"))
+				p.colorPaletteLength = MathLib.maxInt(1, o.getInt("colorPaletteLength"));
+			if (o.has("colorPaletteRepeat"))
+				p.colorPaletteRepeat = MathLib.maxInt(1, o.getInt("colorPaletteRepeat"));
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
