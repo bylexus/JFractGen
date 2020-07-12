@@ -70,8 +70,7 @@ import ch.alexi.jfractgen.models.PresetsCollection;
  * @author Alexander Schenkel, www.alexi.ch (c) 2012 Alexander Schenkel
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame
-        implements IFractCalcObserver, ActionListener, PresetChangeListener {
+public class MainFrame extends JFrame implements IFractCalcObserver, ActionListener, PresetChangeListener {
     /**
      * Zx diameter that is taken as "Zoom level 1"
      */
@@ -123,6 +122,7 @@ public class MainFrame extends JFrame
     private JSpinner paletteRepeat;
 
     private ObjectFactory objectFactory;
+    private JCheckBox chckbxLockIterations;
 
     public MainFrame(String title) {
         super(title);
@@ -185,7 +185,7 @@ public class MainFrame extends JFrame
                         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
                         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
                         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC, }));
+                        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
         JLabel lblNewLabel_2 = new JLabel("Presets");
         lblNewLabel_2.setFont(new Font("Sans Serif", Font.BOLD, 14));
@@ -233,9 +233,8 @@ public class MainFrame extends JFrame
         paletteLength.setToolTipText("The amount of colors available:\nEach iteration count maps to a specific color.");
         lblColorPresetRepeat.setLabelFor(paletteLength);
         paletteLength.addChangeListener(e -> recalculateColors());
-        paletteLength.setPreferredSize(new Dimension(100,20));
+        paletteLength.setPreferredSize(new Dimension(100, 20));
         panel_3.add(paletteLength);
-
 
         panel_5 = new JPanel();
         FlowLayout flowLayout_2 = (FlowLayout) panel_5.getLayout();
@@ -246,10 +245,11 @@ public class MainFrame extends JFrame
         panel_5.add(lblPaletteRepeat);
 
         paletteRepeat = new JSpinner(new SpinnerNumberModel());
-        paletteRepeat.setToolTipText("The defined color palette is repeated n times within the palette length:\nIf the iteration counts of the pixels are near, it gives more contrasted colors.");
+        paletteRepeat.setToolTipText(
+                "The defined color palette is repeated n times within the palette length:\nIf the iteration counts of the pixels are near, it gives more contrasted colors.");
         lblPaletteRepeat.setLabelFor(paletteRepeat);
         paletteRepeat.addChangeListener(e -> recalculateColors());
-        paletteRepeat.setPreferredSize(new Dimension(100,20));
+        paletteRepeat.setPreferredSize(new Dimension(100, 20));
         panel_5.add(paletteRepeat);
 
         panel_4 = new JPanel();
@@ -265,7 +265,8 @@ public class MainFrame extends JFrame
         chckbxSmoothColors.addActionListener(this);
 
         chckbxFixedsizePalette = new JCheckBox("rotating palette");
-        chckbxFixedsizePalette.setToolTipText("Fixed means: Each pixel iteration count maps to a color index:\nIf the palette is too short, it is wrapped.\n If this parameter is not checked, each pixel count's color index corresponds to the max iteration percentage.");
+        chckbxFixedsizePalette.setToolTipText(
+                "Fixed means: Each pixel iteration count maps to a color index:\nIf the palette is too short, it is wrapped.\n If this parameter is not checked, each pixel count's color index corresponds to the max iteration percentage.");
         panel_4.add(chckbxFixedsizePalette);
         chckbxFixedsizePalette.addActionListener(this);
 
@@ -335,34 +336,38 @@ public class MainFrame extends JFrame
         settingsPanel.add(maxIters, "4, 25, fill, default");
         maxIters.setColumns(10);
 
+        chckbxLockIterations = new JCheckBox("Lock iterations");
+        chckbxLockIterations.setToolTipText("If set, the number of iterations is not increased when zooming in.");
+        settingsPanel.add(chckbxLockIterations, "4, 27");
+
         JLabel lblFunction = new JLabel("Function:");
-        settingsPanel.add(lblFunction, "2, 27, right, default");
+        settingsPanel.add(lblFunction, "2, 29, right, default");
 
         functionCB = new FractFunctionsCombo();
-        settingsPanel.add(functionCB, "4, 27, fill, default");
+        settingsPanel.add(functionCB, "4, 29, fill, default");
         functionCB.addActionListener(this);
 
         JLabel lblJuliaK = new JLabel("Julia K(r):");
-        settingsPanel.add(lblJuliaK, "2, 29, right, default");
+        settingsPanel.add(lblJuliaK, "2, 31, right, default");
 
         juliaKrField = new JTextField();
         juliaKrField.setToolTipText("Julia constant real value");
-        settingsPanel.add(juliaKrField, "4, 29, fill, default");
+        settingsPanel.add(juliaKrField, "4, 31, fill, default");
         juliaKrField.setColumns(10);
 
         JLabel lblJuliaKi = new JLabel("Julia K(i):");
-        settingsPanel.add(lblJuliaKi, "2, 31, right, default");
+        settingsPanel.add(lblJuliaKi, "2, 33, right, default");
 
         juliaKiField = new JTextField();
         juliaKiField.setToolTipText("Julia constant imaginary value");
-        settingsPanel.add(juliaKiField, "4, 31, fill, default");
+        settingsPanel.add(juliaKiField, "4, 33, fill, default");
         juliaKiField.setColumns(10);
 
         JSeparator separator_2 = new JSeparator();
-        settingsPanel.add(separator_2, "2, 33, 3, 1");
+        settingsPanel.add(separator_2, "2, 35, 3, 1");
 
         btnSaveAsFractalPreset = new JButton("Save as Fractal Preset", AppManager.getInstance().getIcon("disk"));
-        settingsPanel.add(btnSaveAsFractalPreset, "2, 35, 3, 1");
+        settingsPanel.add(btnSaveAsFractalPreset, "2, 37, 3, 1, fill, default");
         btnSaveAsFractalPreset.addActionListener(this);
 
         JToolBar toolBar = new JToolBar();
@@ -552,8 +557,8 @@ public class MainFrame extends JFrame
         p.maxIterations = Integer.parseInt(maxIters.getText());
 
         p.colorPreset = ((ColorPreset) colorPresetsCombo.getSelectedItem()).toString();
-        p.colorPaletteLength = MathLib.maxInt((int)paletteLength.getValue(), 1);
-        p.colorPaletteRepeat = MathLib.maxInt((int)paletteRepeat.getValue(), 1);
+        p.colorPaletteLength = MathLib.maxInt((int) paletteLength.getValue(), 1);
+        p.colorPaletteRepeat = MathLib.maxInt((int) paletteRepeat.getValue(), 1);
 
         p.smoothColors = chckbxSmoothColors.isSelected();
         p.fixedSizePalette = chckbxFixedsizePalette.isSelected();
@@ -615,8 +620,10 @@ public class MainFrame extends JFrame
             FractParam p = this.getActualFractParam();
             p.initFractParams();
             p.diameterCX = p.diameterCX * 0.5;
-            p.maxIterations = new Double(p.maxIterations * 1.3).intValue(); // Nr of iterations is +30% per zoom
-                                                                            // doubling
+            if (chckbxLockIterations.isSelected() != true) {
+                p.maxIterations = new Double(p.maxIterations * 1.3).intValue(); // Nr of iterations is +30% per zoom
+                                                                                // doubling
+            }
 
             p.centerCX = p.min_cx + centerX * p.punkt_abstand;
             p.centerCY = p.min_cy + (p.picHeight - centerY) * p.punkt_abstand; // inverse y-axis on draw
@@ -659,8 +666,10 @@ public class MainFrame extends JFrame
 
             // Iterations: 1.3^(2log(scaleFactor)) --> Iterations are 1.3 times increased by
             // every doubling of the zoom level:
-            p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor) / Math.log(2.0))))
-                    .intValue();
+            if (chckbxLockIterations.isSelected() != true) {
+                p.maxIterations = new Double(p.maxIterations * (Math.pow(1.3, Math.log(scaleFactor) / Math.log(2.0))))
+                        .intValue();
+            }
 
             // New center in fractal coordinates:
             p.centerCX = p.min_cx + pixelCenterX * p.punkt_abstand;
@@ -682,8 +691,10 @@ public class MainFrame extends JFrame
             FractParam p = this.getActualFractParam();
             p.initFractParams();
             p.diameterCX = p.diameterCX * 2;
-            p.maxIterations = new Double(p.maxIterations / 1.3).intValue(); // Nr of iterations is +20% per zoom
-                                                                            // doubling
+            if (chckbxLockIterations.isSelected() != true) {
+                p.maxIterations = new Double(p.maxIterations / 1.3).intValue(); // Nr of iterations is +20% per zoom
+                                                                                // doubling
+            }
 
             this.setFractParam(p);
             this.startCalculation();
@@ -796,15 +807,15 @@ public class MainFrame extends JFrame
         }
         outputSplitPane.resetToPreferredSizes();
     }
-    
+
     protected void recalculateColors() {
-    	// If the palette length value changes, redraw the actual fractal using the new
+        // If the palette length value changes, redraw the actual fractal using the new
         // palette length value:
         // Re-render the color values of the actual fractal image:
         if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
             ColorPreset preset = (ColorPreset) this.colorPresetsCombo.getSelectedItem();
-            this.actualFractCalcerResult.fractParam.colorPaletteLength = (int)this.paletteLength.getValue();
-            this.actualFractCalcerResult.fractParam.colorPaletteRepeat = (int)this.paletteRepeat.getValue();
+            this.actualFractCalcerResult.fractParam.colorPaletteLength = (int) this.paletteLength.getValue();
+            this.actualFractCalcerResult.fractParam.colorPaletteRepeat = (int) this.paletteRepeat.getValue();
             this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(
                     this.actualFractCalcerResult.fractParam.colorPaletteLength,
                     this.actualFractCalcerResult.fractParam.colorPaletteRepeat);

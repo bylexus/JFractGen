@@ -29,6 +29,8 @@ public class FooterPanel extends Box {
 	}
 
 	private void initGUI() {
+        add(Box.createRigidArea(new Dimension(10,0)));
+
 		JLabel label = new JLabel("<html>JFractGen - &copy; 2012-2020</html>");
 		label.setMaximumSize(new Dimension(100,20));
 		add(label);
@@ -62,5 +64,6 @@ public class FooterPanel extends Box {
 
 		MemoryProgressbar progressBar = new MemoryProgressbar();
 		add(progressBar);
+        add(Box.createRigidArea(new Dimension(10,0)));
 	}
 }
