@@ -8,8 +8,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
@@ -29,10 +27,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -71,7 +71,7 @@ import ch.alexi.jfractgen.models.PresetsCollection;
  */
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame
-        implements IFractCalcObserver, ActionListener, FocusListener, PresetChangeListener {
+        implements IFractCalcObserver, ActionListener, PresetChangeListener {
     /**
      * Zx diameter that is taken as "Zoom level 1"
      */
@@ -98,7 +98,7 @@ public class MainFrame extends JFrame
     private JTextField juliaKrField;
     private JTextField juliaKiField;
     private boolean suspendUpdate = false;
-    private JTextField paletteLength;
+    private JSpinner paletteLength;
     private JButton btnSaveAsFractalPreset;
     private JButton btnDelFractParamPreset;
     private JPanel panel;
@@ -120,7 +120,7 @@ public class MainFrame extends JFrame
     private JLabel lblZoomLevel;
     private JPanel panel_5;
     private JLabel lblPaletteRepeat;
-    private JTextField paletteRepeat;
+    private JSpinner paletteRepeat;
 
     private ObjectFactory objectFactory;
 
@@ -229,11 +229,13 @@ public class MainFrame extends JFrame
         JLabel lblColorPresetRepeat = new JLabel("Palette Length:");
         panel_3.add(lblColorPresetRepeat);
 
-        paletteLength = new JTextField();
+        paletteLength = new JSpinner(new SpinnerNumberModel());
+        paletteLength.setToolTipText("The amount of colors available:\nEach iteration count maps to a specific color.");
+        lblColorPresetRepeat.setLabelFor(paletteLength);
+        paletteLength.addChangeListener(e -> recalculateColors());
+        paletteLength.setPreferredSize(new Dimension(100,20));
         panel_3.add(paletteLength);
-        paletteLength.setColumns(5);
 
-        paletteLength.addFocusListener(this);
 
         panel_5 = new JPanel();
         FlowLayout flowLayout_2 = (FlowLayout) panel_5.getLayout();
@@ -243,12 +245,15 @@ public class MainFrame extends JFrame
         lblPaletteRepeat = new JLabel("Palette Repeat:");
         panel_5.add(lblPaletteRepeat);
 
-        paletteRepeat = new JTextField();
+        paletteRepeat = new JSpinner(new SpinnerNumberModel());
+        paletteRepeat.setToolTipText("The defined color palette is repeated n times within the palette length:\nIf the iteration counts of the pixels are near, it gives more contrasted colors.");
+        lblPaletteRepeat.setLabelFor(paletteRepeat);
+        paletteRepeat.addChangeListener(e -> recalculateColors());
+        paletteRepeat.setPreferredSize(new Dimension(100,20));
         panel_5.add(paletteRepeat);
-        paletteRepeat.setColumns(5);
-        paletteRepeat.addFocusListener(this);
 
         panel_4 = new JPanel();
+        panel_4.setToolTipText("Smoothes the color bands for a more smooth image");
         FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
         flowLayout_1.setVgap(0);
         flowLayout_1.setAlignment(FlowLayout.LEADING);
@@ -260,6 +265,7 @@ public class MainFrame extends JFrame
         chckbxSmoothColors.addActionListener(this);
 
         chckbxFixedsizePalette = new JCheckBox("rotating palette");
+        chckbxFixedsizePalette.setToolTipText("Fixed means: Each pixel iteration count maps to a color index:\nIf the palette is too short, it is wrapped.\n If this parameter is not checked, each pixel count's color index corresponds to the max iteration percentage.");
         panel_4.add(chckbxFixedsizePalette);
         chckbxFixedsizePalette.addActionListener(this);
 
@@ -279,6 +285,7 @@ public class MainFrame extends JFrame
         settingsPanel.add(lblPixelW, "2, 11, right, default");
 
         picWidth = new JTextField();
+        picWidth.setToolTipText("Image width in pixels");
         lblPixelW.setLabelFor(picWidth);
         settingsPanel.add(picWidth, "4, 11, fill, default");
         picWidth.setColumns(10);
@@ -287,24 +294,27 @@ public class MainFrame extends JFrame
         settingsPanel.add(lblPixelH, "2, 13, right, default");
 
         picHeight = new JTextField();
+        picHeight.setToolTipText("Image height in pixels");
         settingsPanel.add(picHeight, "4, 13, fill, default");
         picHeight.setColumns(10);
 
-        JLabel lblCenterCx = new JLabel("Center cx:");
+        JLabel lblCenterCx = new JLabel("Center cr (cx):");
         settingsPanel.add(lblCenterCx, "2, 15, right, default");
 
         centerCX = new JTextField();
+        centerCX.setToolTipText("Real part of the center c value");
         settingsPanel.add(centerCX, "4, 15, fill, default");
         centerCX.setColumns(10);
 
-        JLabel lblCenterCy = new JLabel("Center cy:");
+        JLabel lblCenterCy = new JLabel("Center ci (cy):");
         settingsPanel.add(lblCenterCy, "2, 17, right, default");
 
         centerCY = new JTextField();
+        centerCY.setToolTipText("Imaginary part of the center c value");
         settingsPanel.add(centerCY, "4, 17, fill, default");
         centerCY.setColumns(10);
 
-        JLabel lblDiameterX = new JLabel("Diameter x:");
+        JLabel lblDiameterX = new JLabel("Diameter real (x):");
         settingsPanel.add(lblDiameterX, "2, 19, right, default");
 
         diameterCX = new JTextField();
@@ -321,6 +331,7 @@ public class MainFrame extends JFrame
         settingsPanel.add(lblNewLabel_4, "2, 25, right, center");
 
         maxIters = new JTextField();
+        maxIters.setToolTipText("Maximum number of iterations to check if a |Z| is in the set");
         settingsPanel.add(maxIters, "4, 25, fill, default");
         maxIters.setColumns(10);
 
@@ -335,6 +346,7 @@ public class MainFrame extends JFrame
         settingsPanel.add(lblJuliaK, "2, 29, right, default");
 
         juliaKrField = new JTextField();
+        juliaKrField.setToolTipText("Julia constant real value");
         settingsPanel.add(juliaKrField, "4, 29, fill, default");
         juliaKrField.setColumns(10);
 
@@ -342,6 +354,7 @@ public class MainFrame extends JFrame
         settingsPanel.add(lblJuliaKi, "2, 31, right, default");
 
         juliaKiField = new JTextField();
+        juliaKiField.setToolTipText("Julia constant imaginary value");
         settingsPanel.add(juliaKiField, "4, 31, fill, default");
         juliaKiField.setColumns(10);
 
@@ -539,8 +552,8 @@ public class MainFrame extends JFrame
         p.maxIterations = Integer.parseInt(maxIters.getText());
 
         p.colorPreset = ((ColorPreset) colorPresetsCombo.getSelectedItem()).toString();
-        p.colorPaletteLength = MathLib.maxInt(Integer.parseInt(paletteLength.getText()), 1);
-        p.colorPaletteRepeat = MathLib.maxInt(Integer.parseInt(paletteRepeat.getText()), 1);
+        p.colorPaletteLength = MathLib.maxInt((int)paletteLength.getValue(), 1);
+        p.colorPaletteRepeat = MathLib.maxInt((int)paletteRepeat.getValue(), 1);
 
         p.smoothColors = chckbxSmoothColors.isSelected();
         p.fixedSizePalette = chckbxFixedsizePalette.isSelected();
@@ -583,8 +596,8 @@ public class MainFrame extends JFrame
         chckbxSmoothColors.setSelected(p.smoothColors);
         chckbxFixedsizePalette.setSelected(p.fixedSizePalette);
 
-        paletteLength.setText(Integer.toString(p.colorPaletteLength));
-        paletteRepeat.setText(Integer.toString(p.colorPaletteRepeat));
+        paletteLength.setValue(p.colorPaletteLength);
+        paletteRepeat.setValue(p.colorPaletteRepeat);
     }
 
     /**
@@ -783,6 +796,28 @@ public class MainFrame extends JFrame
         }
         outputSplitPane.resetToPreferredSizes();
     }
+    
+    protected void recalculateColors() {
+    	// If the palette length value changes, redraw the actual fractal using the new
+        // palette length value:
+        // Re-render the color values of the actual fractal image:
+        if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
+            ColorPreset preset = (ColorPreset) this.colorPresetsCombo.getSelectedItem();
+            this.actualFractCalcerResult.fractParam.colorPaletteLength = (int)this.paletteLength.getValue();
+            this.actualFractCalcerResult.fractParam.colorPaletteRepeat = (int)this.paletteRepeat.getValue();
+            this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(
+                    this.actualFractCalcerResult.fractParam.colorPaletteLength,
+                    this.actualFractCalcerResult.fractParam.colorPaletteRepeat);
+            try {
+                Colorizer c = AppManager.getInstance().getObjectFactory()
+                        .createColorizer(this.actualFractCalcerResult.fractParam);
+                c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
+                this.updateOutput(this.actualFractCalcerResult);
+            } catch (NoSuchAlgorithmException e) {
+                System.err.println("Oops! Colorizer Strategy not implemented!");
+            }
+        }
+    }
 
     /**
      * action listeners for various comboboxes
@@ -903,38 +938,6 @@ public class MainFrame extends JFrame
             }
             colorSchemeEditDialog.display();
         }
-    }
-
-    public void focusGained(FocusEvent ev) {
-        // nothing todo here
-
-    }
-
-    public void focusLost(FocusEvent ev) {
-        if (ev.getSource() == this.paletteLength || ev.getSource() == this.paletteRepeat) {
-            // If the palette length value changes, redraw the actual fractal using the new
-            // palette length value:
-            // Re-render the color values of the actual fractal image:
-            if (!this.suspendUpdate && this.actualFractCalcerResult != null) {
-                ColorPreset preset = (ColorPreset) this.colorPresetsCombo.getSelectedItem();
-                this.actualFractCalcerResult.fractParam.colorPaletteLength = Integer
-                        .parseInt(this.paletteLength.getText());
-                this.actualFractCalcerResult.fractParam.colorPaletteRepeat = Integer
-                        .parseInt(this.paletteRepeat.getText());
-                this.actualFractCalcerResult.colorPalette = preset.createDynamicSizeColorPalette(
-                        this.actualFractCalcerResult.fractParam.colorPaletteLength,
-                        this.actualFractCalcerResult.fractParam.colorPaletteRepeat);
-                try {
-                    Colorizer c = AppManager.getInstance().getObjectFactory()
-                            .createColorizer(this.actualFractCalcerResult.fractParam);
-                    c.fractDataToRaster(this.actualFractCalcerResult, this.actualFractCalcerResult.colorPalette);
-                    this.updateOutput(this.actualFractCalcerResult);
-                } catch (NoSuchAlgorithmException e) {
-                    System.err.println("Oops! Colorizer Strategy not implemented!");
-                }
-            }
-        }
-
     }
 
     public void presetsChanged(PresetsCollection c) {
