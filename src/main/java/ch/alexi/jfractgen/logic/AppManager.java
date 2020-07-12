@@ -33,8 +33,8 @@ import ch.alexi.jfractgen.models.PresetsCollection;
 import ch.alexi.jfractgen.models.UserPreferences;
 
 /**
- * The AppManager offers some application-wide functions and data. Singleton. 
- * 
+ * The AppManager offers some application-wide functions and data. Singleton.
+ *
  * Part of JFractGen - a Julia / Mandelbrot Fractal generator written in Java/Swing.
  * @author Alexander Schenkel, www.alexi.ch
  * (c) 2012 Alexander Schenkel
@@ -44,23 +44,24 @@ public class AppManager implements ApplicationListener{
 	private MainFrame mainFrame;
 	private Stack<FractCalcerResultData> history;
 	private PresetsCollection presets;
-	private UserPreferences prefs;
-	
+    private UserPreferences prefs;
+    private ObjectFactory factory;
+
 	private AppManager() {
 		this.history = new Stack<FractCalcerResultData>();
 		this.prefs = new UserPreferences();
 		this.loadUserSettings();
 	}
-	
+
 	public static AppManager getInstance() {
 		return inst;
 	}
-	
+
 	/**
 	 * Called directly from the Main class, the AppManager is responsible
-	 * for setting up and displaying the GUI. It also starts the 
+	 * for setting up and displaying the GUI. It also starts the
 	 * first calculation.
-	 * 
+	 *
 	 * @return
 	 */
 	public MainFrame createAndShowGUI() {
@@ -69,21 +70,21 @@ public class AppManager implements ApplicationListener{
 		//app.addPreferencesMenuItem();
 		//app.setEnabledPreferencesMenu(false);
 		app.addApplicationListener(this);
-		
+
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "JFractGen");
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
+
 		UIManager.put("Label.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("ComboBox.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("CheckBox.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("TextField.font",new Font("Sans Serif",Font.PLAIN,11));
 		UIManager.put("Button.font",new Font("Sans Serif",Font.PLAIN,11));
 
-		
+
 		if (mainFrame == null) {
 			// Create and set up the window.
 	        mainFrame = new MainFrame("JFractGen");
@@ -94,45 +95,45 @@ public class AppManager implements ApplicationListener{
 	        		shutdown();
 	        	}
 			});
-	        
+
 	        if (!app.isMac()) {
 	        	// Add menu entries for non-mac GUIs:
 	        }
-	        
+
 	        JMenuBar menuBar = mainFrame.getJMenuBar();
 	        if (menuBar == null) {
 	        	menuBar = new JMenuBar();
 	        	mainFrame.setJMenuBar(menuBar);
 	        }
 	        menuBar.add(new FileMenu());
-	        
+
 	        getPresets().addPresetChangeListener(mainFrame);
-	        
+
 	        mainFrame.pack();
 	        mainFrame.setVisible(true);
 	        mainFrame.setFractParam(this.getPresets().getFractalPresets().get(0));
-	        
+
 			// Start the first calculation:
 			mainFrame.startCalculation();
 		}
-		
+
         return mainFrame;
     }
-	
+
 	public MainFrame getMainFrame() {
 		return this.mainFrame;
 	}
-	
+
 	/**
 	 * Reads the presets configuration file (presets.json) and returns
 	 * a JSONObject.
-	 * 
+	 *
 	 * @return All presets from the presets.json configuration file.
 	 */
 	public PresetsCollection getPresets() {
 		if (this.presets == null) {
 			presets = new PresetsCollection();
-			
+
 			File presetFile = new File(getUserSettingsDir() + File.separator + "presets.json");
 			if (presetFile.exists()) {
 				System.out.println("Loading presets file from " + presetFile.getAbsolutePath());
@@ -147,16 +148,16 @@ public class AppManager implements ApplicationListener{
 				}
 			}
 		}
-		
+
 		return presets;
 	}
-	
-	
+
+
 	public void addFractalPreset(FractParam p) {
 		this.getPresets().addFractalPreset(p);
 		this.saveUserPresets();
 	}
-	
+
 	/**
 	 * Removes the fractal preset given from the list of available ones,
 	 * but only if it is not the last one.
@@ -168,14 +169,14 @@ public class AppManager implements ApplicationListener{
 			this.saveUserPresets();
 		}
 	}
-	
+
 	public void removeUserColorPreset(ColorPreset p) {
 		if (this.getPresets().getColorPresets().size() > 1) {
 			this.getPresets().removeColorPreset(p);
 			this.saveUserPresets();
 		}
 	}
-	
+
 	/**
 	 * Adds a fractal result data object to the history stack.
 	 * @param data
@@ -186,7 +187,7 @@ public class AppManager implements ApplicationListener{
 			history.removeElementAt(0);
 		}
 	}
-	
+
 	/**
 	 * Pops a fractal result data object from the history stack, returning the data.
 	 * @return
@@ -198,7 +199,7 @@ public class AppManager implements ApplicationListener{
 			return res;
 		} else return null;
 	}
-	
+
 	/**
 	 * How many entries does the history actually have?
 	 * @return
@@ -206,24 +207,24 @@ public class AppManager implements ApplicationListener{
 	public int getHistoryCount() {
 		return this.history.size();
 	}
-	
+
 	public UserPreferences getUserPrefs() {
 		return this.prefs;
 	}
-	
+
 	protected void loadUserSettings() {
 		File userSettingsFile = new File(getUserSettingsDir() + File.separator + "settings.xml");
 		if (userSettingsFile.exists()) {
 			getUserPrefs().loadPrefsFromFile(userSettingsFile);
 		}
-		
+
 	}
-	
+
 	public String getUserSettingsDir() {
 		return System.getProperty("user.home") + File.separator + ".jfractgen";
 	}
-	
-	
+
+
 	/**
 	 * Exits the application, and do necessary things before.
 	 */
@@ -232,22 +233,22 @@ public class AppManager implements ApplicationListener{
 		System.out.println("User settings go to: "+userSettingsFile);
 		userSettingsFile.mkdirs();
 		userSettingsFile.delete();
-		
+
 		// save user preferences:
 		this.getUserPrefs().savePrefsToFile(userSettingsFile);
-		
+
 		// save user presets:
 		this.saveUserPresets();
 		System.exit(0);
-		
+
 	}
-	
+
 	private void saveUserPresets() {
 		File f = new File(getUserSettingsDir() + File.separator + "presets.json");
 		BufferedWriter w;
 		try {
 			w = new BufferedWriter(new FileWriter(f));
-			
+
 			w.write(getPresets().getPresetsJsonObject().toString(4));
 			//w.write(getPresetsJSONObject().put("fractalPresets",this.getFractParamPresets().getJSONArray()).toString(4));
 			w.close();
@@ -259,8 +260,8 @@ public class AppManager implements ApplicationListener{
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public Icon getIcon(String name) {
 		URL imgUrl = getClass().getResource("/icons/"+name+".png");
 		if (imgUrl != null) {
@@ -272,36 +273,43 @@ public class AppManager implements ApplicationListener{
 	public void handleAbout(ApplicationEvent arg0) {
 		AboutDialog.display();
 		arg0.setHandled(true);
-		
+
 	}
 
 	public void handleOpenApplication(ApplicationEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void handleOpenFile(ApplicationEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void handlePreferences(ApplicationEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void handlePrintFile(ApplicationEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void handleQuit(ApplicationEvent arg0) {
 		shutdown();
-		
+
 	}
 
 	public void handleReOpenApplication(ApplicationEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
+
+    }
+
+    public ObjectFactory getObjectFactory() {
+        if (this.factory == null) {
+            this.factory = new ObjectFactory();
+        }
+        return this.factory;
+    }
 }

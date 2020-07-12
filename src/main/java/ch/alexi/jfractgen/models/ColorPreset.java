@@ -108,7 +108,7 @@ public class ColorPreset implements Cloneable {
 
 			// Create a color palette for all defined colors in the preset
 			// that smoothly transist from color to color, independent of the requested length first:
-			for (int i = 0; i < this.colors.length * repeat - 1; i++) {
+			for (int i = 0; i < this.colors.length * repeat; i++) {
 				actBase = this.colors[i % this.colors.length];
 				nextBase = this.colors[(i+1) % this.colors.length];
 				r = actBase.r;

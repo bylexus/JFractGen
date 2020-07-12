@@ -13,10 +13,11 @@ import ch.alexi.jfractgen.logic.MathLib;
  * (c) 2012 Alexander Schenkel
  */
 public class FractParam {
+    private static double maxBetragQuadrat = 256;
+    // private static double maxBetragQuadrat = 4;
+
 	public String name = "Mandelbrot Total";
 
-	//private double maxBetragQuadrat = 4;
-	private double maxBetragQuadrat = 256;
 	public int maxIterations = 40;
 
 	public double centerCX = -0.7;
@@ -34,6 +35,7 @@ public class FractParam {
 	//public int nrOfWorkers = 2;
 
 	public boolean smoothColors = true;
+	public boolean fixedSizePalette = false;
 
 	// calculated values:
 	public double min_cx = 0.0;
@@ -88,8 +90,8 @@ public class FractParam {
 			o.put("colorPreset",this.colorPreset);
 			o.put("colorPaletteLength",MathLib.maxInt(1, this.colorPaletteLength));
 			o.put("colorPaletteRepeat",MathLib.maxInt(1, this.colorPaletteRepeat));
+			o.put("fixedSizePalette",this.fixedSizePalette);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -145,15 +147,15 @@ public class FractParam {
 				p.colorPaletteLength = MathLib.maxInt(1, o.getInt("colorPaletteLength"));
 			if (o.has("colorPaletteRepeat"))
 				p.colorPaletteRepeat = MathLib.maxInt(1, o.getInt("colorPaletteRepeat"));
-
+			if (o.has("fixedSizePalette"))
+				p.fixedSizePalette = o.getBoolean("fixedSizePalette");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return p;
 	}
-	
-	public double getMaxBetragQuadrat() {
-		return this.maxBetragQuadrat;
+
+	public static double getMaxBetragQuadrat() {
+		return maxBetragQuadrat;
 	}
 }

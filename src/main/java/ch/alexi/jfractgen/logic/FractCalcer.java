@@ -27,8 +27,8 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 
 	private FractParam fractParam;
 	private IFractCalcObserver observer;
-	private RGB[] palette;
-	private Colorizer colorizer = new Colorizer();
+    private RGB[] palette;
+    private Colorizer colorizer;
 
 	/**
 	 * The Worker thread calculating a part of the fractal set.
@@ -80,28 +80,30 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 			pdata.threadNr = this.threadNr;
 			pdata.threadName = this.getName();
 
-			// the threadNr is taken as start offset for this thread, and we increment by pixelIncrement.
+            // the threadNr is taken as start offset for this thread, and we increment by pixelIncrement.
+            double log_max_betrag = Math.log(FractParam.getMaxBetragQuadrat());
 			for (int pixel = this.threadNr; pixel < width * height; pixel += pixelIncrement) {
 				if (isCancelled()) {
 					return;
 				}
-				
+
 				int y = pixel / width;
 				int x = pixel % width;
-				
+
 				// cy = C(i) for the pixel y (C(i) = imaginary part of C)
 				// and we also reverse the y axis:
 				cy = fractParam.min_cy + ((height - y) * fractParam.punkt_abstand);
-					
+
 				// cx = C(r) for the pixel x (C(r) = real part of C)
 				cx = fractParam.min_cx + x * fractParam.punkt_abstand;
 
 				// Check for set membership by executing the selected iteration function (julia, mandelbrot):
-				res = fractParam.iterFunc.fractIterFunc(cx,cy,fractParam.getMaxBetragQuadrat(), fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
+				res = fractParam.iterFunc.fractIterFunc(cx,cy,FractParam.getMaxBetragQuadrat(), fractParam.maxIterations,fractParam.juliaKr,fractParam.juliaKi);
 
 				if (fractParam.smoothColors == true) {
 					// Smooth coloring, see http://de.wikipedia.org/wiki/Mandelbrot-Menge#Iteration_eines_Bildpunktes:
-					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Constants.LOG_4) / Constants.LOG_2;
+					// iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / Constants.LOG_4) / Constants.LOG_2;
+					iterValues[x][y] = res.iterValue - Math.log(Math.log(res.bailoutValue) / log_max_betrag) / Constants.LOG_2;
 				} else {
 					// Rough coloring: Escape time algorithm:
 					iterValues[x][y] = res.iterValue;
@@ -123,9 +125,10 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		}
 	};
 
-	public FractCalcer(FractParam params, IFractCalcObserver o) {
+	public FractCalcer(FractParam params, IFractCalcObserver o, Colorizer colorizer) {
 		this.fractParam = params;
-		this.observer = o;
+        this.observer = o;
+        this.colorizer = colorizer;
 	}
 
 
@@ -160,7 +163,7 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 		int nrOfWorkers = AppManager.getInstance().getUserPrefs().getNrOfWorkers();
 		Thread[] workers = new Thread[nrOfWorkers];
 		for (int i = 0; i < workers.length; i++) {
-			
+
 			//int minX = fractParam.picWidth / nrOfWorkers * i;
 			//int maxX = fractParam.picWidth / nrOfWorkers * (i+1) - 1;
 			workers[i] = new FractCalcThread(i,fractParam, img.getRaster(), result, fractParam.picWidth, fractParam.picHeight, nrOfWorkers);
@@ -203,6 +206,14 @@ public class FractCalcer extends SwingWorker<FractCalcerResultData, FractCalcerP
 	@Override
 	protected void done() {
 		observer.done(this);
+		this.dispose();
+	}
+
+	public void dispose() {
+		this.colorizer = null;
+		this.fractParam = null;
+		this.observer = null;
+		this.palette = null;
 	}
 
 
