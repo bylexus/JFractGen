@@ -35,18 +35,19 @@ Today's already implemented features
 ------------------------------------
 - Fractal settings presets for 'nice' mandelbrot/julia locations
 - color palette presets
-- define user-presets in json config file (<user.home>/.jfractcalc/presets.json)
+- define user-presets in json config file ([user.home]/.jfractcalc/presets.json)
 - uses chosable nr of Workers, for using multiple CPUs for calculating
 - dive deeper by click/rubberband zoom, zoom out
 - drag-move the fractal viewport
 - smooth colors / hard edges
 - history
 - dynamic color palette change (without re-calc)
-- multiply color palette
+- multiple color palettes, multiple color apply strategies
 - PNG export
 - presets defined as JSON data in properties file
 - JSON export/import of presets
 - Transparency support in color schemes
+- Super-configurable: All relevant (and not so relevant) Fractal and color parameters can manually be set.
 
 
 Planned / future features
@@ -59,7 +60,6 @@ Planned / future features
   - nr of workers / CPU dependant
   - max. Nr of history entries
 - aspect-ratio presets
-- rubber band should respect actual image aspect ratio
 
 
 
