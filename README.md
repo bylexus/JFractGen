@@ -77,6 +77,14 @@ Planned / future features
 - graphic bulk export/conversion/downsampling
 - aspect-ratio presets
 
+Some Impressions
+--------------------
+
+![Screenshot of the application](./featured/img/screenshot1.jpg)
+![Mandelbrot Example](./featured/img/2015-02-04-001.jpg)
+![Mandelbrot Example](./featured/img/2015-05-02-003.jpg)
+![Mandelbrot Example](./featured/img/20200712-FlamesEverywhere.jpg)
+![Mandelbrot Example](./featured/img/20200822-Crosses.jpg)
 
 
 NOTE(s)
