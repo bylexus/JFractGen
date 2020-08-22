@@ -19,15 +19,29 @@ You need Maven and JDK >= 1.8 to build the tool.
 
 Build with:
 
-* mvn validate
-* mvn package
+```
+$ mvn validate
+$ mvn package
+```
 
 Run
 ----
 
-* mvn exec:exec
+with maven:
 
-Main class: ch.alexi.jfractgen.Main
+```
+$ mvn exec:exec
+```
+
+pre-built JAR:
+
+```
+$ java -Xmx1024M -jar jfractgen-0.9.jar
+# Or use the shell script:
+$ ./jfractgen.sh
+```
+
+**Main class**: ch.alexi.jfractgen.Main
 
 See also an HTML5 version of this project: https://github.com/bylexus/JS-fractgen
 
@@ -40,7 +54,10 @@ Today's already implemented features
 - dive deeper by click/rubberband zoom, zoom out
 - drag-move the fractal viewport
 - smooth colors / hard edges
-- history
+- multiple color palette models:
+  - fixed repeat pattern: repeat after n steps
+  - dynamic color palette: stretch color palette to match iterations
+- history / undo
 - dynamic color palette change (without re-calc)
 - multiple color palettes, multiple color apply strategies
 - PNG export
@@ -48,17 +65,16 @@ Today's already implemented features
 - JSON export/import of presets
 - Transparency support in color schemes
 - Super-configurable: All relevant (and not so relevant) Fractal and color parameters can manually be set.
+- preferences:
+  - nr of workers / CPU dependant
+  - max. Nr of history entries
+  - Background color
 
 
 Planned / future features
 -------------------------
 - create own color palettes
-- fixed repeat pattern: repeat after 256 steps
-- flip-flop color repeating: when repeating, repeat the palette forward-backward, instead of flipping back
 - graphic bulk export/conversion/downsampling
-- preferences:
-  - nr of workers / CPU dependant
-  - max. Nr of history entries
 - aspect-ratio presets
 
 
